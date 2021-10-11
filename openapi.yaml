@@ -1,0 +1,630 @@
+# This source file is part of the Swift.org open source project
+#
+# Copyright (c) 2021 Apple Inc. and the Swift project authors
+# Licensed under Apache License v2.0 with Runtime Library Exception
+#
+# See https://swift.org/LICENSE.txt for license information
+# See https://swift.org/CONTRIBUTORS.txt for Swift project authors
+
+openapi: "3.0.0"
+info:
+  title: SymbolGraph
+  description: A format for describing symbols and their documentation.
+  version: "0.3.0"
+paths: {}
+components:
+  schemas:
+    SymbolGraph:
+      title: SymbolGraph
+      description: |
+        A symbol graph is a set of *nodes* that represent the symbols in a module and
+        a set of directed *edges* that represent the relationships between symbols.
+      type: object
+      required:
+        - metadata
+        - module
+        - symbols
+        - relationships 
+      properties:
+        metadata:
+          description: Metadata about the symbol graph.
+          $ref: "#/components/schemas/Metadata"
+        module:
+          description: The module that this symbol graph represents.
+          $ref: "#/components/schemas/Module"
+        symbols:
+          description: >
+            The symbols in a module: the nodes in a graph, mapped by precise identifier.
+          type: array
+          items:
+            $ref: "#/components/schemas/Symbol"
+        relationships:
+          description: >
+            The relationships between symbols: the edges in a graph.
+          type: array
+          items:
+            $ref: "#/components/schemas/Relationship"
+    Metadata:
+      title: Metadata
+      description: Metadata for the Symbol Graph data itself.
+      type: object 
+      required:
+        - formatVersion
+        - generator
+      properties:
+        formatVersion:
+          description: The data format version.
+          $ref: "#/components/schemas/SemanticVersion"
+        generator:
+          description: |
+            A string describing the tool or system that generated the data for this symbol graph.
+
+            This should include a name and version if possible to track down potential
+            serialization bugs.
+          type: string
+    Module:
+      title: Module
+      description: The module or framework that a symbol graph describes.
+      type: object
+      required:
+        - name
+        - platform
+      properties:
+        name:
+          description: The name of the module.
+          type: string
+        platform:
+          description: The intended platform for deploying the module.
+          $ref: "#/components/schemas/Platform"
+        version:
+          description: The module's version number if known or applicable.
+          $ref: "#/components/schemas/SemanticVersion"
+    SemanticVersion:
+      title: SemanticVersion
+      description: A [semantic version](https://semver.org).
+      type: object
+      required:
+        - major
+        - minor
+        - patch
+      properties:
+        major:
+          description: Major version when you make incompatible API changes.
+          type: number
+          format: int64
+        minor:
+          description: Minor version when you add functionality in a backwards compatible manner.
+          type: number
+          format: int64
+        patch:
+          description: Patch version when you make backwards compatible bug fixes.
+          type: number
+          format: int64
+        prerelease:
+          description: >
+            A pre-release version indicates that the version is unstable and
+            might not satisfy the intended compatibility requirements as denoted
+            by its associated normal version.
+            Examples: 1.0.0-alpha, 1.0.0-alpha.1, 1.0.0-0.3.7, 1.0.0-x.7.z.92.
+          type: string
+        buildMetadata:
+          description: Information about the specific build of the module.
+          type: string
+    Platform:
+      title: Platform
+      description: Describes the intended platform for deploying this module.
+      type: object
+      properties:
+        architecture:
+          description: |
+            The name of the architecture that this module targets, such as `x86_64` or `arm64`.
+            If the module doesn't have a specific architecture, this may be undefined.
+          type: string
+          nullable: true
+        vendor:
+          description: |
+            The platform vendor from which this module came, such as `apple` or `linux`.
+            If there is no specific platform vendor, this may be undefined.
+          type: string
+          nullable: true
+        operatingSystem:
+          $ref: "#/components/schemas/OperatingSystem"
+          nullable: true
+    OperatingSystem:
+      title: OperatingSystem
+      description:  |
+        The operating system intended as the run environment
+        If no operating system is required, this may be undefined.
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          description: The name of the operating system.
+          type: string
+        minimumVersion:
+          description: The minimum version of the operating system needed to deploy this module, if applicable.
+          $ref: "#/components/schemas/SemanticVersion"
+          nullable: true
+    Relationship:
+      title: Relationship
+      description: A relationship between two symbols; a directed edge in a graph.
+      type: object
+      required:
+        - source
+        - target
+        - kind
+      properties:
+        source:
+          description: The *precise identifier* of a symbol that is the *source* of this graph edge.
+          type: string
+        target:
+          description: The *precise identifier* of a symbol that is the *target* of this graph edge.
+          type: string
+        kind:
+          title: Kind
+          description: The kind of relationship denoted by a keyword string.
+          type: string
+          enum:
+            - memberOf
+            - conformsTo
+            - inheritsFrom
+            - defaultImplementationOf
+            - overrides
+            - requirementOf
+            - optionalRequirementOf
+        targetFallback:
+          type: string
+          nullable: true
+    Symbol:
+      title: Symbol
+      description: |
+        A symbol from a module.
+
+        A symbol corresponds to some named declaration in a module.
+
+        A symbol should never contain another symbol as a field or part of a field.
+        If a symbol is related to another symbol, it should be formalized
+        as a relationship in an edge in the graph.
+      type: object
+      required:
+        - identifier
+        - kind
+        - names
+        - accessLevel
+      properties:
+        identifier:
+          title: Identifier
+          description: A unique identifier for a symbol.
+          type: object
+          required:
+            - precise
+            - interfaceLanguage
+          properties:
+            precise:
+              description: |
+                A string that uniquely identifies a symbol within a module in the event of ambiguities. A precise identifier need not be human readable.
+                For example, languages that use [name mangling](https://en.wikipedia.org/wiki/Name_mangling) should use this field for a mangled name.
+              type: string
+            interfaceLanguage:
+              description: A string identifying the language or system for which this symbol provides an interface.
+              type: string
+        pathComponents:
+          description: |
+            A list of components that uniquely identifies a symbol when there are no ambiguities using only URL-compatible characters.
+            
+            Do not include the module name here.
+
+            For example, in a Swift module `MyModule`, there might exist a function `bar` in `struct Foo`.
+            The `simpleComponents` for `bar` would be `["Foo", "bar"]`, corresponding to `Foo.bar`.
+
+            > Note: When writing relative links, an author may choose to remove leading components, so disambiguating path components should only be appended to the end, not prepended to the beginning.
+          type: array
+          items:
+            type: string
+        kind:
+          title: Kind
+          description: A description of a symbol's kind, such as a structure in C, or a protocol in Swift.  
+          type: object
+          required:
+          - identifier
+          - displayName
+          properties:
+            identifier:
+              description: A unique identifier for the kind of symbol, namespaced by language.
+              type: string
+            displayName:
+              description: The display name of the kind of symbol which may be used in titles, subheadings, or eyebrows. For example, a Swift `struct` would use `Structure` here.
+              type: string
+        type:
+          description: A *precise identifier* for the static type of a symbol if known.
+          type: string
+          nullable: true
+        names:
+          title: Names
+          description: Ways of spelling the name of a symbol in various contexts.
+          type: object
+          required:
+            - title
+          properties:
+            title:
+              description: The name of a symbol when shown as a page title or first-level heading.
+              type: string
+            subHeading:
+              description: The name of a symbol when shown as a subheading, such as a page index or list.
+              type: array
+              nullable: true
+              items:
+                $ref: "#/components/schemas/DeclarationFragment"
+            prose:
+              description: The name of a symbol when shown inline with other prose.
+              type: string
+              nullable: true
+        docComment:
+          $ref: "#/components/schemas/LineList"
+          nullable: true
+        accessLevel:
+          description: The idiomatic name or keyword for a symbol's access level.
+          type: string
+          default: public
+        availability:
+          description: Descriptions of this symbol's *availability* across various *domains*.
+          type: array
+          nullable: true
+          items:
+            $ref: "#/components/schemas/AvailabilityItem"
+        swiftExtension:
+          description: If the symbol comes from Swift, a description of the extension context in which it was defined.
+          $ref: "#/components/schemas/SwiftExtension"
+          nullable: true
+        swiftGenerics:
+          description: If the symbol comes from Swift, a description of the generic parameters and generic constraints if there are any.
+          $ref: "#/components/schemas/SwiftGenerics"
+          nullable: true
+        location:
+          title: Location
+          description: A symbol's location in source code if available.
+          type: object
+          nullable: true
+          properties:
+            uri:
+              description: A URI describing a resource or file where the symbol was defined.
+              type: string
+              nullable: true
+            position:
+              description: A position in the resource or file where the symbol was defined if available.
+              $ref: "#/components/schemas/SourcePosition"
+              nullable: true
+        isReadOnly:
+          description: Whether an instance of the symbol is "read-only".
+          type: boolean 
+        parameters:
+          description: If the symbol is a kind of function, the parameters it takes.
+          $ref: "#/components/schemas/FunctionSignature"
+          nullable: true
+        declarationFragments:
+          description: If the symbol is a kind of function, a rendering of the return values.
+          type: array
+          items:
+            $ref: "#/components/schemas/DeclarationFragment"
+    DeclarationFragment:
+      title: DeclarationFragment
+      description: |
+        A tagged range of source text illustrating the important parts of a symbol's declaration.
+
+        > Note: This is not necessarily a lexical token. A sequence of fragments should be able to be joined
+        end-to-end to form tagged spans of text that can highlight the syntax of a symbol's declaration.
+
+        > Note: When the kind of fragment is `typeIdentifier`, an optional *precise identifier* may be included to allow for linking to a type symbol.
+      type: object
+      required:
+        - kind
+        - spelling
+      properties:
+        kind:
+          title: Kind
+          description: The kind of declaration fragment.
+          type: string
+          enum:
+            - keyword
+            - attribute
+            - number
+            - string
+            - identifier
+            - typeIdentifier
+            - genericParameter
+            - text
+        spelling:
+          type: string
+        preciseIdentifier:
+          type: string
+          nullable: true
+    LineList:
+      title: LineList
+      description: |
+        A logical grouping of text ranges in a document making up a block of textual content.
+
+        A line list shouldn't contain any documentation comment markers or newlines.
+
+        For example, for the following C++\-style documentation comment:
+
+        ```c++
+        /// First line
+        /// Second line
+        void foo() {}
+        ```
+
+        The line list would be represented by the following LineList:
+
+        ```json
+        {
+          "lines": [
+            {
+              "text": "First line",
+              "range": {
+                "start": {
+                  "line": 0,
+                  "character": 4
+                },
+                "end": {
+                  "line": 0,
+                  "character": 14
+                }
+              }
+            },
+            {
+              "text": "Second line",
+              "range": {
+                "start": {
+                  "line": 1,
+                  "character": 4
+                },
+                "end": {
+                  "line": 1,
+                  "character": 15
+                }
+              }
+            }
+          ]
+        }
+        ```
+
+        The same breakdown should occur for block-style documentation comments, as in:
+
+        ```c++
+        /**
+        * First line
+        * Second line
+        */
+        void foo() {}
+        ```
+
+        or:
+
+        ```c++
+        /**
+        First line
+        Second line
+        */
+        void foo() {}
+        ```
+
+        It is the responsibility of the tool generating the symbol graph to measure and trim indentation appropriately to project a logical block of text. In all of the above cases, logically, the text is:
+
+        ```
+        First line
+        Second line
+        ```
+
+        That is the text content that would be parsed as markup.
+
+        Line lists were chosen as the representation of documentation markup because each language may have different syntactic forms for documentation comments. This form works for both sequences of single-line comments or multi-line comment blocks.
+      type: object
+      required:
+        - lines
+      properties:
+        lines:
+          type: array
+          items:
+            $ref: "#/components/schemas/Line"
+    Line:
+      title: Line
+      description: A selection of a line from a source file.
+      type: object
+      required:
+        - text
+      properties:
+        text:
+          description: The text of the selection.
+          type: string
+        range:
+          $ref: "#/components/schemas/SourceRange"
+          nullable: true
+    SourceRange:
+      title: SourceRange
+      description: The location of the range in a source file or resource if applicable.
+      type: object
+      required:
+        - start
+        - end
+      properties:
+        start:
+          $ref: "#/components/schemas/SourcePosition"
+        end:
+          $ref: "#/components/schemas/SourcePosition"
+    SourcePosition:
+      title: SourcePosition
+      description: A cursor location in a source file or resource.
+      type: object
+      required:
+        - line
+        - character
+      properties:
+        line:
+          description: The line number in the source file or resource.
+          type: number
+          minimum: 0
+          format: int64
+        character:
+          description: The byte offset into the line.
+          type: number
+          minimum: 0
+          format: int64
+    AvailabilityItem:
+      title: AvailabilityItem
+      description: |
+        Availability of a symbol in a particular domain.
+      type: object
+      properties:
+        domain:
+          description: |
+            A versioned context where a symbol resides.
+
+            For example, a domain can be an operating system, programming language,
+            or perhaps a web platform.
+
+            A single framework, library, or module could theoretically be
+            an `AvailabilityDomain`, as it is a containing context and almost always
+            has a version.
+            However, availability is usually tied to some larger platform like an SDK for
+            an operating system like *iOS*.
+
+            There may be exceptions when there isn't a reasonable larger context.
+            For example, a web framework's larger context is simply *the Web*.
+            Therefore, a web framework could be its own domain so that deprecations and
+            API changes can be tracked across versions of that framework.
+          type: string
+          nullable: true
+        introducedVersion:
+          description: The version of a domain where the symbol was introduced.
+          $ref: "#/components/schemas/SemanticVersion"
+          nullable: true
+        deprecatedVersion:
+          description: The version of a domain where the symbol was deprecated.
+          $ref: "#/components/schemas/SemanticVersion"
+          nullable: true
+        obsoletedVersion:
+          description: The version of a domain where the symbol was obsoleted.
+          $ref: "#/components/schemas/SemanticVersion"
+          nullable: true
+        message:
+          description: A basic description explaining why this availability is specified if applicable.
+          type: string
+          nullable: true
+        renamed:
+          description: An idiomatic spelling of what this symbol was renamed to, if applicable.
+          type: string
+          nullable: true
+        isUnconditionallyDeprecated:
+          type: boolean
+          default: false
+        isUnconditionallyUnavailable:
+          type: boolean
+          default: false
+        willEventuallyBeDeprecated:
+          type: boolean
+          default: false
+    FunctionSignature:
+      title: FunctionSignature
+      type: object
+      required:
+        - parameters
+        - returns
+      properties:
+        parameters:
+          type: array
+          items:
+            $ref: "#/components/schemas/FunctionParameter"
+        returns:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeclarationFragment"
+    FunctionParameter:
+      title: FunctionParameter
+      type: object
+      required:
+        - declaration
+      properties:
+        name:
+          type: string
+          nullable: true
+        declaration:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeclarationFragment"
+        children:
+          type: array
+          items:
+            $ref: "#/components/schemas/FunctionParameter"
+    SwiftExtension:
+      title: SwiftExtension
+      type: object
+      required:
+        - extendedModule
+      properties:
+        extendedModule:
+          description: The name of the module whose type was extended.
+          type: string
+        constraints:
+          description: An array of generic constraints on the extension, if any.
+          nullable: true
+          type: array
+          items:
+            $ref: "#/components/schemas/SwiftGenericConstraint"
+    SwiftGenerics:
+      title: SwiftGenerics
+      type: object
+      properties:
+        parameters:
+          description: The generic parameters of a symbol, if any.
+          nullable: true
+          type: array
+          items:
+            $ref: "#/components/schemas/SwiftGenericParameter"
+        constraints:
+          description: The constraints on a symbol's available generic parameters, if any.
+          nullable: true
+          type: array
+          items:
+            $ref: "#/components/schemas/SwiftGenericConstraint"
+    SwiftGenericParameter:
+      title: SwiftGenericParameter
+      description: A generic parameter of a Swift declaration.
+      required:
+        - name
+        - index
+        - depth
+      properties:
+        name:
+          description: The name of the generic parameter.
+          type: string
+        index:
+          description: The index of the generic parameter at its depth.
+          type: number
+          format: int64
+        depth:
+          description: The depth of the generic parameter; parameters declared at deeper scopes have increased depth.
+          type: number
+          format: int64
+    SwiftGenericConstraint:
+      title: SwiftGenericConstraint
+      description: A constraint between two types.
+      required:
+        - kind
+        - lhs
+        - rhs
+      properties:
+        kind:
+          title: Kind
+          description: A kind of generic constraint.
+          type: string
+          enum:
+            - conformance
+            - superclass
+            - sameType
+        lhs:
+          description: The spelling of the left-hand side of the constraint.
+          type: string
+        rhs:
+          description: The spelling of the right-hand side of the constraint.
+          type: string
