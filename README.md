@@ -1,5 +1,6 @@
 # SymbolKit 
 
+
 The specification and reference model for the *Symbol Graph* File Format.
 
 A *Symbol Graph* models a *module*, also known in various programming languages as a "framework", "library", or "package", as a [directed graph](https://en.wikipedia.org/wiki/Directed_graph). In this graph, the nodes are declarations, and the edges connecting nodes are relationships between declarations.
