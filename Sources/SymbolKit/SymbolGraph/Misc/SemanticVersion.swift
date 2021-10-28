@@ -42,6 +42,8 @@ extension SymbolGraph {
             self.major = major
             self.minor = minor
             self.patch = patch
+            self.prerelease = prerelease
+            self.buildMetadata = buildMetadata
         }
 
         public init(from decoder: Decoder) throws {
