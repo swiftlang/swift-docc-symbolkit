@@ -12,3 +12,4 @@
 /*.xcodeproj
 xcuserdata/
 SymbolGraph.symbols.json
+.swiftpm
