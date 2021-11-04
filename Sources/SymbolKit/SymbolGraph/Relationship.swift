@@ -109,7 +109,7 @@ extension SymbolGraph {
 
 extension SymbolGraph.Relationship {
     /// The kind of relationship.
-    public struct Kind: Codable, RawRepresentable, Equatable {
+    public struct Kind: Codable, RawRepresentable, Equatable, Hashable {
         public var rawValue: String
         public init(rawValue: String) {
             self.rawValue = rawValue
