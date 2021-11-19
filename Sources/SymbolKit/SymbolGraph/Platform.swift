@@ -48,7 +48,7 @@ extension SymbolGraph {
                 return nil
             }
             switch os {
-            case "macosx":
+            case "macosx", "macos":
                 return SymbolGraph.Symbol.Availability.Domain.macOS
             case "ios":
                 if environment == "macabi" {
