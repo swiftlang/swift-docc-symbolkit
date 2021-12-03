@@ -31,6 +31,6 @@ class PlatformTests: XCTestCase {
             environment: nil
         )
         
-        XCTAssertEqual(macosPlatform.name, "macOS", "'macosx' should be a valid OS identifier.")
+        XCTAssertEqual(macosxPlatform.name, "macOS", "'macosx' should be a valid OS identifier.")
     }
 }
