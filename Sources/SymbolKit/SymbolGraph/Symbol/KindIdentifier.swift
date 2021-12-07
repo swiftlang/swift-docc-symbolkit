@@ -14,63 +14,58 @@ extension SymbolGraph.Symbol {
     /**
      A unique identifier of a symbol's kind, such as a structure or protocol.
      */
-    public enum KindIdentifier: Equatable, Hashable, Codable, CaseIterable {
-        case `associatedtype`
-        case `class`
-        case `deinit`
-        case `enum`
-        case `case`
-        case `func`
-        case `operator`
-        case `init`
-        case method
-        case property
-        case `protocol`
-        case snippet
-        case snippetGroup
-        case `struct`
-        case `subscript`
-        case typeMethod
-        case typeProperty
-        case typeSubscript
-        case `typealias`
-        case `var`
+    public struct KindIdentifier: Equatable, Hashable, Codable {
+        public let identifier: String
 
-        case module
-
-        case unknown
-
-        /// A string that uniquely identifies the symbol kind.
-        ///
-        /// If the original kind string was not recognized, this will return `"unknown"`.
-        public var identifier: String {
-            switch self {
-            case .associatedtype: return "associatedtype"
-            case .class: return "class"
-            case .deinit: return "deinit"
-            case .enum: return "enum"
-            case .case: return "enum.case"
-            case .func: return "func"
-            case .operator: return "func.op"
-            case .`init`: return "init"
-            case .method: return "method"
-            case .property: return "property"
-            case .protocol: return "protocol"
-            case .snippet: return "snippet"
-            case .snippetGroup: return "snippetGroup"
-            case .struct: return "struct"
-            case .subscript: return "subscript"
-            case .typeMethod: return "type.method"
-            case .typeProperty: return "type.property"
-            case .typeSubscript: return "type.subscript"
-            case .typealias: return "typealias"
-            case .var: return "var"
-            case .module: return "module"
-            case .unknown: return "unknown"
-            }
+        private init(rawIdentifier: String) {
+            self.identifier = rawIdentifier
         }
 
-        // FIXME: Save "unknown" symbol kinds in a synchronized set to prevent loss of data (rdar://84276085)
+        public static let `associatedtype`  : Self = .init(rawIdentifier: "associatedtype")
+        public static let `class`           : Self = .init(rawIdentifier: "class")
+        public static let `deinit`          : Self = .init(rawIdentifier: "deinit")
+        public static let `enum`            : Self = .init(rawIdentifier: "enum")
+        public static let `case`            : Self = .init(rawIdentifier: "enum.case")
+        public static let `func`            : Self = .init(rawIdentifier: "func")
+        public static let `operator`        : Self = .init(rawIdentifier: "func.op")
+        public static let `init`            : Self = .init(rawIdentifier: "init")
+        public static let `method`          : Self = .init(rawIdentifier: "method")
+        public static let `property`        : Self = .init(rawIdentifier: "property")
+        public static let `protocol`        : Self = .init(rawIdentifier: "protocol")
+        public static let snippet           : Self = .init(rawIdentifier: "snippet")
+        public static let snippetGroup      : Self = .init(rawIdentifier: "snippetGroup")
+        public static let `struct`          : Self = .init(rawIdentifier: "struct")
+        public static let `subscript`       : Self = .init(rawIdentifier: "subscript")
+        public static let typeMethod        : Self = .init(rawIdentifier: "type.method")
+        public static let typeProperty      : Self = .init(rawIdentifier: "type.property")
+        public static let typeSubscript     : Self = .init(rawIdentifier: "type.subscript")
+        public static let `typealias`       : Self = .init(rawIdentifier: "typealias")
+        public static let `var`             : Self = .init(rawIdentifier: "var")
+        public static let module            : Self = .init(rawIdentifier: "module")
+
+        public static let allCases: [KindIdentifier] = [
+          .`associatedtype`,
+          .`class`,
+          .`deinit`,
+          .`enum`,
+          .`case`,
+          .`func`,
+          .`operator`,
+          .`init`,
+          .`method`,
+          .`property`,
+          .`protocol`,
+          .snippet,
+          .snippetGroup,
+          .`struct`,
+          .`subscript`,
+          .`typeMethod`,
+          .`typeProperty`,
+          .`typeSubscript`,
+          .`typealias`,
+          .`var`,
+          .`module`
+      ]
 
         /// Check the given identifier string against the list of known identifiers.
         ///
@@ -138,7 +133,12 @@ extension SymbolGraph.Symbol {
                 // (e.g. "swift.func" instead of just "func"), strip off the language prefix and
                 // try again.
                 let cleanIdentifier = KindIdentifier.cleanIdentifier(identifier)
-                self = Self.lookupIdentifier(identifier: cleanIdentifier) ?? .unknown
+                if let secondParse = Self.lookupIdentifier(identifier: cleanIdentifier) {
+                    self = secondParse
+                } else {
+                    // If we still don't have a match, store the whole original string.
+                    self = .init(rawIdentifier: identifier)
+                }
             }
         }
 
