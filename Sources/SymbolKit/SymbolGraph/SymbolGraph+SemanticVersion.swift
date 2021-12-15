@@ -48,11 +48,11 @@ extension SymbolGraph {
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            self.major = try container.decode(Int.self, forKey: .major)
-            self.minor = try container.decodeIfPresent(Int.self, forKey: .minor) ?? 0
-            self.patch = try container.decodeIfPresent(Int.self, forKey: .patch) ?? 0
-            self.prerelease = try container.decodeIfPresent(String.self, forKey: .prerelease)
-            self.buildMetadata = try container.decodeIfPresent(String.self, forKey: .buildMetadata)
+            major = try container.decode(Int.self, forKey: .major)
+            minor = try container.decodeIfPresent(Int.self, forKey: .minor) ?? 0
+            patch = try container.decodeIfPresent(Int.self, forKey: .patch) ?? 0
+            prerelease = try container.decodeIfPresent(String.self, forKey: .prerelease)
+            buildMetadata = try container.decodeIfPresent(String.self, forKey: .buildMetadata)
         }
 
         public var description: String {

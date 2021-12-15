@@ -202,37 +202,3 @@ extension SymbolGraph.LineList {
         }
     }
 }
-
-extension SymbolGraph.LineList {
-    /**
-     Represents a selection in text: a start and end position, a half-open range.
-     */
-    public struct SourceRange: Equatable, Codable {
-        /**
-         The range's start position.
-         */
-        public var start: Position
-
-        /**
-         The range's end position.
-         */
-        public var end: Position
-    }
-}
-
-extension SymbolGraph.LineList.SourceRange {
-    /**
-     Represents a cursor position in text.
-     */
-    public struct Position: Equatable, Codable {
-        /**
-         The zero-based line number of a document.
-         */
-        public var line: Int
-
-        /**
-         The zero-based *byte offset* into a line.
-         */
-        public var character: Int
-    }
-}

@@ -18,7 +18,7 @@ public struct SymbolGraph: Codable {
 
     /// The module that this symbol graph represents.
     public var module: Module
-    
+
     /// The symbols in a module: the nodes in a graph, mapped by precise identifier.
     public var symbols: [String: Symbol]
 
@@ -31,7 +31,6 @@ public struct SymbolGraph: Codable {
         self.symbols = [String: Symbol](symbols.lazy.map({ ($0.identifier.precise, $0) }), uniquingKeysWith: { old, new in
             SymbolGraph._symbolToKeepInCaseOfPreciseIdentifierConflict(old, new)
         })
-        
         self.relationships = relationships
     }
 
@@ -60,7 +59,7 @@ public struct SymbolGraph: Codable {
         try container.encode(Array(symbols.values), forKey: .symbols)
         try container.encode(relationships, forKey: .relationships)
     }
-    
+
     public static func _symbolToKeepInCaseOfPreciseIdentifierConflict(_ lhs: Symbol, _ rhs: Symbol) -> Symbol {
         if lhs.declarationContainsAsyncKeyword() {
             return rhs
@@ -74,50 +73,10 @@ public struct SymbolGraph: Codable {
     }
 }
 
-private extension SymbolGraph.Symbol {
-    func declarationContainsAsyncKeyword() -> Bool {
+extension SymbolGraph.Symbol {
+    fileprivate func declarationContainsAsyncKeyword() -> Bool {
         return (mixins[DeclarationFragments.mixinKey] as? DeclarationFragments)?.declarationFragments.contains(where: { fragment in
             fragment.kind == .keyword && fragment.spelling == "async"
         }) == true
-    }
-}
-
-extension SymbolGraph {
-    public struct Metadata: Codable {
-        /// The version of the serialization format.
-        public var formatVersion: SemanticVersion
-
-        /// A string describing the tool or system that generated the data for this symbol graph.
-        ///
-        /// This should include a name and version if possible to track down potential
-        /// serialization bugs.
-        public var generator: String
-
-        public init(formatVersion: SemanticVersion, generator: String) {
-            self.formatVersion = formatVersion
-            self.generator = generator
-        }
-    }
-
-    /// A ``Module-swift.struct``  describes the module from which the symbols were extracted..
-    public struct Module: Codable {
-        /// The name of the module.
-        public var name: String
-
-        /// Optional bystander module names.
-        public var bystanders: [String]?
-
-        /// The platform intended for deployment.
-        public var platform: Platform
-
-        /// The [semantic version](https://semver.org) of the module, if availble.
-        public var version: SemanticVersion?
-
-        public init(name: String, platform: Platform, version: SemanticVersion? = nil, bystanders: [String]? = nil) {
-            self.name = name
-            self.platform = platform
-            self.version = version
-            self.bystanders = bystanders
-        }
     }
 }
