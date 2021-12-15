@@ -108,11 +108,11 @@ extension SymbolGraph.Symbol {
         public static func isKnownIdentifier(_ identifier: String) -> Bool {
             let kind: KindIdentifier?
 
-            if let cachedDetail = Self.lookupIdentifier(identifier: identifier) {
+            if let cachedDetail = KindIdentifier.lookupIdentifier(identifier: identifier) {
                 kind = cachedDetail
             } else {
                 let cleanIdentifier = KindIdentifier.cleanIdentifier(identifier)
-                kind = Self.lookupIdentifier(identifier: cleanIdentifier)
+                kind = KindIdentifier.lookupIdentifier(identifier: cleanIdentifier)
             }
 
             return kind != nil
@@ -126,14 +126,14 @@ extension SymbolGraph.Symbol {
         /// - Parameter identifier: The identifier string to parse.
         public init(identifier: String) {
             // Check if the identifier matches a symbol kind directly.
-            if let firstParse = Self.lookupIdentifier(identifier: identifier) {
+            if let firstParse = KindIdentifier.lookupIdentifier(identifier: identifier) {
                 self = firstParse
             } else {
                 // For symbol graphs which include a language identifier with their symbol kinds
                 // (e.g. "swift.func" instead of just "func"), strip off the language prefix and
                 // try again.
                 let cleanIdentifier = KindIdentifier.cleanIdentifier(identifier)
-                if let secondParse = Self.lookupIdentifier(identifier: cleanIdentifier) {
+                if let secondParse = KindIdentifier.lookupIdentifier(identifier: cleanIdentifier) {
                     self = secondParse
                 } else {
                     // If we still don't have a match, store the whole original string.
