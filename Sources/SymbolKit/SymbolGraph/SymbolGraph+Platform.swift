@@ -9,7 +9,6 @@
 */
 
 extension SymbolGraph {
-
     /// A ``Platform`` describes the deployment environment for a ``Module-swift.struct``.
     public struct Platform: Codable {
         /**
