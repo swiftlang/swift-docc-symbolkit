@@ -25,8 +25,8 @@ extension SymbolGraph {
         public var minimumVersion: SemanticVersion?
 
         public init(name: String, minimumVersion: SemanticVersion? = nil) {
-          self.name = name
-          self.minimumVersion = minimumVersion
+            self.name = name
+            self.minimumVersion = minimumVersion
         }
     }
 }
