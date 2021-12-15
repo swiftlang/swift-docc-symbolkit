@@ -72,30 +72,7 @@ extension SymbolGraph.Symbol {
         /// - Parameter identifier: The identifier string to check.
         /// - Returns: The matching `KindIdentifier` case, or `nil` if there was no match.
         private static func lookupIdentifier(identifier: String) -> KindIdentifier? {
-            switch identifier {
-            case "associatedtype": return .associatedtype
-            case "class": return .class
-            case "deinit": return .deinit
-            case "enum": return .enum
-            case "enum.case": return .case
-            case "func": return .func
-            case "func.op": return .operator
-            case "init": return .`init`
-            case "method": return .method
-            case "property": return .property
-            case "protocol": return .protocol
-            case "snippet": return .snippet
-            case "snippetGroup": return .snippetGroup
-            case "struct": return .struct
-            case "subscript": return .subscript
-            case "type.method": return .typeMethod
-            case "type.property": return .typeProperty
-            case "type.subscript": return .typeSubscript
-            case "typealias": return .typealias
-            case "var": return .var
-            case "module": return .module
-            default: return nil
-            }
+            allCases.first(where: { $0.identifier == identifier })
         }
 
         /// Compares the given identifier against the known default symbol kinds, and returns whether it matches one.
