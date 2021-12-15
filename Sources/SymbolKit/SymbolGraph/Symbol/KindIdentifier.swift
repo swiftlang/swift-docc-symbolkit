@@ -106,7 +106,7 @@ extension SymbolGraph.Symbol {
         /// - Parameter identifier: The identifier string to compare.
         /// - Returns: `true` if the given identifier matches a known symbol kind; otherwise `false`.
         public static func isKnownIdentifier(_ identifier: String) -> Bool {
-            var kind: KindIdentifier?
+            let kind: KindIdentifier?
 
             if let cachedDetail = Self.lookupIdentifier(identifier: identifier) {
                 kind = cachedDetail
