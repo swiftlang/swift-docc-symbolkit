@@ -72,7 +72,7 @@ extension SymbolGraph.Symbol {
         /// - Parameter identifier: The identifier string to check.
         /// - Returns: The matching `KindIdentifier` case, or `nil` if there was no match.
         private static func lookupIdentifier(identifier: String) -> KindIdentifier? {
-            allCases.first(where: { $0.identifier == identifier })
+            allCases.first { $0.identifier == identifier }
         }
 
         /// Compares the given identifier against the known default symbol kinds, and returns whether it matches one.
