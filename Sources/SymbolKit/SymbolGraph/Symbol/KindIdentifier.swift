@@ -114,7 +114,7 @@ extension SymbolGraph.Symbol {
                     self = secondParse
                 } else {
                     // If we still don't have a match, store the whole original string.
-                    self = .init(rawIdentifier: identifier)
+                    self.init(rawIdentifier: identifier)
                 }
             }
         }
