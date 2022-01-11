@@ -1,4 +1,4 @@
-# SymbolKit 
+# SymbolKit
 
 The specification and reference model for the *Symbol Graph* File Format.
 
