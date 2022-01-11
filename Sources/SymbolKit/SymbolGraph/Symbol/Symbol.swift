@@ -105,6 +105,7 @@ extension SymbolGraph {
             case location
             case functionSignature
             case spi
+            case snippet
 
             static var mixinKeys: Set<CodingKeys> {
                 return [
@@ -116,6 +117,7 @@ extension SymbolGraph {
                     .location,
                     .functionSignature,
                     .spi,
+                    .snippet,
                 ]
             }
         }
@@ -170,6 +172,8 @@ extension SymbolGraph {
                     try container.encode(mixin as! FunctionSignature, forKey: key)
                 case .spi:
                     try container.encode(mixin as! SPI, forKey: key)
+                case .snippet:
+                    try container.encode(mixin as! Snippet, forKey: key)
                 default:
                     fatalError("Unknown mixin key \(key.rawValue)!")
                 }
@@ -194,6 +198,8 @@ extension SymbolGraph {
                 return try container.decode(Swift.Generics.self, forKey: key)
             case SPI.mixinKey:
                 return try container.decode(SPI.self, forKey: key)
+            case Snippet.mixinKey:
+                return try container.decode(Snippet.self, forKey: key)
             default:
                 return nil
             }

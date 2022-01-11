@@ -92,7 +92,7 @@ extension SymbolGraph {
         /// The lines making up this line list.
         public var lines: [Line]
 
-        init(_ lines: [Line]) {
+        public init(_ lines: [Line]) {
             self.lines = lines
         }
 
@@ -196,7 +196,7 @@ extension SymbolGraph.LineList {
         /// The line's range in a document if available.
         public var range: SourceRange?
 
-        init(text: String, range: SourceRange?) {
+        public init(text: String, range: SourceRange?) {
             self.text = text
             self.range = range
         }
