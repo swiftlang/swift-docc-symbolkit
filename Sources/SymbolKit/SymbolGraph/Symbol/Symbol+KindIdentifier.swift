@@ -26,6 +26,8 @@ extension SymbolGraph.Symbol {
         case method
         case property
         case `protocol`
+        case snippet
+        case snippetGroup
         case `struct`
         case `subscript`
         case typeMethod
@@ -54,6 +56,8 @@ extension SymbolGraph.Symbol {
             case .method: return "method"
             case .property: return "property"
             case .protocol: return "protocol"
+            case .snippet: return "snippet"
+            case .snippetGroup: return "snippetGroup"
             case .struct: return "struct"
             case .subscript: return "subscript"
             case .typeMethod: return "type.method"
@@ -85,6 +89,8 @@ extension SymbolGraph.Symbol {
             case "method": return .method
             case "property": return .property
             case "protocol": return .protocol
+            case "snippet": return .snippet
+            case "snippetGroup": return .snippetGroup
             case "struct": return .struct
             case "subscript": return .subscript
             case "type.method": return .typeMethod
