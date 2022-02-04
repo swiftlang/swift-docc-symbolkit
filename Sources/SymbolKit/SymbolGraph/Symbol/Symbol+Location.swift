@@ -12,7 +12,7 @@ import Foundation
 
 extension SymbolGraph.Symbol {
     /**
-     The place where a symbol was originaly declared in a source file.
+     The place where a symbol was originally declared in a source file.
 
      This information may not always be available for many reasons, such
      as compiler infrastructure limitations, or filesystem security concerns.
@@ -30,5 +30,13 @@ extension SymbolGraph.Symbol {
          The range of the declaration in the file, not including its documentation comment.
          */
         public var position: SymbolGraph.LineList.SourceRange.Position
+        
+        /**
+         Create a new symbol location with the given source file URI and position.
+         */
+        public init(uri: String, position: SymbolGraph.LineList.SourceRange.Position) {
+            self.uri = uri
+            self.position = position
+        }
     }
 }

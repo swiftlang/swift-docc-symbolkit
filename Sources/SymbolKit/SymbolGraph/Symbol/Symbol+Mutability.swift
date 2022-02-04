@@ -24,6 +24,11 @@ extension SymbolGraph.Symbol {
          Whether a symbol is *immutable* or "read-only".
          */
         public var isReadOnly: Bool
+        
+        /// Create a mutability mix-in with the given Boolean value.
+        public init(isReadOnly: Bool) {
+            self.isReadOnly = isReadOnly
+        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.singleValueContainer()

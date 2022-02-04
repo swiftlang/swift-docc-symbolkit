@@ -24,5 +24,13 @@ extension SymbolGraph.LineList {
          The range's end position.
          */
         public var end: Position
+        
+        /**
+         Create a new source range with the given start and end position.
+         */
+        public init(start: Position, end: Position) {
+            self.start = start
+            self.end = end
+        }
     }
 }

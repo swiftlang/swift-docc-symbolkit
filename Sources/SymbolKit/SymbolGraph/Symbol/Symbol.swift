@@ -174,6 +174,8 @@ extension SymbolGraph {
                     try container.encode(mixin as! SPI, forKey: key)
                 case .snippet:
                     try container.encode(mixin as! Snippet, forKey: key)
+                case .location:
+                    try container.encode(mixin as! Location, forKey: key)
                 default:
                     fatalError("Unknown mixin key \(key.rawValue)!")
                 }
