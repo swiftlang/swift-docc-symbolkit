@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -174,6 +174,8 @@ extension SymbolGraph {
                     try container.encode(mixin as! SPI, forKey: key)
                 case .snippet:
                     try container.encode(mixin as! Snippet, forKey: key)
+                case .location:
+                    try container.encode(mixin as! Location, forKey: key)
                 default:
                     fatalError("Unknown mixin key \(key.rawValue)!")
                 }

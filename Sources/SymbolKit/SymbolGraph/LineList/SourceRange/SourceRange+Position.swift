@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -24,5 +24,13 @@ extension SymbolGraph.LineList.SourceRange {
          The zero-based *byte offset* into a line.
          */
         public var character: Int
+        
+        /**
+         Creates a new cursor position with the given line number and character offset.
+         */
+        public init(line: Int, character: Int) {
+            self.line = line
+            self.character = character
+        }
     }
 }
