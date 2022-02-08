@@ -26,7 +26,7 @@ extension SymbolGraph.LineList {
         public var end: Position
         
         /**
-         Create a new source range with the given start and end position.
+         Creates a new source range with the given start and end position.
          */
         public init(start: Position, end: Position) {
             self.start = start

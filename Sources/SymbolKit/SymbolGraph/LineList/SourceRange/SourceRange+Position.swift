@@ -26,7 +26,7 @@ extension SymbolGraph.LineList.SourceRange {
         public var character: Int
         
         /**
-         Create a new cursor position with the given line number and character offset.
+         Creates a new cursor position with the given line number and character offset.
          */
         public init(line: Int, character: Int) {
             self.line = line

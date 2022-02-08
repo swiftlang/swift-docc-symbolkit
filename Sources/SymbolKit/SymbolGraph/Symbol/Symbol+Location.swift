@@ -32,7 +32,7 @@ extension SymbolGraph.Symbol {
         public var position: SymbolGraph.LineList.SourceRange.Position
         
         /**
-         Create a new symbol location with the given source file URI and position.
+         Creates a new symbol location with the given source file URI and position.
          */
         public init(uri: String, position: SymbolGraph.LineList.SourceRange.Position) {
             self.uri = uri

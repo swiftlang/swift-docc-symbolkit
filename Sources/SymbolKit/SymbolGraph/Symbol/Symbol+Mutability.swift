@@ -25,7 +25,7 @@ extension SymbolGraph.Symbol {
          */
         public var isReadOnly: Bool
         
-        /// Create a mutability mix-in with the given Boolean value.
+        /// Creates a mutability mix-in with the given Boolean value.
         public init(isReadOnly: Bool) {
             self.isReadOnly = isReadOnly
         }
