@@ -250,6 +250,12 @@ components:
             title:
               description: The name of a symbol when shown as a page title or first-level heading.
               type: string
+            navigator:
+              description: The name of a symbol when displaying in navigators, where there may be limited horizontal space.
+              type: array
+              nullable: true
+              items:
+                $ref: "#/components/schemas/DeclarationFragment"
             subHeading:
               description: The name of a symbol when shown as a subheading, such as a page index or list.
               type: array
