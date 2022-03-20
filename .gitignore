@@ -13,3 +13,5 @@
 xcuserdata/
 SymbolGraph.symbols.json
 .swiftpm
+Package.resolved
+.vscode
