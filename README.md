@@ -13,7 +13,9 @@ By modeling different kinds of relationships, SymbolKit can provide rich data to
 
 In addition, graph representations of data also present opportunities for visualizations in documentation, illustrating the structure or hierarchy of a module.
 
-## Getting Started Using Markup
+Please see SymbolKit's [documentation site](https://apple.github.io/swift-docc-symbolkit/documentation/symbolkit/) for more detailed information about the library.
+
+## Getting Started Using SymbolKit
 
 In your `Package.swift` Swift Package Manager manifest, add the following dependency to your `dependencies` argument:
 
@@ -26,7 +28,5 @@ Add the dependency to any targets you've declared in your manifest:
 ```swift
 .target(name: "MyTarget", dependencies: ["SymbolKit"]),
 ```
-
-Please see Swift `SymbolKit`'s [documentation site](https://apple.github.io/swift-docc-symbolkit/documentation/symbolkit/) for more detailed information about the library.
 
 <!-- Copyright (c) 2021-2022 Apple Inc and the Swift Project authors. All Rights Reserved. -->

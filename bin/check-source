@@ -38,7 +38,7 @@ fi
 printf "\033[0;32mokay.\033[0m\n"
 
 printf "=> Checking license headers… "
-tmp=$(mktemp /tmp/.swift-markdown-check-source_XXXXXX)
+tmp=$(mktemp /tmp/.swift-docc-symbolkit-check-source_XXXXXX)
 
 for language in swift-or-c bash md-or-tutorial html docker; do
   declare -a matching_files
