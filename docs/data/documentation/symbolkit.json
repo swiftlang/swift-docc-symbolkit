@@ -115,7 +115,7 @@
         {
           "code" : [
             "public struct MyStruct {",
-            "  public var x: Int",
+            "    public var x: Int",
             "}"
           ],
           "syntax" : "swift",
@@ -280,7 +280,7 @@
             "public protocol P {}",
             "",
             "public struct MyStruct: P {",
-            "  public var x: Int",
+            "    public var x: Int",
             "}"
           ],
           "syntax" : "swift",
