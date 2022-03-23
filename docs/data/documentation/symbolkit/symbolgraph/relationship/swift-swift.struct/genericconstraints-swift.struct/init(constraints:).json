@@ -1,0 +1,558 @@
+{
+  "abstract" : [
+    {
+      "text" : "No overview available.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship\/Swift-swift.struct",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship\/Swift-swift.struct\/GenericConstraints-swift.struct"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship\/Swift-swift.struct\/GenericConstraints-swift.struct\/init(constraints:)"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SymbolKit0A5GraphV12RelationshipV5SwiftV18GenericConstraintsV11constraintsAISayAC0A0VAFO0F10ConstraintVG_tcfc",
+    "fragments" : [
+      {
+        "kind" : "identifier",
+        "text" : "init"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "externalParam",
+        "text" : "constraints"
+      },
+      {
+        "kind" : "text",
+        "text" : ": ["
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+        "text" : "SymbolGraph"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+        "text" : "Symbol"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+        "text" : "Swift"
+      },
+      {
+        "kind" : "text",
+        "text" : "."
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+        "text" : "GenericConstraint"
+      },
+      {
+        "kind" : "text",
+        "text" : "])"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SymbolKit"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Initializer",
+    "symbolKind" : "init",
+    "title" : "init(constraints:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "init"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "constraints"
+            },
+            {
+              "kind" : "text",
+              "text" : ": ["
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+              "text" : "SymbolGraph"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+              "text" : "Symbol"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/Swift",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+              "text" : "Swift"
+            },
+            {
+              "kind" : "text",
+              "text" : "."
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericConstraint",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+              "text" : "GenericConstraint"
+            },
+            {
+              "kind" : "text",
+              "text" : "])"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/symbolkit\/symbolgraph\/relationship\/swift-swift.struct\/genericconstraints-swift.struct\/init(constraints:)"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://org.swift.SymbolKit/documentation/SymbolKit": {
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Relationship": {
+  "abstract" : [
+    {
+      "text" : "A relationship between two ",
+      "type" : "text"
+    },
+    {
+      "code" : "Symbol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "s; a directed edge in a graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Relationship",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/relationship"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Relationship/Swift-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "A view of a relationship in terms of the Swift programming language.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Swift"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship\/Swift-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Swift"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Relationship.Swift",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/relationship\/swift-swift.struct"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Relationship/Swift-swift.struct/GenericConstraints-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "A mixin collecting Swift generic constraints.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GenericConstraints"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship\/Swift-swift.struct\/GenericConstraints-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GenericConstraints"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Relationship.Swift.GenericConstraints",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/relationship\/swift-swift.struct\/genericconstraints-swift.struct"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Relationship/Swift-swift.struct/GenericConstraints-swift.struct/init(constraints:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "constraints"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO",
+      "text" : "Swift"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V5SwiftO17GenericConstraintV",
+      "text" : "GenericConstraint"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship\/Swift-swift.struct\/GenericConstraints-swift.struct\/init(constraints:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(constraints:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/relationship\/swift-swift.struct\/genericconstraints-swift.struct\/init(constraints:)"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol": {
+  "abstract" : [
+    {
+      "text" : "A symbol from a module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/Swift": {
+  "abstract" : [
+    {
+      "text" : "A namespace for Swift-specific data.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Swift"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/Swift",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Swift"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol.Swift",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/swift"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/Swift/GenericConstraint": {
+  "abstract" : [
+    {
+      "text" : "A generic constraint between two types.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GenericConstraint"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/Swift\/GenericConstraint",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GenericConstraint"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol.Swift.GenericConstraint",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/swift\/genericconstraint"
+}
+}
+}

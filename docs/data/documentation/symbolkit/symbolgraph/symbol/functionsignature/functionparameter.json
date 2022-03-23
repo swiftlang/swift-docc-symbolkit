@@ -1,0 +1,586 @@
+{
+  "abstract" : [
+    {
+      "text" : "An argument of a callable symbol.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "extendedModule" : "SymbolKit",
+    "externalID" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV0D9ParameterV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "FunctionParameter"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SymbolKit"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "FunctionParameter"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "SymbolGraph.Symbol.FunctionSignature.FunctionParameter"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "FunctionParameter"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/Se",
+        "doc:\/\/org.swift.SymbolKit\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/init(from:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/children",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/declarationFragments",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/name"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://org.swift.SymbolKit/SE": {
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://org.swift.SymbolKit/Se": {
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit": {
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol": {
+  "abstract" : [
+    {
+      "text" : "A symbol from a module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature": {
+  "abstract" : [
+    {
+      "text" : "The arguments of a callable symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FunctionSignature"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FunctionSignature"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol.FunctionSignature",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature/FunctionParameter": {
+  "abstract" : [
+    {
+      "text" : "An argument of a callable symbol.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "FunctionParameter"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "FunctionParameter"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol.FunctionSignature.FunctionParameter",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature/FunctionParameter/children": {
+  "abstract" : [
+    {
+      "text" : "Sub-parameters of the parameter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "children"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V17FunctionSignatureV0D9ParameterV",
+      "text" : "FunctionParameter"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/children",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "children",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter\/children"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature/FunctionParameter/declarationFragments": {
+  "abstract" : [
+    {
+      "text" : "The syntax used to create the parameter.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "declarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV",
+      "text" : "SymbolGraph"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV",
+      "text" : "DeclarationFragments"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V20DeclarationFragmentsV8FragmentV",
+      "text" : "Fragment"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/declarationFragments",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "declarationFragments",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter\/declarationfragments"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature/FunctionParameter/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter\/encode(to:)"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature/FunctionParameter/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter\/init(from:)"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol/FunctionSignature/FunctionParameter/name": {
+  "abstract" : [
+    {
+      "text" : "The name of the symbol, as referred to in user code (must match the name used in the documentation comment).",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol\/FunctionSignature\/FunctionParameter\/name",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "name",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol\/functionsignature\/functionparameter\/name"
+}
+}
+}

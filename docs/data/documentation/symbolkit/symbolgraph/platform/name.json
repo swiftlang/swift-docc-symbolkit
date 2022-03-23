@@ -1,0 +1,432 @@
+{
+  "abstract" : [
+    {
+      "text" : "The name of the platform as it is generally known.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform\/name"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SymbolKit0A5GraphV8PlatformV4nameSSSgvp",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "var"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "name"
+      },
+      {
+        "kind" : "text",
+        "text" : ": "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:SS",
+        "text" : "String"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SymbolKit"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Property",
+    "symbolKind" : "property",
+    "title" : "name"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "var"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "name"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:SS",
+              "text" : "String"
+            },
+            {
+              "kind" : "text",
+              "text" : "? { "
+            },
+            {
+              "kind" : "keyword",
+              "text" : "get"
+            },
+            {
+              "kind" : "text",
+              "text" : " }"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "For example, the ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "macCatalyst",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " platform corresponds to an",
+              "type" : "text"
+            },
+            {
+              "text" : " ",
+              "type" : "text"
+            },
+            {
+              "text" : "operating system of ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "iOS",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " and a running environment of ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "macabi",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/symbolkit\/symbolgraph\/platform\/name"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://org.swift.SymbolKit/documentation/SymbolKit": {
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Module-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "  describes the module from which the symbols were extracted..",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Module"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Module"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Module",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/module-swift.struct"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Platform": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " describes the deployment environment for a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Platform"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Platform"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Platform",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/platform"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Platform/name": {
+  "abstract" : [
+    {
+      "text" : "The name of the platform as it is generally known.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "name"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform\/name",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "name",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/platform\/name"
+}
+}
+}

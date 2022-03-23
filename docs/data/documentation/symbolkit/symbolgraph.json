@@ -1,0 +1,1016 @@
+{
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SymbolKit0A5GraphV",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "struct"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "SymbolGraph"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SymbolKit"
+      }
+    ],
+    "navigatorTitle" : [
+      {
+        "kind" : "identifier",
+        "text" : "SymbolGraph"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Structure",
+    "symbolKind" : "struct",
+    "title" : "SymbolGraph"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "struct"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "SymbolGraph"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    }
+  ],
+  "relationshipsSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/Se",
+        "doc:\/\/org.swift.SymbolKit\/SE"
+      ],
+      "kind" : "relationships",
+      "title" : "Conforms To",
+      "type" : "conformsTo"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Metadata-swift.struct",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/OperatingSystem",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/SemanticVersion",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol"
+      ],
+      "title" : "Structures"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/init(from:)",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/init(metadata:module:symbols:relationships:)"
+      ],
+      "title" : "Initializers"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/metadata-swift.property",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/module-swift.property",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/relationships",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/symbols"
+      ],
+      "title" : "Instance Properties"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/encode(to:)"
+      ],
+      "title" : "Instance Methods"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/CodingKeys"
+      ],
+      "title" : "Enumerations"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/symbolkit\/symbolgraph"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://org.swift.SymbolKit/SE": {
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/SE",
+  "title" : "Swift.Encodable",
+  "type" : "unresolvable"
+},
+"doc://org.swift.SymbolKit/Se": {
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/Se",
+  "title" : "Swift.Decodable",
+  "type" : "unresolvable"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit": {
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/CodingKeys": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "enum"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/CodingKeys",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "CodingKeys"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.CodingKeys",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/codingkeys"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/LineList": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "code" : "LineList",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a logical grouping of text ranges in a document making up a block of textual content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LineList"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LineList"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.LineList",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/linelist"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Metadata-swift.struct": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Metadata-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Metadata"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/metadata-swift.struct"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Module-swift.struct": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "  describes the module from which the symbols were extracted..",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Module"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Module"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Module",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/module-swift.struct"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/OperatingSystem": {
+  "abstract" : [
+    {
+      "text" : "The operating system intended for a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "’s deployment.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "OperatingSystem"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/OperatingSystem",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "OperatingSystem"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.OperatingSystem",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/operatingsystem"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Platform": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " describes the deployment environment for a ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Module-swift.struct",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Platform"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Platform",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Platform"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Platform",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/platform"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Relationship": {
+  "abstract" : [
+    {
+      "text" : "A relationship between two ",
+      "type" : "text"
+    },
+    {
+      "code" : "Symbol",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : "s; a directed edge in a graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Relationship",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Relationship"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Relationship",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/relationship"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/SemanticVersion": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "https:\/\/semver.org",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVersion"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/SemanticVersion",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SemanticVersion"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.SemanticVersion",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/semanticversion"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol": {
+  "abstract" : [
+    {
+      "text" : "A symbol from a module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/encode(to:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "encode"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "to"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7EncoderP",
+      "text" : "Encoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/encode(to:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "encode(to:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/encode(to:)"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/init(from:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "from"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:s7DecoderP",
+      "text" : "Decoder"
+    },
+    {
+      "kind" : "text",
+      "text" : ") "
+    },
+    {
+      "kind" : "keyword",
+      "text" : "throws"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/init(from:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(from:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/init(from:)"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/init(metadata:module:symbols:relationships:)": {
+  "abstract" : [
+
+  ],
+  "fragments" : [
+    {
+      "kind" : "identifier",
+      "text" : "init"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8MetadataV",
+      "text" : "Metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "module"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV6ModuleV",
+      "text" : "Module"
+    },
+    {
+      "kind" : "text",
+      "text" : ", "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "symbols"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "], "
+    },
+    {
+      "kind" : "externalParam",
+      "text" : "relationships"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV12RelationshipV",
+      "text" : "Relationship"
+    },
+    {
+      "kind" : "text",
+      "text" : "])"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/init(metadata:module:symbols:relationships:)",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "init(metadata:module:symbols:relationships:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/init(metadata:module:symbols:relationships:)"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/metadata-swift.property": {
+  "abstract" : [
+    {
+      "text" : "Metadata about the symbol graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "metadata"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8MetadataV",
+      "text" : "Metadata"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/metadata-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "metadata",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/metadata-swift.property"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/module-swift.property": {
+  "abstract" : [
+    {
+      "text" : "The module that this symbol graph represents.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "module"
+    },
+    {
+      "kind" : "text",
+      "text" : ": "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV6ModuleV",
+      "text" : "Module"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/module-swift.property",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "module",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/module-swift.property"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/relationships": {
+  "abstract" : [
+    {
+      "text" : "The relationships between symbols: the edges in a graph.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "relationships"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV12RelationshipV",
+      "text" : "Relationship"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/relationships",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "relationships",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/relationships"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/symbols": {
+  "abstract" : [
+    {
+      "text" : "The symbols in a module: the nodes in a graph, mapped by precise identifier.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "var"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "symbols"
+    },
+    {
+      "kind" : "text",
+      "text" : ": ["
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:SS",
+      "text" : "String"
+    },
+    {
+      "kind" : "text",
+      "text" : " : "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV0A0V",
+      "text" : "Symbol"
+    },
+    {
+      "kind" : "text",
+      "text" : "]"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/symbols",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "symbols",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbols"
+},
+"https://semver.org": {
+  "identifier" : "https:\/\/semver.org",
+  "title" : "semantic version",
+  "titleInlineContent" : [
+    {
+      "text" : "semantic version",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/semver.org"
+}
+}
+}

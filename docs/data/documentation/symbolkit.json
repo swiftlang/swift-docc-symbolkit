@@ -1,0 +1,832 @@
+{
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "SymbolKit",
+    "modules" : [
+      {
+        "name" : "SymbolKit"
+      }
+    ],
+    "role" : "collection",
+    "roleHeading" : "Framework",
+    "symbolKind" : "module",
+    "title" : "SymbolKit"
+  },
+  "primaryContentSections" : [
+    {
+      "content" : [
+        {
+          "anchor" : "Overview",
+          "level" : 2,
+          "text" : "Overview",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "Symbol Graph",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " models a ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "module",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : ", also known in various programming languages as a “framework”, “library”, or “package”, as a ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "https:\/\/en.wikipedia.org\/wiki\/Directed_graph",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : ". In this graph, the nodes are declarations, and the edges connecting nodes are relationships between declarations.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "To illustrate the shape of a symbol graph, take the following Swift code as a module called ",
+              "type" : "text"
+            },
+            {
+              "code" : "MyModule",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ":",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "public struct MyStruct {",
+            "  public var x: Int",
+            "}"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "There are two nodes in this module’s graph: the structure ",
+              "type" : "text"
+            },
+            {
+              "code" : "MyStruct",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and its property ",
+              "type" : "text"
+            },
+            {
+              "code" : "x",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ":",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "identifier" : "twonodes",
+              "type" : "image"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "code" : "x",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " is related to ",
+              "type" : "text"
+            },
+            {
+              "code" : "MyStruct",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ": it is a ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "member",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " of ",
+              "type" : "text"
+            },
+            {
+              "code" : "MyStruct",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ". SymbolKit represents ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "relationships",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " as directed edges in the graph:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "identifier" : "member",
+              "type" : "image"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "The ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "source",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : " of an edge points to its ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "text" : "target",
+                  "type" : "text"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : ". You can read this edge as ",
+              "type" : "text"
+            },
+            {
+              "inlineContent" : [
+                {
+                  "code" : "x",
+                  "type" : "codeVoice"
+                },
+                {
+                  "text" : " is a member of ",
+                  "type" : "text"
+                },
+                {
+                  "code" : "MyStruct",
+                  "type" : "codeVoice"
+                }
+              ],
+              "type" : "emphasis"
+            },
+            {
+              "text" : ". Every edge is qualified by some kind of relationship; in this case, the kind is membership. There can be many kinds of relationships, even multiple relationships between the same two nodes. Here’s another example, adding a Swift protocol to the mix:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "public protocol P {}",
+            "",
+            "public struct MyStruct: P {",
+            "  public var x: Int",
+            "}"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "Now we’ve added a new node for the protocol ",
+              "type" : "text"
+            },
+            {
+              "code" : "P",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ", and a new conformance relationship between ",
+              "type" : "text"
+            },
+            {
+              "code" : "MyStruct",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " and ",
+              "type" : "text"
+            },
+            {
+              "code" : "P",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ":",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "identifier" : "conforms",
+              "type" : "image"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "By modeling different kinds of relationships, SymbolKit can provide rich data to power documentation, answering interesting questions, such as:",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "items" : [
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "inlineContent" : [
+                        {
+                          "text" : "Which types conform to this protocol?",
+                          "type" : "text"
+                        }
+                      ],
+                      "type" : "emphasis"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "inlineContent" : [
+                        {
+                          "text" : "What is the class hierarchy rooted at this class?",
+                          "type" : "text"
+                        }
+                      ],
+                      "type" : "emphasis"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "inlineContent" : [
+                        {
+                          "text" : "Which protocol provides a requirement called ",
+                          "type" : "text"
+                        },
+                        {
+                          "code" : "count",
+                          "type" : "codeVoice"
+                        },
+                        {
+                          "text" : "?",
+                          "type" : "text"
+                        }
+                      ],
+                      "type" : "emphasis"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            },
+            {
+              "content" : [
+                {
+                  "inlineContent" : [
+                    {
+                      "inlineContent" : [
+                        {
+                          "text" : "Which types customize this protocol requirement?",
+                          "type" : "text"
+                        }
+                      ],
+                      "type" : "emphasis"
+                    }
+                  ],
+                  "type" : "paragraph"
+                }
+              ]
+            }
+          ],
+          "type" : "unorderedList"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "In addition, graph representations of data also present opportunities for visualizations in documentation, illustrating the structure or hierarchy of a module.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "topicSections" : [
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph"
+      ],
+      "title" : "Essentials"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/GraphCollector",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/UnifiedSymbolGraph"
+      ],
+      "title" : "Classes"
+    },
+    {
+      "identifiers" : [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/Mixin"
+      ],
+      "title" : "Protocols"
+    }
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/symbolkit"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"conforms": {
+  "alt" : "Node x has a directed edge with text “memberof” to Node MyStruct, Node MyStruct has a directed edge with text “conformsTo” to “Protocol Node” P",
+  "identifier" : "conforms",
+  "type" : "image",
+  "variants" : [
+    {
+      "traits" : [
+        "2x",
+        "light"
+      ],
+      "url" : "\/images\/conforms@2x.png"
+    },
+    {
+      "traits" : [
+        "2x",
+        "dark"
+      ],
+      "url" : "\/images\/conforms~dark@2x.png"
+    }
+  ]
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit": {
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/GraphCollector": {
+  "abstract" : [
+    {
+      "text" : "An accumulator for incrementally merging ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "s into ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/UnifiedSymbolGraph",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : "s.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "GraphCollector"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/GraphCollector",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "GraphCollector"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "GraphCollector",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/graphcollector"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/Mixin": {
+  "abstract" : [
+    {
+      "text" : "A protocol that allows extracted symbols to have extra data",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "aside from the base ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "protocol"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Mixin"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/Mixin",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Mixin"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "Mixin",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/mixin"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/Symbol": {
+  "abstract" : [
+    {
+      "text" : "A symbol from a module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/Symbol",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "Symbol"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.Symbol",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/symbol"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/UnifiedSymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A combined ",
+      "type" : "text"
+    },
+    {
+      "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+      "isActive" : true,
+      "type" : "reference"
+    },
+    {
+      "text" : " from multiple languages’ views of the same module.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "class"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "UnifiedSymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/UnifiedSymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "UnifiedSymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "UnifiedSymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/unifiedsymbolgraph"
+},
+"https://en.wikipedia.org/wiki/Directed_graph": {
+  "identifier" : "https:\/\/en.wikipedia.org\/wiki\/Directed_graph",
+  "title" : "directed graph",
+  "titleInlineContent" : [
+    {
+      "text" : "directed graph",
+      "type" : "text"
+    }
+  ],
+  "type" : "link",
+  "url" : "https:\/\/en.wikipedia.org\/wiki\/Directed_graph"
+},
+"member": {
+  "alt" : "Node x has a directed edge with text “memberof” to Node MyStruct",
+  "identifier" : "member",
+  "type" : "image",
+  "variants" : [
+    {
+      "traits" : [
+        "2x",
+        "light"
+      ],
+      "url" : "\/images\/member@2x.png"
+    },
+    {
+      "traits" : [
+        "2x",
+        "dark"
+      ],
+      "url" : "\/images\/member~dark@2x.png"
+    }
+  ]
+},
+"twonodes": {
+  "alt" : "A graph with 2 nodes: “Struct Node” MyStruct and “Instance Property Node” x",
+  "identifier" : "twonodes",
+  "type" : "image",
+  "variants" : [
+    {
+      "traits" : [
+        "2x",
+        "light"
+      ],
+      "url" : "\/images\/twonodes@2x.png"
+    },
+    {
+      "traits" : [
+        "2x",
+        "dark"
+      ],
+      "url" : "\/images\/twonodes~dark@2x.png"
+    }
+  ]
+}
+}
+}

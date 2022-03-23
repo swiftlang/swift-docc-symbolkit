@@ -1,0 +1,637 @@
+{
+  "abstract" : [
+    {
+      "text" : "Translate a range from its ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local space",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " to this line list’s ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "file space",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "hierarchy" : {
+    "paths" : [
+      [
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+        "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList"
+      ]
+    ]
+  },
+  "identifier" : {
+    "interfaceLanguage" : "swift",
+    "url" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/translateToFileSpace(_:)-4tk1b"
+  },
+  "kind" : "symbol",
+  "metadata" : {
+    "externalID" : "s:9SymbolKit0A5GraphV8LineListV20translateToFileSpaceyAE11SourceRangeVSgAHF",
+    "fragments" : [
+      {
+        "kind" : "keyword",
+        "text" : "func"
+      },
+      {
+        "kind" : "text",
+        "text" : " "
+      },
+      {
+        "kind" : "identifier",
+        "text" : "translateToFileSpace"
+      },
+      {
+        "kind" : "text",
+        "text" : "("
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+        "text" : "SourceRange"
+      },
+      {
+        "kind" : "text",
+        "text" : ") -> "
+      },
+      {
+        "kind" : "typeIdentifier",
+        "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+        "text" : "SourceRange"
+      },
+      {
+        "kind" : "text",
+        "text" : "?"
+      }
+    ],
+    "modules" : [
+      {
+        "name" : "SymbolKit"
+      }
+    ],
+    "role" : "symbol",
+    "roleHeading" : "Instance Method",
+    "symbolKind" : "method",
+    "title" : "translateToFileSpace(_:)"
+  },
+  "primaryContentSections" : [
+    {
+      "declarations" : [
+        {
+          "languages" : [
+            "swift"
+          ],
+          "platforms" : [
+            "macOS"
+          ],
+          "tokens" : [
+            {
+              "kind" : "keyword",
+              "text" : "func"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "identifier",
+              "text" : "translateToFileSpace"
+            },
+            {
+              "kind" : "text",
+              "text" : "("
+            },
+            {
+              "kind" : "externalParam",
+              "text" : "_"
+            },
+            {
+              "kind" : "text",
+              "text" : " "
+            },
+            {
+              "kind" : "internalParam",
+              "text" : "range"
+            },
+            {
+              "kind" : "text",
+              "text" : ": "
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/SourceRange",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+              "text" : "SourceRange"
+            },
+            {
+              "kind" : "text",
+              "text" : ") -> "
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/SourceRange",
+              "kind" : "typeIdentifier",
+              "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+              "text" : "SourceRange"
+            },
+            {
+              "kind" : "text",
+              "text" : "?"
+            }
+          ]
+        }
+      ],
+      "kind" : "declarations"
+    },
+    {
+      "content" : [
+        {
+          "anchor" : "discussion",
+          "level" : 2,
+          "text" : "Discussion",
+          "type" : "heading"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "This method calls the overload ",
+              "type" : "text"
+            },
+            {
+              "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/translateToFileSpace(_:)-9dlzx",
+              "isActive" : true,
+              "type" : "reference"
+            },
+            {
+              "text" : " on each bound of the ",
+              "type" : "text"
+            },
+            {
+              "code" : "range",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : ".",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "content" : [
+            {
+              "inlineContent" : [
+                {
+                  "text" : "A range in its local space may cross over documentation comment markers in file space. For example:",
+                  "type" : "text"
+                }
+              ],
+              "type" : "paragraph"
+            }
+          ],
+          "style" : "note",
+          "type" : "aside"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "A selection of “",
+              "type" : "text"
+            },
+            {
+              "code" : "is\\na doc comment",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : "” in",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "       v",
+            "  0123456789ABCDE",
+            "0 This is",
+            "1 a doc comment.",
+            "   ^"
+          ],
+          "syntax" : "none",
+          "type" : "codeListing"
+        },
+        {
+          "inlineContent" : [
+            {
+              "text" : "will be the selection ",
+              "type" : "text"
+            },
+            {
+              "code" : "is\\n\/\/\/ a doc comment",
+              "type" : "codeVoice"
+            },
+            {
+              "text" : " in the original file, crossing over the doc comment markers.",
+              "type" : "text"
+            }
+          ],
+          "type" : "paragraph"
+        },
+        {
+          "code" : [
+            "           v",
+            "  0123456789ABCDEFGHI",
+            "0 \/\/\/ This is",
+            "1 \/\/\/ a doc comment.",
+            "       ^"
+          ],
+          "syntax" : "swift",
+          "type" : "codeListing"
+        }
+      ],
+      "kind" : "content"
+    }
+  ],
+  "schemaVersion" : {
+    "major" : 0,
+    "minor" : 2,
+    "patch" : 0
+  },
+  "sections" : [
+
+  ],
+  "variants" : [
+    {
+      "paths" : [
+        "\/documentation\/symbolkit\/symbolgraph\/linelist\/translatetofilespace(_:)-4tk1b"
+      ],
+      "traits" : [
+        {
+          "interfaceLanguage" : "swift"
+        }
+      ]
+    }
+  ]
+, 
+"references": {
+"doc://org.swift.SymbolKit/documentation/SymbolKit": {
+  "abstract" : [
+    {
+      "text" : "The specification and reference model for the ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "Symbol Graph",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " File Format.",
+      "type" : "text"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit",
+  "kind" : "symbol",
+  "role" : "collection",
+  "title" : "SymbolKit",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph": {
+  "abstract" : [
+    {
+      "text" : "A symbol graph is a set of ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "nodes",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the symbols in a module and",
+      "type" : "text"
+    },
+    {
+      "text" : " ",
+      "type" : "text"
+    },
+    {
+      "text" : "a set of directed ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "edges",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " that represent the relationships between symbols.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SymbolGraph"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/LineList": {
+  "abstract" : [
+    {
+      "text" : "A ",
+      "type" : "text"
+    },
+    {
+      "code" : "LineList",
+      "type" : "codeVoice"
+    },
+    {
+      "text" : " is a logical grouping of text ranges in a document making up a block of textual content.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "LineList"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "LineList"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.LineList",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/linelist"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/LineList/SourceRange": {
+  "abstract" : [
+    {
+      "text" : "Represents a selection in text: a start and end position, a half-open range.",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "struct"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "SourceRange"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/SourceRange",
+  "kind" : "symbol",
+  "navigatorTitle" : [
+    {
+      "kind" : "identifier",
+      "text" : "SourceRange"
+    }
+  ],
+  "role" : "symbol",
+  "title" : "SymbolGraph.LineList.SourceRange",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/linelist\/sourcerange"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/LineList/translateToFileSpace(_:)-4tk1b": {
+  "abstract" : [
+    {
+      "text" : "Translate a range from its ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local space",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " to this line list’s ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "file space",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "translateToFileSpace"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/translateToFileSpace(_:)-4tk1b",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "translateToFileSpace(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/linelist\/translatetofilespace(_:)-4tk1b"
+},
+"doc://org.swift.SymbolKit/documentation/SymbolKit/SymbolGraph/LineList/translateToFileSpace(_:)-9dlzx": {
+  "abstract" : [
+    {
+      "text" : "Translate a position from its ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "local space",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : " to this line list’s ",
+      "type" : "text"
+    },
+    {
+      "inlineContent" : [
+        {
+          "text" : "file space",
+          "type" : "text"
+        }
+      ],
+      "type" : "emphasis"
+    },
+    {
+      "text" : ".",
+      "type" : "text"
+    }
+  ],
+  "fragments" : [
+    {
+      "kind" : "keyword",
+      "text" : "func"
+    },
+    {
+      "kind" : "text",
+      "text" : " "
+    },
+    {
+      "kind" : "identifier",
+      "text" : "translateToFileSpace"
+    },
+    {
+      "kind" : "text",
+      "text" : "("
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV8PositionV",
+      "text" : "Position"
+    },
+    {
+      "kind" : "text",
+      "text" : ") -> "
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV",
+      "text" : "SourceRange"
+    },
+    {
+      "kind" : "text",
+      "text" : "."
+    },
+    {
+      "kind" : "typeIdentifier",
+      "preciseIdentifier" : "s:9SymbolKit0A5GraphV8LineListV11SourceRangeV8PositionV",
+      "text" : "Position"
+    },
+    {
+      "kind" : "text",
+      "text" : "?"
+    }
+  ],
+  "identifier" : "doc:\/\/org.swift.SymbolKit\/documentation\/SymbolKit\/SymbolGraph\/LineList\/translateToFileSpace(_:)-9dlzx",
+  "kind" : "symbol",
+  "role" : "symbol",
+  "title" : "translateToFileSpace(_:)",
+  "type" : "topic",
+  "url" : "\/documentation\/symbolkit\/symbolgraph\/linelist\/translatetofilespace(_:)-9dlzx"
+}
+}
+}
