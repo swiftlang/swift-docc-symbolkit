@@ -10,7 +10,7 @@ To illustrate the shape of a symbol graph, take the following Swift code as a mo
 
 ```swift
 public struct MyStruct {
-  public var x: Int
+    public var x: Int
 }
 ```
 
@@ -28,7 +28,7 @@ The *source* of an edge points to its *target*. You can read this edge as *`x` i
 public protocol P {}
 
 public struct MyStruct: P {
-  public var x: Int
+    public var x: Int
 }
 ```
 
