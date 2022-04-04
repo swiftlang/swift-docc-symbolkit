@@ -12,6 +12,7 @@
 */
 
 import PackageDescription
+import Foundation
 
 let package = Package(
     name: "SymbolKit",
@@ -23,9 +24,29 @@ let package = Package(
     targets: [
         .target(
             name: "SymbolKit",
-            dependencies: []),
+            dependencies: [],
+            swiftSettings: librarySwiftSettings()
+        ),
         .testTarget(
             name: "SymbolKitTests",
             dependencies: ["SymbolKit"]),
     ]
 )
+
+func librarySwiftSettings() -> [SwiftSetting]? {
+    let manifestLocation = URL(fileURLWithPath: #filePath)
+
+    let enableLibraryEvolutionFileLocation = manifestLocation
+        .deletingLastPathComponent()
+        .appendingPathComponent(".enable-library-evolution")
+    
+    // If there is a `.enable-library-evolution` file as a sibling of this package manifest
+    // build libraries with library evolution enabled.
+    if FileManager.default.fileExists(atPath: enableLibraryEvolutionFileLocation.path) {
+        return [
+            .unsafeFlags(["-enable-library-evolution"])
+        ]
+    } else {
+        return []
+    }
+}
