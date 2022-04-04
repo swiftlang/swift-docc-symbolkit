@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -89,6 +89,16 @@ class SymbolKindTests: XCTestCase {
             XCTAssertNotNil(kind)
             XCTAssertEqual(kind.identifier, .func)
             XCTAssertEqual(kind.displayName, "Function")
+        }
+    }
+
+    /// Make sure that all the cases added to `KindIdentifier` can parse back as themselves
+    /// when their `identifier` string is given back to the `.init(identifier:)` initializer.
+    func testKindIdentifierRoundtrip() throws {
+        for identifier in SymbolGraph.Symbol.KindIdentifier.allCases {
+            let parsed = SymbolGraph.Symbol.KindIdentifier(identifier: identifier.identifier)
+
+            XCTAssertEqual(identifier, parsed)
         }
     }
 }
