@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -23,8 +23,6 @@ extension SymbolGraph.Symbol {
         case `func`
         case `operator`
         case `init`
-        case ivar
-        case macro
         case method
         case property
         case `protocol`
@@ -55,8 +53,6 @@ extension SymbolGraph.Symbol {
             case .func: return "func"
             case .operator: return "func.op"
             case .`init`: return "init"
-            case .ivar: return "ivar"
-            case .macro: return "macro"
             case .method: return "method"
             case .property: return "property"
             case .protocol: return "protocol"
@@ -90,8 +86,6 @@ extension SymbolGraph.Symbol {
             case "func": return .func
             case "func.op": return .operator
             case "init": return .`init`
-            case "ivar": return .ivar
-            case "macro": return .macro
             case "method": return .method
             case "property": return .property
             case "protocol": return .protocol
