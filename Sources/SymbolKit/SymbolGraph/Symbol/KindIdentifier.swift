@@ -14,93 +14,65 @@ extension SymbolGraph.Symbol {
     /**
      A unique identifier of a symbol's kind, such as a structure or protocol.
      */
-    public enum KindIdentifier: Equatable, Hashable, Codable, CaseIterable {
-        case `associatedtype`
-        case `class`
-        case `deinit`
-        case `enum`
-        case `case`
-        case `func`
-        case `operator`
-        case `init`
-        case method
-        case property
-        case `protocol`
-        case snippet
-        case snippetGroup
-        case `struct`
-        case `subscript`
-        case typeMethod
-        case typeProperty
-        case typeSubscript
-        case `typealias`
-        case `var`
+    public struct KindIdentifier: Equatable, Hashable, Codable {
+        public let identifier: String
 
-        case module
-
-        case unknown
-
-        /// A string that uniquely identifies the symbol kind.
-        ///
-        /// If the original kind string was not recognized, this will return `"unknown"`.
-        public var identifier: String {
-            switch self {
-            case .associatedtype: return "associatedtype"
-            case .class: return "class"
-            case .deinit: return "deinit"
-            case .enum: return "enum"
-            case .case: return "enum.case"
-            case .func: return "func"
-            case .operator: return "func.op"
-            case .`init`: return "init"
-            case .method: return "method"
-            case .property: return "property"
-            case .protocol: return "protocol"
-            case .snippet: return "snippet"
-            case .snippetGroup: return "snippetGroup"
-            case .struct: return "struct"
-            case .subscript: return "subscript"
-            case .typeMethod: return "type.method"
-            case .typeProperty: return "type.property"
-            case .typeSubscript: return "type.subscript"
-            case .typealias: return "typealias"
-            case .var: return "var"
-            case .module: return "module"
-            case .unknown: return "unknown"
-            }
+        private init(rawIdentifier: String) {
+            self.identifier = rawIdentifier
         }
 
-        // FIXME: Save "unknown" symbol kinds in a synchronized set to prevent loss of data (rdar://84276085)
+        public static let `associatedtype`  = KindIdentifier(rawIdentifier: "associatedtype")
+        public static let `class`           = KindIdentifier(rawIdentifier: "class")
+        public static let `deinit`          = KindIdentifier(rawIdentifier: "deinit")
+        public static let `enum`            = KindIdentifier(rawIdentifier: "enum")
+        public static let `case`            = KindIdentifier(rawIdentifier: "enum.case")
+        public static let `func`            = KindIdentifier(rawIdentifier: "func")
+        public static let `operator`        = KindIdentifier(rawIdentifier: "func.op")
+        public static let `init`            = KindIdentifier(rawIdentifier: "init")
+        public static let `method`          = KindIdentifier(rawIdentifier: "method")
+        public static let `property`        = KindIdentifier(rawIdentifier: "property")
+        public static let `protocol`        = KindIdentifier(rawIdentifier: "protocol")
+        public static let snippet           = KindIdentifier(rawIdentifier: "snippet")
+        public static let snippetGroup      = KindIdentifier(rawIdentifier: "snippetGroup")
+        public static let `struct`          = KindIdentifier(rawIdentifier: "struct")
+        public static let `subscript`       = KindIdentifier(rawIdentifier: "subscript")
+        public static let typeMethod        = KindIdentifier(rawIdentifier: "type.method")
+        public static let typeProperty      = KindIdentifier(rawIdentifier: "type.property")
+        public static let typeSubscript     = KindIdentifier(rawIdentifier: "type.subscript")
+        public static let `typealias`       = KindIdentifier(rawIdentifier: "typealias")
+        public static let `var`             = KindIdentifier(rawIdentifier: "var")
+        public static let module            = KindIdentifier(rawIdentifier: "module")
+
+        public static let allCases: [KindIdentifier] = [
+            .associatedtype,
+            .class,
+            .deinit,
+            .enum,
+            .case,
+            .func,
+            .operator,
+            .`init`,
+            .method,
+            .property,
+            .protocol,
+            .snippet,
+            .snippetGroup,
+            .struct,
+            .subscript,
+            .typeMethod,
+            .typeProperty,
+            .typeSubscript,
+            .typealias,
+            .var,
+            .module,
+      ]
 
         /// Check the given identifier string against the list of known identifiers.
         ///
         /// - Parameter identifier: The identifier string to check.
         /// - Returns: The matching `KindIdentifier` case, or `nil` if there was no match.
         private static func lookupIdentifier(identifier: String) -> KindIdentifier? {
-            switch identifier {
-            case "associatedtype": return .associatedtype
-            case "class": return .class
-            case "deinit": return .deinit
-            case "enum": return .enum
-            case "enum.case": return .case
-            case "func": return .func
-            case "func.op": return .operator
-            case "init": return .`init`
-            case "method": return .method
-            case "property": return .property
-            case "protocol": return .protocol
-            case "snippet": return .snippet
-            case "snippetGroup": return .snippetGroup
-            case "struct": return .struct
-            case "subscript": return .subscript
-            case "type.method": return .typeMethod
-            case "type.property": return .typeProperty
-            case "type.subscript": return .typeSubscript
-            case "typealias": return .typealias
-            case "var": return .var
-            case "module": return .module
-            default: return nil
-            }
+            allCases.first { $0.identifier == identifier }
         }
 
         /// Compares the given identifier against the known default symbol kinds, and returns whether it matches one.
@@ -111,13 +83,13 @@ extension SymbolGraph.Symbol {
         /// - Parameter identifier: The identifier string to compare.
         /// - Returns: `true` if the given identifier matches a known symbol kind; otherwise `false`.
         public static func isKnownIdentifier(_ identifier: String) -> Bool {
-            var kind: KindIdentifier?
+            let kind: KindIdentifier?
 
-            if let cachedDetail = Self.lookupIdentifier(identifier: identifier) {
+            if let cachedDetail = KindIdentifier.lookupIdentifier(identifier: identifier) {
                 kind = cachedDetail
             } else {
                 let cleanIdentifier = KindIdentifier.cleanIdentifier(identifier)
-                kind = Self.lookupIdentifier(identifier: cleanIdentifier)
+                kind = KindIdentifier.lookupIdentifier(identifier: cleanIdentifier)
             }
 
             return kind != nil
@@ -131,14 +103,19 @@ extension SymbolGraph.Symbol {
         /// - Parameter identifier: The identifier string to parse.
         public init(identifier: String) {
             // Check if the identifier matches a symbol kind directly.
-            if let firstParse = Self.lookupIdentifier(identifier: identifier) {
+            if let firstParse = KindIdentifier.lookupIdentifier(identifier: identifier) {
                 self = firstParse
             } else {
                 // For symbol graphs which include a language identifier with their symbol kinds
                 // (e.g. "swift.func" instead of just "func"), strip off the language prefix and
                 // try again.
                 let cleanIdentifier = KindIdentifier.cleanIdentifier(identifier)
-                self = Self.lookupIdentifier(identifier: cleanIdentifier) ?? .unknown
+                if let secondParse = KindIdentifier.lookupIdentifier(identifier: cleanIdentifier) {
+                    self = secondParse
+                } else {
+                    // If we still don't have a match, store the whole original string.
+                    self.init(rawIdentifier: identifier)
+                }
             }
         }
 
