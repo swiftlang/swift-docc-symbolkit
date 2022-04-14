@@ -12,6 +12,7 @@ import Foundation
 import ArgumentParser
 import SymbolKit
 
+@main
 struct DumpUnifiedGraph: ParsableCommand {
     @Option(help: "module's symbol graph to output (will infer a single module, but will fail if multiple modules are being loaded)")
     var moduleName: String?
@@ -106,5 +107,3 @@ func loadSymbolGraphsFromDir(_ dir: String) -> [String] {
 
     return symbolGraphs
 }
-
-DumpUnifiedGraph.main()
