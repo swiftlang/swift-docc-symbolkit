@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,7 +93,7 @@ extension UnifiedSymbolGraph {
 
 extension UnifiedSymbolGraph {
     /// A combination of interface language and list of platforms that allows a symbol to be distinguished from another when unifying symbol graphs.
-    public struct Selector: Equatable, Hashable {
+    public struct Selector: Equatable, Hashable, Encodable {
         /// The interface language used for the symbol.
         public let interfaceLanguage: String
 
@@ -116,5 +116,40 @@ extension UnifiedSymbolGraph {
             self.interfaceLanguage = lang
             self.platform = graph.module.platform.name
         }
+    }
+}
+
+extension UnifiedSymbolGraph: Encodable {
+    enum CodingKeys: String, CaseIterable, CodingKey {
+        case moduleName
+        case moduleData
+        case metadata
+        case symbols
+        case relationships
+    }
+
+    private struct EncodableModuleData: Encodable {
+        var url: URL
+        var moduleData: SymbolGraph.Module
+    }
+
+    private struct EncodableMetadata: Encodable {
+        var url: URL
+        var metadata: SymbolGraph.Metadata
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+
+        try container.encode(moduleName, forKey: .moduleName)
+
+        let encodableModuleData = moduleData.map({ EncodableModuleData(url: $0.key, moduleData: $0.value) })
+        try container.encode(encodableModuleData, forKey: .moduleData)
+
+        let encodableMetadata = metadata.map({ EncodableMetadata(url: $0.key, metadata: $0.value) })
+        try container.encode(encodableMetadata, forKey: .metadata)
+
+        try container.encode(Array(symbols.values), forKey: .symbols)
+        try container.encode(relationships, forKey: .relationships)
     }
 }

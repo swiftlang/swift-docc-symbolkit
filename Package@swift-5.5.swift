@@ -10,6 +10,7 @@
 */
 
 import PackageDescription
+import class Foundation.ProcessInfo
 
 let package = Package(
     name: "SymbolKit",
@@ -17,6 +18,9 @@ let package = Package(
         .library(
             name: "SymbolKit",
             targets: ["SymbolKit"]),
+        .executable(
+            name: "dump-unified-graph",
+            targets: ["dump-unified-graph"]),
     ],
     targets: [
         .target(
@@ -25,5 +29,26 @@ let package = Package(
         .testTarget(
             name: "SymbolKitTests",
             dependencies: ["SymbolKit"]),
+        .executableTarget(
+            name: "dump-unified-graph",
+            dependencies: [
+                "SymbolKit",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]),
     ]
 )
+
+// If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
+// we're building in the Swift.org CI system alongside other projects in the Swift toolchain and
+// we can depend on local versions of our dependencies instead of fetching them remotely.
+if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
+    // Building standalone, so fetch all dependencies remotely.
+    package.dependencies += [
+        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.0.1")),
+    ]
+} else {
+    // Building in the Swift.org CI system, so rely on local versions of dependencies.
+    package.dependencies += [
+        .package(path: "../swift-argument-parser"),
+    ]
+}
