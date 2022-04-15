@@ -12,7 +12,6 @@
 */
 
 import PackageDescription
-import class Foundation.ProcessInfo
 
 let package = Package(
     name: "SymbolKit",
@@ -30,22 +29,3 @@ let package = Package(
             dependencies: ["SymbolKit"]),
     ]
 )
-
-// If the `SWIFTCI_USE_LOCAL_DEPS` environment variable is set,
-// we're building in the Swift.org CI system alongside other projects in the Swift toolchain.
-// In this case we only want to build the `dump-unified-graph` tool outside of Swift CI.
-if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
-    // Building standalone, so fetch all dependencies remotely.
-    package.dependencies += [
-        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "1.0.1")),
-    ]
-
-    package.targets += [
-        .executableTarget(
-            name: "dump-unified-graph",
-            dependencies: [
-                "SymbolKit",
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ]),
-    ]
-}
