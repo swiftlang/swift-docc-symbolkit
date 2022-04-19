@@ -51,7 +51,7 @@ class UnifiedGraphTests: XCTestCase {
         let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
 
         XCTAssertEqual(demoGraph.orphanRelationships.count, 1)
-        compareRelationships(demoGraph.orphanRelationships, [
+        XCTAssertEqual(demoGraph.orphanRelationships, [
             .init(
                 source: "unknownIdentifier",
                 target: "unknownProtocol",
@@ -112,18 +112,11 @@ private func compareRelationships(_ left: [SymbolGraph.Relationship], _ right: [
         }
     }
 
-    func assertRelations(_ l: SymbolGraph.Relationship, _ r: SymbolGraph.Relationship) {
-        XCTAssertEqual(l.source, r.source)
-        XCTAssertEqual(l.target, r.target)
-        XCTAssertEqual(l.kind, r.kind)
-        XCTAssertEqual(l.targetFallback, r.targetFallback)
-    }
-
     let leftSorted = left.sorted(by: compareRelations(_:_:))
     let rightSorted = right.sorted(by: compareRelations(_:_:))
 
     for (l, r) in zip(leftSorted, rightSorted) {
-        assertRelations(l, r)
+        XCTAssertEqual(l, r)
     }
 }
 
