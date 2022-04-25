@@ -39,8 +39,13 @@ struct DumpUnifiedGraph: ParsableCommand {
             throw ValidationError("Please provide files or a symbol graph directory")
         }
 
-        if let symbolGraphDir = symbolGraphDir, !symbolGraphDir.hasSuffix("/") {
-            self.symbolGraphDir = symbolGraphDir.appending("/")
+        if let symbolGraphDir = symbolGraphDir {
+            if !FileManager.default.fileExists(atPath: symbolGraphDir) {
+                throw ValidationError("Given symbol graph directory does not exist")
+            }
+            if !symbolGraphDir.hasSuffix("/") {
+                self.symbolGraphDir = symbolGraphDir.appending("/")
+            }
         }
     }
 
