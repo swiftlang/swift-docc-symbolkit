@@ -22,7 +22,7 @@ struct DumpUnifiedGraph: ParsableCommand {
     var moduleName: String?
 
     @Flag(inversion: .prefixedNo,
-          help: "whether to pretty-print the output JSON (default: true)")
+          help: "whether to pretty-print the output JSON")
     var prettyPrint: Bool = true
 
     @Option(name: .shortAndLong, help: "output file to write to (default: standard out)")
