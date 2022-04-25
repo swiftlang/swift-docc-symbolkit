@@ -89,6 +89,9 @@ struct DumpUnifiedGraph: ParsableCommand {
         }
 
         let encoder = JSONEncoder()
+        if #available(macOS 10.13, *) {
+            encoder.outputFormatting.insert(.sortedKeys)
+        }
         if prettyPrint {
             encoder.outputFormatting.insert(.prettyPrinted)
         }
