@@ -18,20 +18,36 @@ struct DumpUnifiedGraph: ParsableCommand {
         commandName: "dump-unified-graph",
         abstract: "Collects a unified symbol graph from given inputs and renders it to JSON")
 
-    @Option(help: ArgumentHelp("module's symbol graph to output", discussion: "will infer a single module, but will fail if multiple modules are being loaded"))
+    @Option(
+        help: ArgumentHelp(
+            "module's symbol graph to output",
+            discussion: "will infer a single module, but will fail if multiple modules are being loaded",
+            valueName: "name"))
     var moduleName: String?
 
     @Flag(inversion: .prefixedNo,
           help: "whether to pretty-print the output JSON")
     var prettyPrint: Bool = true
 
-    @Option(name: .shortAndLong, help: "output file to write to (default: standard out)")
+    @Option(
+        name: .shortAndLong,
+        help: ArgumentHelp(
+            "output file to write to (default: standard out)",
+            valueName: "file"))
     var output: String?
 
-    @Option(help: "directory to recursively load symbol graphs from", completion: .directory)
+    @Option(
+        help: ArgumentHelp(
+            "directory to recursively load symbol graphs from",
+            valueName: "dir"),
+        completion: .directory)
     var symbolGraphDir: String?
 
-    @Argument(help: "list of symbol graphs to load", completion: .file(extensions: ["json"]))
+    @Argument(
+        help: ArgumentHelp(
+            "individual symbol graphs to load",
+            valueName: "file"),
+        completion: .file(extensions: ["json"]))
     var files: [String] = []
 
     mutating func validate() throws {
