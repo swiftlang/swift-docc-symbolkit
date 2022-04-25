@@ -14,6 +14,10 @@ import SymbolKit
 
 @main
 struct DumpUnifiedGraph: ParsableCommand {
+    static let configuration = CommandConfiguration(
+        commandName: "dump-unified-graph",
+        abstract: "Collects a unified symbol graph from given inputs and renders it to JSON")
+
     @Option(help: ArgumentHelp("module's symbol graph to output", discussion: "will infer a single module, but will fail if multiple modules are being loaded"))
     var moduleName: String?
 
