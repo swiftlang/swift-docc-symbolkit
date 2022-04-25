@@ -21,7 +21,7 @@ struct DumpUnifiedGraph: ParsableCommand {
           help: "whether to pretty-print the output JSON (default: true)")
     var prettyPrint: Bool = true
 
-    @Option(name: .short, help: "output file to write to (default: standard out)")
+    @Option(name: .shortAndLong, help: "output file to write to (default: standard out)")
     var output: String?
 
     @Option(help: "directory to recursively load symbol graphs from", completion: .directory)
