@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -93,7 +93,7 @@ extension UnifiedSymbolGraph {
 
 extension UnifiedSymbolGraph {
     /// A combination of interface language and list of platforms that allows a symbol to be distinguished from another when unifying symbol graphs.
-    public struct Selector: Equatable, Hashable {
+    public struct Selector: Equatable, Hashable, Encodable {
         /// The interface language used for the symbol.
         public let interfaceLanguage: String
 
