@@ -187,7 +187,7 @@ extension SymbolGraph {
             case Availability.mixinKey:
                 return try container.decode(Availability.self, forKey: key)
             case Location.mixinKey:
-                return try container.decode(Location.self, forKey: key)
+                return try? container.decode(Location.self, forKey: key)
             case Mutability.mixinKey:
                 return try container.decode(Mutability.self, forKey: key)
             case FunctionSignature.mixinKey:
