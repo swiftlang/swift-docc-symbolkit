@@ -52,6 +52,58 @@ class SymbolTests: XCTestCase {
             XCTAssertNil(symbol.isDocCommentFromSameModule)
         }
     }
+
+    /// Check that a Location mixin without position information still decodes a symbol graph without throwing.
+    func testMalformedLocationDoesNotThrow() throws {
+        let inputGraph = """
+{
+  "accessLevel" : "public",
+  "kind" : {
+    "displayName" : "Instance Method",
+    "identifier" : "swift.method"
+  },
+  "pathComponents" : [
+    "ClassName",
+    "something()"
+  ],
+  "identifier" : {
+    "precise" : "precise-identifier",
+    "interfaceLanguage" : "swift"
+  },
+  "names" : {
+    "title" : "something()"
+  },
+  "location" : {
+    "uri" : "file:///path/to/someSource.swift"
+  },
+  "declarationFragments" : [
+    {
+      "kind" : "keyword",
+      "spelling" : "func"
+    },
+    {
+      "kind" : "text",
+      "spelling" : " "
+    },
+    {
+      "kind" : "identifier",
+      "spelling" : "something"
+    },
+    {
+      "kind" : "text",
+      "spelling" : "() -> "
+    },
+    {
+      "kind" : "keyword",
+      "spelling" : "Any"
+    }
+  ]
+}
+""".data(using: .utf8)!
+
+        let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraph)
+        XCTAssertNil(symbol.mixins[SymbolGraph.Symbol.Location.mixinKey])
+    }
     
 }
 
