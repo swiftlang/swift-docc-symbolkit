@@ -1,4 +1,4 @@
-// swift-tools-version:5.2
+// swift-tools-version:5.6
 // In order to support users running on the latest Xcodes, please ensure that
 // Package@swift-5.5.swift is kept in sync with this file.
 /*
