@@ -11,8 +11,8 @@
 import XCTest
 @testable import SymbolKit
 
-final class MainInitializationTests: XCTestCase {
-    func testInitializationFromComponents() throws {
+final class DirectInitializationTests: XCTestCase {
+    func testInitializationFromAllComponents() throws {
         
         // MARK: primary public properties
         
@@ -113,5 +113,21 @@ final class MainInitializationTests: XCTestCase {
         XCTAssertThrowsError(try SymbolGraph.SemanticVersion(major: 9, minor: 0, patch: 1, buildMetadata: "...")) { XCTAssertTrue($0 is SymbolGraph.SemanticVersionError) }
         XCTAssertThrowsError(try SymbolGraph.SemanticVersion(major: 5, minor: 6, patch: 7, buildMetadata: ".c.")) { XCTAssertTrue($0 is SymbolGraph.SemanticVersionError) }
         XCTAssertThrowsError(try SymbolGraph.SemanticVersion(major: 8, minor: 9, patch: 0, buildMetadata: "🙃")) { XCTAssertTrue($0 is SymbolGraph.SemanticVersionError) }
+    }
+    
+    func testInitializationFromOnlyVersionCoreComponents() {
+        let version1 = SymbolGraph.SemanticVersion(0, 0, 0)
+        XCTAssertEqual(version1.major, 0)
+        XCTAssertEqual(version1.minor, 0)
+        XCTAssertEqual(version1.patch, 0)
+        XCTAssertEqual(version1.prereleaseIdentifiers, [])
+        XCTAssertEqual(version1.buildMetadataIdentifiers, [])
+        
+        let version2 = SymbolGraph.SemanticVersion(3, 2, 1)
+        XCTAssertEqual(version2.major, 3)
+        XCTAssertEqual(version2.minor, 2)
+        XCTAssertEqual(version2.patch, 1)
+        XCTAssertEqual(version2.prereleaseIdentifiers, [])
+        XCTAssertEqual(version2.buildMetadataIdentifiers, [])
     }
 }

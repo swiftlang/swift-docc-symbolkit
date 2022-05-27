@@ -58,6 +58,13 @@ extension SymbolGraph {
             self.buildMetadataIdentifiers = buildMetadataIdentifiers
         }
         
+        /// Creates a semantic version with the provided components of a semantic version.
+        /// - Parameters:
+        ///   - major: The major version number.
+        ///   - minor: The minor version number.
+        ///   - patch: The patch version number.
+        ///   - prerelease: The pre-release information.
+        ///   - buildMetadata: The build metadata.
         @available(*, deprecated, renamed: "init(_:_:_:prerelease:buildMetadata:)")
         @_disfavoredOverload
         public init(
@@ -74,6 +81,15 @@ extension SymbolGraph {
                 prerelease: prerelease,
                 buildMetadata: buildMetadata
             )
+        }
+        
+        /// Creates a semantic version with the provided components of a semantic version.
+        /// - Parameters:
+        ///   - major: The major version number.
+        ///   - minor: The minor version number.
+        ///   - patch: The patch version number.
+        public init(_ major: UInt, _ minor: UInt, _ patch: UInt) {
+            try! self.init(major: major, minor: minor, patch: patch)
         }
     }
 }
