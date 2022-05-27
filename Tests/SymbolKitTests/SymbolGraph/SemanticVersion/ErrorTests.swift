@@ -201,15 +201,14 @@ final class ErrorTests: XCTestCase {
         atPosition position: SymbolGraph.SemanticVersionError.IdentifierPosition,
         whenEvaluating expression: @autoclosure () throws -> SymbolGraph.SemanticVersion
     ) {
-        let positionString: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-            switch position {
-            case .major: return "major"
-            case .minor: return "minor"
-            case .patch: return "patch"
-            case .prerelease: return "prerelease"
-            case .buildMetadata: return "buildMetadata"
-            }
-        }()
+        let positionString: String
+		switch position {
+		case .major:         positionString = "major"
+		case .minor:         positionString = "minor"
+		case .patch:         positionString = "patch"
+		case .prerelease:    positionString = "prerelease"
+		case .buildMetadata: positionString = "buildMetadata"
+		}
         XCTAssertThrowsError(
             try expression(),
             "'SymbolGraph.SemanticVersionError.emptyIdentifier(position: .\(positionString))' should've been thrown, but no error is thrown"
@@ -218,15 +217,14 @@ final class ErrorTests: XCTestCase {
                 XCTFail(#"'SymbolGraph.SemanticVersionError.emptyIdentifier(position: .\#(positionString))' should've been thrown, but a different error is thrown instead; error description: "\#(error)""#)
                 return
             }
-            let positionDescription: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-                switch position {
-                case .major: return "major version number"
-                case .minor: return "minor version number"
-                case .patch: return "patch version number"
-                case .prerelease: return "pre-release"
-                case .buildMetadata: return "build metadata"
-                }
-            }()
+            let positionDescription: String
+			switch position {
+			case .major:         positionDescription = "major version number"
+			case .minor:         positionDescription = "minor version number"
+			case .patch:         positionDescription = "patch version number"
+			case .prerelease:    positionDescription = "pre-release"
+			case .buildMetadata: positionDescription = "build metadata"
+			}
             XCTAssertEqual(
                 error.description,
                 "semantic version \(positionDescription) identifier cannot be empty"
@@ -239,12 +237,11 @@ final class ErrorTests: XCTestCase {
         inIdentifier identifier: Substring,
         whenEvaluating expression: @autoclosure () throws -> SymbolGraph.SemanticVersion
     ) {
-        let positionString: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-            switch position {
-            case .prerelease: return "prerelease"
-            case .buildMetadata: return "buildMetadata"
-            }
-        }()
+        let positionString: String
+		switch position {
+		case .prerelease:    positionString = "prerelease"
+		case .buildMetadata: positionString = "buildMetadata"
+		}
         XCTAssertThrowsError(
             try expression(),
             "'SymbolGraph.SemanticVersionError.invalidCharacterInIdentifier(\(identifier), position: .\(positionString))' should've been thrown, but no error is thrown"
@@ -253,12 +250,11 @@ final class ErrorTests: XCTestCase {
                 XCTFail((#"'SymbolGraph.SemanticVersionError.invalidCharacterInIdentifier(\#(identifier), position: .\#(positionString))' should've been thrown, but a different error is thrown instead; error description: "\#(error)""#))
                 return
             }
-            let positionDescription: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-                switch position {
-                case .prerelease: return "pre-release"
-                case .buildMetadata: return "build metadata"
-                }
-            }()
+            let positionDescription: String
+			switch position {
+			case .prerelease:    positionDescription = "pre-release"
+			case .buildMetadata: positionDescription = "build metadata"
+			}
             XCTAssertEqual(
                 error.description,
                 "semantic version \(positionDescription) identifier '\(identifier)' cannot contain characters other than ASCII alphanumerics and hyphen-minus ([0-9A-Za-z-])"
@@ -271,14 +267,13 @@ final class ErrorTests: XCTestCase {
         inIdentifier identifier: Substring,
         whenEvaluating expression: @autoclosure () throws -> SymbolGraph.SemanticVersion
     ) {
-        let positionString: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-            switch position {
-            case .major: return "major"
-            case .minor: return "minor"
-            case .patch: return "patch"
-            case .prerelease: XCTFail("pre-release identifier with non-numeric characters should be regarded as alpha-numeric identifier"); return "prerelease"
-            }
-        }()
+        let positionString: String
+		switch position {
+		case .major: positionString = "major"
+		case .minor: positionString = "minor"
+		case .patch: positionString = "patch"
+		case .prerelease: XCTFail("pre-release identifier with non-numeric characters should be regarded as alpha-numeric identifier"); positionString = "prerelease"
+		}
         XCTAssertThrowsError(
             try expression(),
             "'SymbolGraph.SemanticVersionError.invalidCharacterInIdentifier(\(identifier), position: .\(positionString))' should've been thrown, but no error is thrown"
@@ -287,14 +282,13 @@ final class ErrorTests: XCTestCase {
                 XCTFail((#"'SymbolGraph.SemanticVersionError.invalidNumericIdentifier(\#(identifier), position: \#(positionString), errorKind: .nonNumericCharacter)' should've been thrown, but a different error is thrown instead; error description: "\#(error)""#))
                 return
             }
-            let positionDescription: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-                switch position {
-                case .major: return "major version number"
-                case .minor: return "minor version number"
-                case .patch: return "patch version number"
-                case .prerelease: XCTFail("pre-release identifier with non-numeric characters should be regarded as alpha-numeric identifier"); return "pre-release numeric"
-                }
-            }()
+            let positionDescription: String
+			switch position {
+			case .major: positionDescription = "major version number"
+			case .minor: positionDescription = "minor version number"
+			case .patch: positionDescription = "patch version number"
+			case .prerelease: XCTFail("pre-release identifier with non-numeric characters should be regarded as alpha-numeric identifier"); positionDescription = "pre-release numeric"
+			}
             XCTAssertEqual(
                 error.description,
                 "semantic version \(positionDescription) identifier '\(identifier)' cannot contain non-numeric characters"
@@ -307,14 +301,13 @@ final class ErrorTests: XCTestCase {
         inIdentifier identifier: Substring,
         whenEvaluating expression: @autoclosure () throws -> SymbolGraph.SemanticVersion
     ) {
-        let positionString: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-            switch position {
-            case .major: return "major"
-            case .minor: return "minor"
-            case .patch: return "patch"
-            case .prerelease: return "prerelease"
-            }
-        }()
+        let positionString: String
+		switch position {
+		case .major:      positionString = "major"
+		case .minor:      positionString = "minor"
+		case .patch:      positionString = "patch"
+		case .prerelease: positionString = "prerelease"
+		}
         XCTAssertThrowsError(
             try expression(),
             "'SymbolGraph.SemanticVersionError.invalidCharacterInIdentifier(\(identifier), position: .\(positionString))' should've been thrown, but no error is thrown"
@@ -323,14 +316,13 @@ final class ErrorTests: XCTestCase {
                 XCTFail((#"'SymbolGraph.SemanticVersionError.invalidNumericIdentifier(\#(identifier), position: \#(positionString), errorKind: .leadingZeros)' should've been thrown, but a different error is thrown instead; error description: "\#(error)""#))
                 return
             }
-            let positionDescription: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-                switch position {
-                case .major: return "major version number"
-                case .minor: return "minor version number"
-                case .patch: return "patch version number"
-                case .prerelease: return "pre-release numeric"
-                }
-            }()
+			let positionDescription: String
+			switch position {
+			case .major:      positionDescription = "major version number"
+			case .minor:      positionDescription = "minor version number"
+			case .patch:      positionDescription = "patch version number"
+			case .prerelease: positionDescription = "pre-release numeric"
+			}
             XCTAssertEqual(
                 error.description,
                 "semantic version \(positionDescription) identifier '\(identifier)' cannot contain leading '0'"
@@ -343,14 +335,13 @@ final class ErrorTests: XCTestCase {
         inIdentifier identifier: Substring,
         whenEvaluating expression: @autoclosure () throws -> SymbolGraph.SemanticVersion
     ) {
-        let positionString: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-            switch position {
-            case .major: return "major"
-            case .minor: return "minor"
-            case .patch: return "patch"
-            case .prerelease: return "prerelease"
-            }
-        }()
+		let positionString: String
+		switch position {
+		case .major:      positionString = "major"
+		case .minor:      positionString = "minor"
+		case .patch:      positionString = "patch"
+		case .prerelease: positionString = "prerelease"
+		}
         XCTAssertThrowsError(
             try expression(),
             "'SymbolGraph.SemanticVersionError.invalidCharacterInIdentifier(\(identifier), position: .\(positionString))' should've been thrown, but no error is thrown"
@@ -359,14 +350,13 @@ final class ErrorTests: XCTestCase {
                 XCTFail((#"'SymbolGraph.SemanticVersionError.invalidNumericIdentifier(\#(identifier), position: \#(positionString), errorKind: .oversizedValue)' should've been thrown, but a different error is thrown instead; error description: "\#(error)""#))
                 return
             }
-            let positionDescription: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-                switch position {
-                case .major: return "major version number"
-                case .minor: return "minor version number"
-                case .patch: return "patch version number"
-                case .prerelease: return "pre-release numeric"
-                }
-            }()
+            let positionDescription: String
+			switch position {
+			case .major:      positionDescription = "major version number"
+			case .minor:      positionDescription = "minor version number"
+			case .patch:      positionDescription = "patch version number"
+			case .prerelease: positionDescription = "pre-release numeric"
+			}
             XCTAssertEqual(
                 error.description,
                 "semantic version \(positionDescription) identifier '\(identifier)' cannot be larger than 'UInt.max'"

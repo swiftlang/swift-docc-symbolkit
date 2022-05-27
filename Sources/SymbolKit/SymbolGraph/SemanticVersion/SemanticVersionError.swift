@@ -97,16 +97,12 @@ extension SymbolGraph {
             case let .invalidCharacterInIdentifier(identifier, position):
                 return "semantic version \(position) identifier '\(identifier)' cannot contain characters other than ASCII alphanumerics and hyphen-minus ([0-9A-Za-z-])"
             case let .invalidNumericIdentifier(identifier, position, errorKind):
-                let fault: String = { // FIXME: This type annotation can be removed in Swift ≥ 5.7
-                    switch errorKind {
-                    case .leadingZeros:
-                        return "contain leading '0'"
-                    case .nonNumericCharacter:
-                        return "contain non-numeric characters"
-                    case .oversizedValue:
-                        return "be larger than 'UInt.max'"
-                    }
-                }()
+                let fault: String
+				switch errorKind {
+				case .leadingZeros:        fault = "contain leading '0'"
+				case .nonNumericCharacter: fault = "contain non-numeric characters"
+				case .oversizedValue:      fault = "be larger than 'UInt.max'"
+				}
                 return "semantic version \(position) identifier '\(identifier)' cannot \(fault)"
             case let .invalidVersionCoreIdentifierCount(identifiers):
                 return """
