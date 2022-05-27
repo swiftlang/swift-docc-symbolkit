@@ -42,7 +42,7 @@ extension SymbolGraph.SemanticVersion.Prerelease {
         }
         let identifiers = dotSeparatedIdentifiers.split(
             separator: ".",
-            omittingEmptySubsequences: false // must preserve empty identifiers, for accurate diagnostics.
+            omittingEmptySubsequences: false // Preserve empty sequences to be able to raise validation errors about empty prerelease identifiers.
         )
         try self.init(identifiers)
     }
