@@ -51,7 +51,7 @@ extension SymbolGraph {
                 throw SymbolGraph.SemanticVersionError.emptyIdentifier(position: .buildMetadata)
             }
             try buildMetadataIdentifiers.forEach {
-                guard $0.allSatisfy( { $0.isASCII && ( $0.isLetter || $0.isNumber || $0 == "-" ) } ) else {
+                guard $0.allSatisfy(\.isAllowedInSemanticVersionIdentifier) else {
                     throw SymbolGraph.SemanticVersionError.invalidCharacterInIdentifier($0, position: .buildMetadata)
                 }
             }
