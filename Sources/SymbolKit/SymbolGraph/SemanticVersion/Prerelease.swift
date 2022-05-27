@@ -142,17 +142,3 @@ extension SymbolGraph.SemanticVersion.Prerelease.Identifier: CustomStringConvert
         }
     }
 }
-
-// MARK: - Validating Identifiers
-
-extension Character {
-    /// A Boolean value indicating whether this character is allowed in a semantic version's identifier.
-    internal var isAllowedInSemanticVersionIdentifier: Bool {
-        isASCII && (isLetter || isNumber || self == "-")
-    }
-    
-    /// A Boolean value indicating whether this character is allowed in a semantic version's numeric identifier.
-    internal var isAllowedInSemanticVersionNumericIdentifier: Bool {
-        isASCII && isNumber
-    }
-}
