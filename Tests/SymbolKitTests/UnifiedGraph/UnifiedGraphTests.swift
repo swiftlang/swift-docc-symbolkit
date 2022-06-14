@@ -34,6 +34,68 @@ class UnifiedGraphTests: XCTestCase {
             XCTFail("Unified graph did not have objc relationships")
         }
     }
+
+    func testOrphanRelationships() throws {
+        var swiftSyms = swiftSymbolGraph()
+        swiftSyms.relationships.append(.init(
+            source: "unknownIdentifier",
+            target: "unknownProtocol",
+            kind: .conformsTo,
+            targetFallback: nil))
+
+        let collector = GraphCollector()
+        collector.mergeSymbolGraph(swiftSyms, at: .init(fileURLWithPath: "swift/DemoKit.symbols.json"))
+        collector.mergeSymbolGraph(objcSymbolGraph(), at: .init(fileURLWithPath: "objc/DemoKit.symbols.json"))
+
+        let (unifiedGraphs, _) = collector.finishLoading()
+        let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+
+        XCTAssertEqual(demoGraph.orphanRelationships.count, 1)
+        compareRelationships(demoGraph.orphanRelationships, [
+            .init(
+                source: "unknownIdentifier",
+                target: "unknownProtocol",
+                kind: .conformsTo,
+                targetFallback: nil)
+        ])
+    }
+
+    func testCollectOrphanRelationships() throws {
+        var swiftSyms = swiftSymbolGraph()
+        swiftSyms.relationships.append(.init(
+            source: "unknownIdentifier",
+            target: "unknownProtocol",
+            kind: .conformsTo,
+            targetFallback: nil))
+
+        var objcSyms = objcSymbolGraph()
+        objcSyms.symbols["unknownProtocol"] = .init(
+            identifier: .init(precise: "unknownProtocol", interfaceLanguage: "objc"),
+            names: .init(title: "unknownProtocol", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["unknownProtocol"],
+            docComment: nil,
+            accessLevel: .init(rawValue: "public"),
+            kind: .init(parsedIdentifier: .protocol, displayName: "Protocol"),
+            mixins: [:])
+
+        let collector = GraphCollector()
+        collector.mergeSymbolGraph(swiftSyms, at: .init(fileURLWithPath: "swift/DemoKit.symbols.json"))
+        collector.mergeSymbolGraph(objcSyms, at: .init(fileURLWithPath: "objc/DemoKit.symbols.json"))
+
+        let (unifiedGraphs, _) = collector.finishLoading()
+        let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+
+        XCTAssert(demoGraph.orphanRelationships.isEmpty)
+
+        // Since the only matching symbol in this relationship was `unknownProtocol` in the objc
+        // graph, the relation is only sorted among the objc relationships, even though it appeared
+        // in a "Swift" symbol graph. This is because even though in practice all the symbols in a
+        // single graph have the same source language, the symbol graph itself does not define a
+        // source language as a whole. In practice this is unlikely to be a problem, but it could be
+        // a surprising behavior for new symbol graph implementors.
+        let objcRelations = try XCTUnwrap(demoGraph.relationshipsByLanguage.first(where: { $0.key.interfaceLanguage == "objc" })?.value)
+        XCTAssert(objcRelations.contains(where: { $0.target == "unknownProtocol" }))
+    }
 }
 
 /// Compare the given lists of relationships and assert that they contain the same relationships.
