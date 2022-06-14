@@ -28,14 +28,20 @@ public class UnifiedSymbolGraph {
     public var symbols: [String: UnifiedSymbolGraph.Symbol]
 
     /// The relationships between symbols.
-    @available(*, deprecated, message: "Use relationshipsByLanguage instead")
+    @available(*, deprecated, message: "Use unifiedRelationships and orphanRelationships instead")
     public var relationships: [SymbolGraph.Relationship] {
-        mergeRelationships(Array(relationshipsByLanguage.values.joined()))
+        var allRelations = mergeRelationships(Array(relationshipsByLanguage.values.joined()))
+        allRelations.append(contentsOf: self.orphanRelationships)
+        return allRelations
     }
 
     /// The relationships between symbols, separated by the language's view those relationships are
     /// relevant in.
     public var relationshipsByLanguage: [Selector: [SymbolGraph.Relationship]]
+
+    /// A list of relationships between symbols, for which neither the source nor target were able
+    /// to be matched with an appropriate symbol in the collected graphs.
+    public var orphanRelationships: [SymbolGraph.Relationship]
 
     public init?(fromSingleGraph graph: SymbolGraph, at url: URL) {
         let (_, isMainGraph) = GraphCollector.moduleNameFor(graph, at: url)
@@ -45,6 +51,7 @@ public class UnifiedSymbolGraph {
         self.metadata = [url: graph.metadata]
         self.symbols = graph.symbols.mapValues { UnifiedSymbolGraph.Symbol(fromSingleSymbol: $0, module: graph.module, isMainGraph: isMainGraph) }
         self.relationshipsByLanguage = [:]
+        self.orphanRelationships = []
         loadRelationships(fromGraph: graph)
     }
 }
@@ -65,9 +72,9 @@ extension UnifiedSymbolGraph {
             } else if let unifiedTargetSym = self.symbols[rel.target] {
                 selectors = unifiedTargetSym.mainGraphSelectors
             } else {
-                // FIXME: this will drop any relationship to a symbol we haven't loaded yet.
-                // this may be the correct action (it dodges an assertion in swift-docc), but
-                // it may also paper over issues in the tool that generated the symbol graph.
+                // If we can't find the appropriate selector(s) to use, consider the relationship an
+                // orphan and save it for later.
+                self.orphanRelationships.append(rel)
                 continue
             }
 
@@ -113,6 +120,36 @@ extension UnifiedSymbolGraph {
         let map = [:].merging(allRelations.map({ RelationKey.makePair(fromRelation: $0) }), uniquingKeysWith: { r1, r2 in r1 })
 
         return Array(map.values)
+    }
+
+    internal func checkOrphans() {
+        var newRelations: [Selector: [SymbolGraph.Relationship]] = [:]
+        var remainingOrphans: [SymbolGraph.Relationship] = []
+        for rel in self.orphanRelationships {
+            let selectors: [Selector]
+            if let unifiedSourceSym = self.symbols[rel.source] {
+                selectors = unifiedSourceSym.mainGraphSelectors
+            } else if let unifiedSourceSym = self.symbols[rel.target] {
+                selectors = unifiedSourceSym.mainGraphSelectors
+            } else {
+                remainingOrphans.append(rel)
+                continue
+            }
+
+            for selector in selectors {
+                if !newRelations.keys.contains(selector) {
+                    newRelations[selector] = []
+                }
+
+                newRelations[selector]!.append(rel)
+            }
+        }
+
+        for (key: selector, value: relations) in newRelations {
+            self.relationshipsByLanguage[selector] = mergeRelationships(self.relationshipsByLanguage[selector, default: []], relations)
+        }
+
+        self.orphanRelationships = remainingOrphans
     }
 
     /// Merge the given symbol graph with this one.
