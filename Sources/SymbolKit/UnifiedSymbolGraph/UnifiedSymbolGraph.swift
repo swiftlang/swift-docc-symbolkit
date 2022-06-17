@@ -122,7 +122,15 @@ extension UnifiedSymbolGraph {
         return Array(map.values)
     }
 
-    internal func checkOrphans() {
+    /// Scans over ``orphanRelationships`` and sorts any whose source/target symbols were loaded
+    /// after the relationship was.
+    ///
+    /// Since relationships are added to ``relationshipsByLanguage`` based on what symbols are
+    /// available when the relationship is being loaded, a relationship can be considered an
+    /// "orphan" even when it's not, if the symbol graphs are loaded in a certain order. This
+    /// method was added to ensure that these relationships can be properly assigned a language
+    /// even if the symbol information isn't in the same symbol graph.
+    internal func collectOrphans() {
         var newRelations: [Selector: [SymbolGraph.Relationship]] = [:]
         var remainingOrphans: [SymbolGraph.Relationship] = []
         for rel in self.orphanRelationships {
