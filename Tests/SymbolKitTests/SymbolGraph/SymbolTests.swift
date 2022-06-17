@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -19,38 +19,49 @@ class SymbolTests: XCTestCase {
             let jsonData = encodedSymbol(withDocComment: nil).data(using: .utf8)!
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
-            XCTAssertNil(symbol.isDocCommentFromSameModule)
+            XCTAssertNil(symbol._isDocCommentFromSameModule)
         }
         
         // without range information
         do {
             let jsonData = encodedSymbol(withDocComment:
-                (lines: ["First line", "Second line"], rangeStart: nil)
+                (lines: ["First line", "Second line"], rangeStart: nil, moduleName: nil, fileName: nil)
             ).data(using: .utf8)!
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
-            XCTAssertEqual(symbol.isDocCommentFromSameModule, false)
+            XCTAssertEqual(symbol._isDocCommentFromSameModule, false)
         }
         
         // with range information
         do {
             let jsonData = encodedSymbol(withDocComment:
-                (lines: ["First line", "Second line"], rangeStart: (line: 2, character: 4))
+                (lines: ["First line", "Second line"], rangeStart: (line: 2, character: 4), moduleName: nil, fileName: nil)
             ).data(using: .utf8)!
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
-            XCTAssertEqual(symbol.isDocCommentFromSameModule, true)
+            XCTAssertEqual(symbol._isDocCommentFromSameModule, true)
         }
         
         // empty doc comment
         do {
             let jsonData = encodedSymbol(withDocComment:
-                (lines: [], rangeStart: (line: 2, character: 4))
+                (lines: [], rangeStart: (line: 2, character: 4), moduleName: nil, fileName: nil)
             ).data(using: .utf8)!
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
-            XCTAssertNil(symbol.isDocCommentFromSameModule)
+            XCTAssertNil(symbol._isDocCommentFromSameModule)
         }
+    }
+    
+    func testDocCommentModuleInformation() throws {
+        let jsonData = encodedSymbol(withDocComment:
+            (lines: ["First line", "Second line"], rangeStart: nil, moduleName: "ModuleName", fileName: "file name")
+        ).data(using: .utf8)!
+        let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
+
+        XCTAssertEqual(symbol.docComment?.moduleName, "ModuleName")
+        XCTAssertEqual(symbol.docComment?.url?.isFileURL, true)
+        XCTAssertEqual(symbol.docComment?.url?.pathComponents.last, "file name")
     }
 
     /// Check that a Location mixin without position information still decodes a symbol graph without throwing.
@@ -109,8 +120,7 @@ class SymbolTests: XCTestCase {
 
 // MARK: Test Data
 
-private func encodedSymbol(withDocComment: (lines: [String], rangeStart: (line: Int, character: Int)?)?) -> String {
-    
+private func encodedSymbol(withDocComment: (lines: [String], rangeStart: (line: Int, character: Int)?, moduleName: String?, fileName: String?)?) -> String {
     let docCommentJSON: String
     if let withDocComment = withDocComment {
         let lineList = SymbolGraph.LineList(withDocComment.lines.enumerated().map { index, text in
@@ -121,7 +131,7 @@ private func encodedSymbol(withDocComment: (lines: [String], rangeStart: (line: 
                 )
             }
             return SymbolGraph.LineList.Line(text: text, range: range)
-        })
+        }, url: withDocComment.fileName.map({ URL(fileURLWithPath: $0) }), moduleName: withDocComment.moduleName)
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         let data = try! encoder.encode(lineList)

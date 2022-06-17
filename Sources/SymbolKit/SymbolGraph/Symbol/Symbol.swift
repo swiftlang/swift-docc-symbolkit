@@ -58,7 +58,12 @@ extension SymbolGraph {
         /// the same module as the symbol or not.
         ///
         /// An inherited documentation comment is from the same module when the symbol that the documentation is inherited from is in the same module as this symbol.
+        @available(*, deprecated, message: "Use 'docComment?.moduleName' instead to compare the documentation's source module name with another module name.")
         public var isDocCommentFromSameModule: Bool? {
+            _isDocCommentFromSameModule
+        }
+        // To avoid deprecation warnings in SymbolKit test until the deprecated property is removed.
+        internal var _isDocCommentFromSameModule: Bool? {
             guard let docComment = docComment, !docComment.lines.isEmpty else {
                 return nil
             }
