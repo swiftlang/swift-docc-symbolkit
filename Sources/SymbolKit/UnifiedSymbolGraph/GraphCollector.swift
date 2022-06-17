@@ -77,7 +77,7 @@ extension GraphCollector {
         }
 
         for (_, graph) in self.unifiedGraphs {
-            graph.checkOrphans()
+            graph.collectOrphans()
         }
 
         return (self.unifiedGraphs, self.graphSources)
