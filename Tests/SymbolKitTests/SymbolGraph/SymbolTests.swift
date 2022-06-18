@@ -20,6 +20,7 @@ class SymbolTests: XCTestCase {
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
             XCTAssertNil(symbol._isDocCommentFromSameModule)
+            XCTAssertNil(symbol.isDocCommentFromSameModule(symbolModuleName: "Test"))
         }
         
         // without range information
@@ -30,6 +31,7 @@ class SymbolTests: XCTestCase {
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
             XCTAssertEqual(symbol._isDocCommentFromSameModule, false)
+            XCTAssertEqual(symbol.isDocCommentFromSameModule(symbolModuleName: "Test"), false)
         }
         
         // with range information
@@ -40,6 +42,7 @@ class SymbolTests: XCTestCase {
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
             XCTAssertEqual(symbol._isDocCommentFromSameModule, true)
+            XCTAssertEqual(symbol.isDocCommentFromSameModule(symbolModuleName: "Test"), true)
         }
         
         // empty doc comment
@@ -50,6 +53,7 @@ class SymbolTests: XCTestCase {
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: jsonData)
 
             XCTAssertNil(symbol._isDocCommentFromSameModule)
+            XCTAssertNil(symbol.isDocCommentFromSameModule(symbolModuleName: "Test"))
         }
     }
     
@@ -62,6 +66,9 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(symbol.docComment?.moduleName, "ModuleName")
         XCTAssertEqual(symbol.docComment?.url?.isFileURL, true)
         XCTAssertEqual(symbol.docComment?.url?.pathComponents.last, "file name")
+        
+        XCTAssertEqual(symbol.isDocCommentFromSameModule(symbolModuleName: "ModuleName"), true)
+        XCTAssertEqual(symbol.isDocCommentFromSameModule(symbolModuleName: "Test"), false)
     }
 
     /// Check that a Location mixin without position information still decodes a symbol graph without throwing.

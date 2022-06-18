@@ -58,7 +58,7 @@ extension SymbolGraph {
         /// the same module as the symbol or not.
         ///
         /// An inherited documentation comment is from the same module when the symbol that the documentation is inherited from is in the same module as this symbol.
-        @available(*, deprecated, message: "Use 'docComment?.moduleName' instead to compare the documentation's source module name with another module name.")
+        @available(*, deprecated, message: "Use 'isDocCommentFromSameModule(symbolModuleName:)' instead.")
         public var isDocCommentFromSameModule: Bool? {
             _isDocCommentFromSameModule
         }
@@ -71,8 +71,29 @@ extension SymbolGraph {
             // As a current implementation detail, documentation comments from within the current module has range information but
             // documentation comments that are inherited from other modules don't have any range information.
             //
-            // It would be better for correctness and accuracy to determine this when extracting the symbol information (rdar://81190369)
+            // This isn't always correct and is only used as a fallback logic for symbol information before the source module was
+            // included in the symbol graph file.
             return docComment.lines.contains(where: { $0.range != nil })
+        }
+        
+        /// If the symbol has a documentation comment, checks whether the documentation comment is from the same module as the symbol.
+        ///
+        /// A documentation comment is from the same module as the symbol when the source of the documentation comment is the symbol itself or another symbol in the same module.
+        ///
+        /// - Parameter symbolModuleName: The name of the module where the symbol is defined.
+        /// - Returns: `true`if the source of the documentation comment is from the same module as this symbol.
+        public func isDocCommentFromSameModule(symbolModuleName: String) -> Bool? {
+            guard let docComment = docComment, !docComment.lines.isEmpty else {
+                return nil
+            }
+            
+            if let moduleName = docComment.moduleName {
+                // If the new source module information is available, rely on that.
+                return moduleName == symbolModuleName
+            } else {
+                // Otherwise, fallback to the previous implementation.
+                return _isDocCommentFromSameModule
+            }
         }
 
         /// The access level of the symbol.
