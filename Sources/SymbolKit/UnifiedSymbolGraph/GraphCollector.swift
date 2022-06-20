@@ -76,6 +76,10 @@ extension GraphCollector {
             self.mergeSymbolGraph(graph, at: url, forceLoading: true)
         }
 
+        for (_, graph) in self.unifiedGraphs {
+            graph.collectOrphans()
+        }
+
         return (self.unifiedGraphs, self.graphSources)
     }
 
