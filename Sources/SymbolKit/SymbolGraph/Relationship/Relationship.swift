@@ -106,3 +106,30 @@ extension SymbolGraph {
         }
     }
 }
+
+extension SymbolGraph.Relationship: Hashable, Equatable {
+
+    /// A custom hashing for the relationship.
+    /// > Important: If there are new relationship mixins they need to be added to the hasher in this function.
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(source)
+        hasher.combine(target)
+        hasher.combine(kind.rawValue)
+        hasher.combine(targetFallback)
+        hasher.combine(mixins[SymbolGraph.Relationship.Swift.GenericConstraints.mixinKey] as? Swift.GenericConstraints)
+        hasher.combine(mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] as? SourceOrigin)
+    }
+
+    /// A custom equality implmentation for a relationship.
+    /// > Important: If there are new relationship mixins they need to be added to the equality function.
+    public static func == (lhs: SymbolGraph.Relationship, rhs: SymbolGraph.Relationship) -> Bool {
+        return lhs.source == rhs.source
+            && lhs.target == rhs.target
+            && lhs.kind == rhs.kind
+            && lhs.targetFallback == rhs.targetFallback
+            && lhs.mixins[SymbolGraph.Relationship.Swift.GenericConstraints.mixinKey] as? Swift.GenericConstraints
+                == rhs.mixins[SymbolGraph.Relationship.Swift.GenericConstraints.mixinKey] as? Swift.GenericConstraints
+            && lhs.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] as? SourceOrigin
+                == rhs.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] as? SourceOrigin
+    }
+}

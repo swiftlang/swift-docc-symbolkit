@@ -28,7 +28,20 @@ public class UnifiedSymbolGraph {
     public var symbols: [String: UnifiedSymbolGraph.Symbol]
 
     /// The relationships between symbols.
-    public var relationships: [SymbolGraph.Relationship]
+    @available(*, deprecated, message: "Use unifiedRelationships and orphanRelationships instead")
+    public var relationships: [SymbolGraph.Relationship] {
+        var allRelations = mergeRelationships(Array(relationshipsByLanguage.values.joined()))
+        allRelations.append(contentsOf: self.orphanRelationships)
+        return allRelations
+    }
+
+    /// The relationships between symbols, separated by the language's view those relationships are
+    /// relevant in.
+    public var relationshipsByLanguage: [Selector: [SymbolGraph.Relationship]]
+
+    /// A list of relationships between symbols, for which neither the source nor target were able
+    /// to be matched with an appropriate symbol in the collected graphs.
+    public var orphanRelationships: [SymbolGraph.Relationship]
 
     public init?(fromSingleGraph graph: SymbolGraph, at url: URL) {
         let (_, isMainGraph) = GraphCollector.moduleNameFor(graph, at: url)
@@ -37,15 +50,53 @@ public class UnifiedSymbolGraph {
         self.moduleData = [url: graph.module]
         self.metadata = [url: graph.metadata]
         self.symbols = graph.symbols.mapValues { UnifiedSymbolGraph.Symbol(fromSingleSymbol: $0, module: graph.module, isMainGraph: isMainGraph) }
-        self.relationships = graph.relationships
+        self.relationshipsByLanguage = [:]
+        self.orphanRelationships = []
+        loadRelationships(fromGraph: graph)
     }
 }
 
 extension UnifiedSymbolGraph {
-    /// Merge the given list of ``SymbolGraph/Relationship``s with the list in this graph.
+    func loadRelationships(fromGraph graph: SymbolGraph) {
+        var newRelations: [Selector: [SymbolGraph.Relationship]] = [:]
+
+        for rel in graph.relationships {
+            // associate each relationship with a selector based on the symbol(s) it references
+            let selectors: [Selector]
+            if let sourceSym = graph.symbols[rel.source] {
+                selectors = [Selector(interfaceLanguage: sourceSym.identifier.interfaceLanguage, platform: graph.module.platform.name)]
+            } else if let targetSym = graph.symbols[rel.target] {
+                selectors = [Selector(interfaceLanguage: targetSym.identifier.interfaceLanguage, platform: graph.module.platform.name)]
+            } else if let unifiedSourceSym = self.symbols[rel.source] {
+                selectors = unifiedSourceSym.mainGraphSelectors
+            } else if let unifiedTargetSym = self.symbols[rel.target] {
+                selectors = unifiedTargetSym.mainGraphSelectors
+            } else {
+                // If we can't find the appropriate selector(s) to use, consider the relationship an
+                // orphan and save it for later.
+                self.orphanRelationships.append(rel)
+                continue
+            }
+
+            for selector in selectors {
+                if !newRelations.keys.contains(selector) {
+                    newRelations[selector] = []
+                }
+
+                newRelations[selector]!.append(rel)
+            }
+        }
+
+        for (key: selector, value: relations) in newRelations {
+            self.relationshipsByLanguage[selector] = mergeRelationships(self.relationshipsByLanguage[selector, default: []], relations)
+        }
+    }
+
+    /// Merge the given lists of ``SymbolGraph/Relationship``s.
     ///
     /// This function will deduplicate relationships based on their source, target, and kind. If it sees a duplicate, it will keep the first one it sees.
-    func mergeRelationships(with otherRelations: [SymbolGraph.Relationship]) {
+    func mergeRelationships(_ relationsList: [SymbolGraph.Relationship]...)
+    -> [SymbolGraph.Relationship] {
         struct RelationKey: Hashable {
             let source: String
             let target: String
@@ -62,14 +113,51 @@ extension UnifiedSymbolGraph {
             }
         }
 
-        // first add the new relations to this one
-        self.relationships.append(contentsOf: otherRelations)
+        let allRelations = relationsList.joined()
 
         // deduplicate the combined relationships array by source/target/kind
         // FIXME: Actually merge relationships if they have different mixins (rdar://84267943)
-        let map = [:].merging(self.relationships.map({ RelationKey.makePair(fromRelation: $0) }), uniquingKeysWith: { r1, r2 in r1 })
+        let map = [:].merging(allRelations.map({ RelationKey.makePair(fromRelation: $0) }), uniquingKeysWith: { r1, r2 in r1 })
 
-        self.relationships = Array(map.values)
+        return Array(map.values)
+    }
+
+    /// Scans over ``orphanRelationships`` and sorts any whose source/target symbols were loaded
+    /// after the relationship was.
+    ///
+    /// Since relationships are added to ``relationshipsByLanguage`` based on what symbols are
+    /// available when the relationship is being loaded, a relationship can be considered an
+    /// "orphan" even when it's not, if the symbol graphs are loaded in a certain order. This
+    /// method was added to ensure that these relationships can be properly assigned a language
+    /// even if the symbol information isn't in the same symbol graph.
+    internal func collectOrphans() {
+        var newRelations: [Selector: [SymbolGraph.Relationship]] = [:]
+        var remainingOrphans: [SymbolGraph.Relationship] = []
+        for rel in self.orphanRelationships {
+            let selectors: [Selector]
+            if let unifiedSourceSym = self.symbols[rel.source] {
+                selectors = unifiedSourceSym.mainGraphSelectors
+            } else if let unifiedSourceSym = self.symbols[rel.target] {
+                selectors = unifiedSourceSym.mainGraphSelectors
+            } else {
+                remainingOrphans.append(rel)
+                continue
+            }
+
+            for selector in selectors {
+                if !newRelations.keys.contains(selector) {
+                    newRelations[selector] = []
+                }
+
+                newRelations[selector]!.append(rel)
+            }
+        }
+
+        for (key: selector, value: relations) in newRelations {
+            self.relationshipsByLanguage[selector] = mergeRelationships(self.relationshipsByLanguage[selector, default: []], relations)
+        }
+
+        self.orphanRelationships = remainingOrphans
     }
 
     /// Merge the given symbol graph with this one.
@@ -79,8 +167,6 @@ extension UnifiedSymbolGraph {
         self.metadata[url] = graph.metadata
         self.moduleData[url] = graph.module
 
-        self.mergeRelationships(with: graph.relationships)
-
         for (key: precise, value: sym) in graph.symbols {
             if let existingSymbol = self.symbols[precise] {
                 existingSymbol.mergeSymbol(symbol: sym, module: graph.module, isMainGraph: isMainGraph)
@@ -88,6 +174,8 @@ extension UnifiedSymbolGraph {
                 self.symbols[precise] = Symbol(fromSingleSymbol: sym, module: graph.module, isMainGraph: isMainGraph)
             }
         }
+
+        loadRelationships(fromGraph: graph)
     }
 }
 
