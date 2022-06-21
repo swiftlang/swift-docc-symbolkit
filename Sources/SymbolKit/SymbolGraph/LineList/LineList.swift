@@ -1,12 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
+
+import Foundation
 
 extension SymbolGraph {
     /**
@@ -91,9 +93,21 @@ extension SymbolGraph {
     public struct LineList: Codable, Equatable {
         /// The lines making up this line list.
         public var lines: [Line]
-
-        public init(_ lines: [Line]) {
+        /// The file URL of the source file where the documentation comment originated.
+        public var url: URL?
+        /// The name of the source module where the documentation comment originated.
+        public var moduleName: String?
+        
+        enum CodingKeys: String, CodingKey {
+            case lines
+            case url = "uri"
+            case moduleName = "module"
+        }
+        
+        public init(_ lines: [Line], url: URL? = nil, moduleName: String? = nil) {
             self.lines = lines
+            self.url = url
+            self.moduleName = moduleName
         }
 
         /**
