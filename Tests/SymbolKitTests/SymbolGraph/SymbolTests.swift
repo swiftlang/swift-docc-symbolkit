@@ -86,6 +86,11 @@ class SymbolTests: XCTestCase {
             "relative/path/to/filename with spaces.swift",
             "/absolute/path/to/filename with spaces.swift",
             "file:///absolute/path/to/filename with spaces.swift",
+            
+            "filename%20with%20escaped%20spaces.swift",
+            "relative/path/to/filename%20with%20escaped%20spaces.swift",
+            "/absolute/path/to/filename%20with%20escaped%20spaces.swift",
+            "file:///absolute/path/to/filename%20with%20escaped%20spaces.swift",
         ]
         
         for uri in uris {
@@ -166,11 +171,13 @@ class SymbolTests: XCTestCase {
             let docComment = try XCTUnwrap(symbol.docComment)
             XCTAssertEqual(docComment.uri, uri)
             XCTAssertNotNil(docComment.url)
+            XCTAssertEqual(false, docComment.url?.path.contains("%20"))
             XCTAssertEqual(docComment.url?.absoluteString, expectedAbsoluteURLString)
             
             let location = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.Location.mixinKey] as? SymbolGraph.Symbol.Location)
             XCTAssertEqual(location.uri, uri)
             XCTAssertNotNil(location.url)
+            XCTAssertEqual(false, location.url?.path.contains("%20"))
             XCTAssertEqual(location.url?.absoluteString, expectedAbsoluteURLString)
         }
     }
