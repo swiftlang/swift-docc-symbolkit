@@ -70,6 +70,110 @@ class SymbolTests: XCTestCase {
         XCTAssertEqual(symbol.isDocCommentFromSameModule(symbolModuleName: "ModuleName"), true)
         XCTAssertEqual(symbol.isDocCommentFromSameModule(symbolModuleName: "Test"), false)
     }
+    
+    func testURIStringsThatAreNotValidURLs() throws {
+        let uris = [
+            "filename.swift",
+            "relative/path/to/filename.swift",
+            "/absolute/path/to/filename.swift",
+            "file:///absolute/path/to/filename.swift",
+            
+            "relative/path with spaces/to/filename.swift",
+            "/absolute/path with spaces/to/filename.swift",
+            "file:///absolute/path with spaces/to/filename.swift",
+            
+            "filename with spaces.swift",
+            "relative/path/to/filename with spaces.swift",
+            "/absolute/path/to/filename with spaces.swift",
+            "file:///absolute/path/to/filename with spaces.swift",
+        ]
+        
+        for uri in uris {
+            let inputGraph = """
+{
+  "accessLevel" : "public",
+  "kind" : {
+    "displayName" : "Instance Method",
+    "identifier" : "swift.method"
+  },
+  "pathComponents" : [
+    "ClassName",
+    "something()"
+  ],
+  "identifier" : {
+    "precise" : "precise-identifier",
+    "interfaceLanguage" : "swift"
+  },
+  "names" : {
+    "title" : "something()"
+  },
+  "location" : {
+    "position" : {
+      "character" : 4,
+      "line" : 3
+    },
+    "uri" : "\(uri)"
+  },
+  "docComment" : {
+    "lines" : [
+      {
+        "range" : {
+          "end" : {
+            "character" : 21,
+            "line": 2
+          },
+          "start" : {
+            "character" : 4,
+            "line" : 2
+          }
+        },
+        "text" : "Doc comment text."
+      }
+    ],
+    "module" : "SourceModuleName",
+    "uri" : "\(uri)"
+  },
+  "declarationFragments" : [
+    {
+      "kind" : "keyword",
+      "spelling" : "func"
+    },
+    {
+      "kind" : "text",
+      "spelling" : " "
+    },
+    {
+      "kind" : "identifier",
+      "spelling" : "something"
+    },
+    {
+      "kind" : "text",
+      "spelling" : "() -> "
+    },
+    {
+      "kind" : "keyword",
+      "spelling" : "Any"
+    }
+  ]
+}
+""".data(using: .utf8)!
+            
+            let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraph)
+            
+            // This doesn't do full percent encoding to preserve the "file://" prefix.
+            let expectedAbsoluteURLString = uri.replacingOccurrences(of: " ", with: "%20")
+            
+            let docComment = try XCTUnwrap(symbol.docComment)
+            XCTAssertEqual(docComment.uri, uri)
+            XCTAssertNotNil(docComment.url)
+            XCTAssertEqual(docComment.url?.absoluteString, expectedAbsoluteURLString)
+            
+            let location = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.Location.mixinKey] as? SymbolGraph.Symbol.Location)
+            XCTAssertEqual(location.uri, uri)
+            XCTAssertNotNil(location.url)
+            XCTAssertEqual(location.url?.absoluteString, expectedAbsoluteURLString)
+        }
+    }
 
     /// Check that a Location mixin without position information still decodes a symbol graph without throwing.
     func testMalformedLocationDoesNotThrow() throws {
@@ -138,7 +242,7 @@ private func encodedSymbol(withDocComment: (lines: [String], rangeStart: (line: 
                 )
             }
             return SymbolGraph.LineList.Line(text: text, range: range)
-        }, url: withDocComment.fileName.map({ URL(fileURLWithPath: $0) }), moduleName: withDocComment.moduleName)
+        }, uri: withDocComment.fileName.map({ "file:///path/to/" + $0 }), moduleName: withDocComment.moduleName)
         let encoder = JSONEncoder()
         encoder.outputFormatting = .prettyPrinted
         let data = try! encoder.encode(lineList)

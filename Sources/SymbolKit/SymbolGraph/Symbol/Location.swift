@@ -27,6 +27,19 @@ extension SymbolGraph.Symbol {
         public var uri: String
 
         /**
+         The file URL of the source file where the symbol was originally declared.
+         */
+        @available(macOS 10.11, *)
+        public var url: URL? {
+            // The URI string provided in the symbol graph file may be an invalid URL (rdar://69242070)
+            //
+            // Using `URL.init(dataRepresentation:relativeTo:)` here handles URI strings with unescaped
+            // characters without trying to escape or otherwise process the URI string in SymbolKit.
+            // Remove this workaround as part of rdar://77336041 when rdar://69242070 is resolved.
+            URL(dataRepresentation: Data(uri.utf8), relativeTo: nil)
+        }
+        
+        /**
          The range of the declaration in the file, not including its documentation comment.
          */
         public var position: SymbolGraph.LineList.SourceRange.Position
