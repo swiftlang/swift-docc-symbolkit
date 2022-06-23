@@ -1,12 +1,14 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
+
+import Foundation
 
 extension SymbolGraph {
     /**
@@ -91,9 +93,34 @@ extension SymbolGraph {
     public struct LineList: Codable, Equatable {
         /// The lines making up this line list.
         public var lines: [Line]
-
-        public init(_ lines: [Line]) {
+        
+        /// The URI of the source file where the documentation comment originated.
+        public var uri: String?
+        
+        /// The file URL of the source file where the documentation comment originated.
+        @available(macOS 10.11, *)
+        public var url: URL? {
+            guard let uri = uri else { return nil }
+            // The URI string provided in the symbol graph file may be an invalid URL (rdar://69242070)
+            //
+            // Using `URL.init(dataRepresentation:relativeTo:)` here handles URI strings with unescaped
+            // characters without trying to escape or otherwise process the URI string in SymbolKit.
+            return URL(dataRepresentation: Data(uri.utf8), relativeTo: nil)
+        }
+        
+        /// The name of the source module where the documentation comment originated.
+        public var moduleName: String?
+        
+        enum CodingKeys: String, CodingKey {
+            case lines
+            case uri
+            case moduleName = "module"
+        }
+        
+        public init(_ lines: [Line], uri: String? = nil, moduleName: String? = nil) {
             self.lines = lines
+            self.uri = uri
+            self.moduleName = moduleName
         }
 
         /**
