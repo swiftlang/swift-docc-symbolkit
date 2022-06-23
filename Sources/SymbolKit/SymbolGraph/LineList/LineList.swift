@@ -93,20 +93,33 @@ extension SymbolGraph {
     public struct LineList: Codable, Equatable {
         /// The lines making up this line list.
         public var lines: [Line]
+        
+        /// The URI of the source file where the documentation comment originated.
+        public var uri: String?
+        
         /// The file URL of the source file where the documentation comment originated.
-        public var url: URL?
+        @available(macOS 10.11, *)
+        public var url: URL? {
+            guard let uri = uri else { return nil }
+            // The URI string provided in the symbol graph file may be an invalid URL (rdar://69242070)
+            //
+            // Using `URL.init(dataRepresentation:relativeTo:)` here handles URI strings with unescaped
+            // characters without trying to escape or otherwise process the URI string in SymbolKit.
+            return URL(dataRepresentation: Data(uri.utf8), relativeTo: nil)
+        }
+        
         /// The name of the source module where the documentation comment originated.
         public var moduleName: String?
         
         enum CodingKeys: String, CodingKey {
             case lines
-            case url = "uri"
+            case uri
             case moduleName = "module"
         }
         
-        public init(_ lines: [Line], url: URL? = nil, moduleName: String? = nil) {
+        public init(_ lines: [Line], uri: String? = nil, moduleName: String? = nil) {
             self.lines = lines
-            self.url = url
+            self.uri = uri
             self.moduleName = moduleName
         }
 
