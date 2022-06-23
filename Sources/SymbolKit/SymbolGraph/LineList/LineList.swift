@@ -105,7 +105,6 @@ extension SymbolGraph {
             //
             // Using `URL.init(dataRepresentation:relativeTo:)` here handles URI strings with unescaped
             // characters without trying to escape or otherwise process the URI string in SymbolKit.
-            // Remove this workaround as part of rdar://77336041 when rdar://69242070 is resolved.
             return URL(dataRepresentation: Data(uri.utf8), relativeTo: nil)
         }
         
