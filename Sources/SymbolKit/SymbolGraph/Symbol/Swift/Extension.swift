@@ -27,7 +27,7 @@ extension SymbolGraph.Symbol.Swift {
         /**
          The ``SymbolGraph/Symbol/KindIdentifier`` of the symbol this
          extension extends.
-          
+
          Usually, this will be either of ``SymbolGraph/Symbol/KindIdentifier/struct``,
          ``SymbolGraph/Symbol/KindIdentifier/class``, ``SymbolGraph/Symbol/KindIdentifier/enum``
          or ``SymbolGraph/Symbol/KindIdentifier/protocol``.
