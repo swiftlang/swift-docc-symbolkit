@@ -233,7 +233,113 @@ class SymbolTests: XCTestCase {
         let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraph)
         XCTAssertNil(symbol.mixins[SymbolGraph.Symbol.Location.mixinKey])
     }
+ 
+    /// Check that an Extension mixin keeps the `typeKind` information if available and doesn't throw if it is absent.
+    func testOptionalExtensionTypeKindCoding() throws {
+        let inputGraphWithTypeKindInformation = """
+{
+  "accessLevel" : "public",
+  "kind" : {
+    "displayName" : "Instance Method",
+    "identifier" : "swift.method"
+  },
+  "pathComponents" : [
+    "ClassName",
+    "something()"
+  ],
+  "identifier" : {
+    "precise" : "precise-identifier",
+    "interfaceLanguage" : "swift"
+  },
+  "names" : {
+    "title" : "something()"
+  },
+  "swiftExtension": {
+    "extendedModule": "ExtendedModule",
+    "typeKind": "class"
+  },
+  "declarationFragments" : [
+    {
+      "kind" : "keyword",
+      "spelling" : "func"
+    },
+    {
+      "kind" : "text",
+      "spelling" : " "
+    },
+    {
+      "kind" : "identifier",
+      "spelling" : "something"
+    },
+    {
+      "kind" : "text",
+      "spelling" : "() -> "
+    },
+    {
+      "kind" : "keyword",
+      "spelling" : "Any"
+    }
+  ]
+}
+""".data(using: .utf8)!
     
+        let symbolWithTypeKind = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraphWithTypeKindInformation)
+        XCTAssertNotNil((symbolWithTypeKind.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension)?.typeKind)
+        
+        XCTAssertTrue(String(data: try JSONEncoder().encode(symbolWithTypeKind), encoding: .utf8)!.contains("\"typeKind\":\"class\""))
+        
+        let inputGraphWithoutTypeKindInformation = """
+{
+  "accessLevel" : "public",
+  "kind" : {
+    "displayName" : "Instance Method",
+    "identifier" : "swift.method"
+  },
+  "pathComponents" : [
+    "ClassName",
+    "something()"
+  ],
+  "identifier" : {
+    "precise" : "precise-identifier",
+    "interfaceLanguage" : "swift"
+  },
+  "names" : {
+    "title" : "something()"
+  },
+  "swiftExtension": {
+    "extendedModule": "ExtendedModule",
+  },
+  "declarationFragments" : [
+    {
+      "kind" : "keyword",
+      "spelling" : "func"
+    },
+    {
+      "kind" : "text",
+      "spelling" : " "
+    },
+    {
+      "kind" : "identifier",
+      "spelling" : "something"
+    },
+    {
+      "kind" : "text",
+      "spelling" : "() -> "
+    },
+    {
+      "kind" : "keyword",
+      "spelling" : "Any"
+    }
+  ]
+}
+""".data(using: .utf8)!
+    
+        let symbolWithoutTypeKind = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraphWithoutTypeKindInformation)
+        XCTAssertNotNil((symbolWithoutTypeKind.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension))
+        XCTAssertNil((symbolWithoutTypeKind.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension)!.typeKind)
+        
+        XCTAssertFalse(String(data: try JSONEncoder().encode(symbolWithoutTypeKind), encoding: .utf8)!.contains("\"typeKind\":\"class\""))
+    }
 }
 
 // MARK: Test Data

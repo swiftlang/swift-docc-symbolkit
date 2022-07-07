@@ -83,5 +83,16 @@ extension SymbolGraph.Relationship {
          an interface `B` has an optional requirement of `A`.
          */
         public static let optionalRequirementOf = Kind(rawValue: "optionalRequirementOf")
+        
+        /**
+         A symbol `A` extends a symbol `B` with members or conformances.
+
+         This relationship describes the connection between extension blocks
+         (swift.extension symbols) and the type they extend.
+
+         The implied inverse of this relationship is a symbol `B` that is extended
+         by an extension block symbol `A`.
+         */
+        public static let extensionTo = Kind(rawValue: "extensionTo")
     }
 }
