@@ -96,6 +96,44 @@ class UnifiedGraphTests: XCTestCase {
         let objcRelations = try XCTUnwrap(demoGraph.relationshipsByLanguage.first(where: { $0.key.interfaceLanguage == "objc" })?.value)
         XCTAssert(objcRelations.contains(where: { $0.target == "unknownProtocol" }))
     }
+
+    func testCollectExtensionGraph() throws {
+        let baseSyms = swiftSymbolGraph()
+
+        var extensionSyms = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:SomeStruct", interfaceLanguage: "swift"),
+                    names: .init(title: "SomeStruct", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["PlayingCard", "SomeStruct"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .struct, displayName: "Structure"),
+                    mixins: [:]
+                )
+            ],
+            relations: [
+                .init(
+                    source: "s:SomeStruct",
+                    target: "c:objc(cs)PlayingCard",
+                    kind: .memberOf,
+                    targetFallback: "DemoKit.PlayingCard")
+            ]
+        )
+        extensionSyms.module.name = "OtherKit"
+
+        let collector = GraphCollector()
+        collector.mergeSymbolGraph(baseSyms, at: .init(fileURLWithPath: "DemoKit.symbols.json"))
+        collector.mergeSymbolGraph(extensionSyms, at: .init(fileURLWithPath: "OtherKit@DemoKit.symbols.json"))
+
+        let (unifiedGraphs, _) = collector.finishLoading()
+
+        XCTAssertFalse(unifiedGraphs.keys.contains("OtherKit"))
+        let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+        let extensionSym = try XCTUnwrap(demoGraph.symbols["s:SomeStruct"])
+        let extensionSymModule = try XCTUnwrap(extensionSym.modules[.init(forSymbolGraph: extensionSyms)!])
+        XCTAssertEqual(extensionSymModule.name, "OtherKit")
+    }
 }
 
 /// Compare the given lists of relationships and assert that they contain the same relationships.
