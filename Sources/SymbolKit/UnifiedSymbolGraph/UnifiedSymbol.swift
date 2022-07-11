@@ -44,6 +44,9 @@ extension UnifiedSymbolGraph {
         /// The access level of the symbol.
         public var accessLevel: [Selector: SymbolGraph.Symbol.AccessControl]
 
+        /// If true, the symbol was created implicitly and not from source.
+        public var isVirtual: [Selector: Bool]
+
         /// Information about a symbol that is not necessarily common to all symbols.
         public var mixins: [Selector: [String: Mixin]]
 
@@ -67,6 +70,7 @@ extension UnifiedSymbolGraph {
                 self.docComment[selector] = docComment
             }
             self.accessLevel = [selector: sym.accessLevel]
+            self.isVirtual = [selector: sym.isVirtual]
             self.mixins = [selector: sym.mixins]
         }
 
@@ -94,6 +98,7 @@ extension UnifiedSymbolGraph {
             self.names[selector] = symbol.names
             self.docComment[selector] = symbol.docComment
             self.accessLevel[selector] = symbol.accessLevel
+            self.isVirtual[selector] = symbol.isVirtual
             self.mixins[selector] = symbol.mixins
         }
     }
