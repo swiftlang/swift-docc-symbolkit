@@ -26,11 +26,38 @@ public class GraphCollector {
     var graphSources: [String: [GraphKind]] = [:]
 
     var extensionGraphs: [URL: SymbolGraph] = [:]
+    
+    private let strategy: MergeStrategy
 
-    public init() {
+    /// Initialize a new collector for merging ``SymbolGraph``s into ``UnifiedSymbolGraph``s.
+    ///
+    /// - Parameter strategy: Optionally specifiy how graphs are to be merged.
+    public init(strategy: MergeStrategy = MergeStrategy()) {
         self.unifiedGraphs = [:]
         self.graphSources = [:]
         self.extensionGraphs = [:]
+        self.strategy = strategy
+    }
+}
+
+extension GraphCollector {
+    /// Describes the strategy for how to merge symbol graph files.
+    public struct MergeStrategy {
+        public init(extensionGraphAssociation: GraphCollector.MergeStrategy.ExtensionGraphAssociation = .extendedGraph) {
+            self.extensionGraphAssociation = extensionGraphAssociation
+        }
+        
+        /// Describes which graph an extension graph is merged with.
+        public var extensionGraphAssociation: ExtensionGraphAssociation
+        
+        /// Describes which graph an extension graph (named `ExtendingModule@ExtendedModule.symbols.json`)
+        /// is merged with.
+        public enum ExtensionGraphAssociation {
+            /// Merge with the extending module
+            case extendingGraph
+            /// Merge with the extended module
+            case extendedGraph
+        }
     }
 }
 
@@ -42,7 +69,9 @@ extension GraphCollector {
     ///   - url: The file name where the given symbol graph is located. Used to determine whether a symbol graph
     ///     contains primary symbols or extensions.
     public func mergeSymbolGraph(_ inputGraph: SymbolGraph, at url: URL, forceLoading: Bool = false) {
-        let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(inputGraph, at: url)
+        let (extendedModuleName, isMainSymbolGraph) = Self.moduleNameFor(inputGraph, at: url)
+
+        let moduleName = strategy.extensionGraphAssociation == .extendedGraph ? extendedModuleName : inputGraph.module.name
 
         if !isMainSymbolGraph && !forceLoading {
             self.extensionGraphs[url] = inputGraph
