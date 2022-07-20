@@ -95,73 +95,73 @@ class SymbolTests: XCTestCase {
         
         for uri in uris {
             let inputGraph = """
-{
-  "accessLevel" : "public",
-  "kind" : {
-    "displayName" : "Instance Method",
-    "identifier" : "swift.method"
-  },
-  "pathComponents" : [
-    "ClassName",
-    "something()"
-  ],
-  "identifier" : {
-    "precise" : "precise-identifier",
-    "interfaceLanguage" : "swift"
-  },
-  "names" : {
-    "title" : "something()"
-  },
-  "location" : {
-    "position" : {
-      "character" : 4,
-      "line" : 3
-    },
-    "uri" : "\(uri)"
-  },
-  "docComment" : {
-    "lines" : [
-      {
-        "range" : {
-          "end" : {
-            "character" : 21,
-            "line": 2
-          },
-          "start" : {
-            "character" : 4,
-            "line" : 2
-          }
-        },
-        "text" : "Doc comment text."
-      }
-    ],
-    "module" : "SourceModuleName",
-    "uri" : "\(uri)"
-  },
-  "declarationFragments" : [
-    {
-      "kind" : "keyword",
-      "spelling" : "func"
-    },
-    {
-      "kind" : "text",
-      "spelling" : " "
-    },
-    {
-      "kind" : "identifier",
-      "spelling" : "something"
-    },
-    {
-      "kind" : "text",
-      "spelling" : "() -> "
-    },
-    {
-      "kind" : "keyword",
-      "spelling" : "Any"
-    }
-  ]
-}
-""".data(using: .utf8)!
+            {
+              "accessLevel" : "public",
+              "kind" : {
+                "displayName" : "Instance Method",
+                "identifier" : "swift.method"
+              },
+              "pathComponents" : [
+                "ClassName",
+                "something()"
+              ],
+              "identifier" : {
+                "precise" : "precise-identifier",
+                "interfaceLanguage" : "swift"
+              },
+              "names" : {
+                "title" : "something()"
+              },
+              "location" : {
+                "position" : {
+                  "character" : 4,
+                  "line" : 3
+                },
+                "uri" : "\(uri)"
+              },
+              "docComment" : {
+                "lines" : [
+                  {
+                    "range" : {
+                      "end" : {
+                        "character" : 21,
+                        "line": 2
+                      },
+                      "start" : {
+                        "character" : 4,
+                        "line" : 2
+                      }
+                    },
+                    "text" : "Doc comment text."
+                  }
+                ],
+                "module" : "SourceModuleName",
+                "uri" : "\(uri)"
+              },
+              "declarationFragments" : [
+                {
+                  "kind" : "keyword",
+                  "spelling" : "func"
+                },
+                {
+                  "kind" : "text",
+                  "spelling" : " "
+                },
+                {
+                  "kind" : "identifier",
+                  "spelling" : "something"
+                },
+                {
+                  "kind" : "text",
+                  "spelling" : "() -> "
+                },
+                {
+                  "kind" : "keyword",
+                  "spelling" : "Any"
+                }
+              ]
+            }
+            """.data(using: .utf8)!
             
             let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraph)
             
@@ -185,50 +185,50 @@ class SymbolTests: XCTestCase {
     /// Check that a Location mixin without position information still decodes a symbol graph without throwing.
     func testMalformedLocationDoesNotThrow() throws {
         let inputGraph = """
-{
-  "accessLevel" : "public",
-  "kind" : {
-    "displayName" : "Instance Method",
-    "identifier" : "swift.method"
-  },
-  "pathComponents" : [
-    "ClassName",
-    "something()"
-  ],
-  "identifier" : {
-    "precise" : "precise-identifier",
-    "interfaceLanguage" : "swift"
-  },
-  "names" : {
-    "title" : "something()"
-  },
-  "location" : {
-    "uri" : "file:///path/to/someSource.swift"
-  },
-  "declarationFragments" : [
-    {
-      "kind" : "keyword",
-      "spelling" : "func"
-    },
-    {
-      "kind" : "text",
-      "spelling" : " "
-    },
-    {
-      "kind" : "identifier",
-      "spelling" : "something"
-    },
-    {
-      "kind" : "text",
-      "spelling" : "() -> "
-    },
-    {
-      "kind" : "keyword",
-      "spelling" : "Any"
-    }
-  ]
-}
-""".data(using: .utf8)!
+        {
+          "accessLevel" : "public",
+          "kind" : {
+            "displayName" : "Instance Method",
+            "identifier" : "swift.method"
+          },
+          "pathComponents" : [
+            "ClassName",
+            "something()"
+          ],
+          "identifier" : {
+            "precise" : "precise-identifier",
+            "interfaceLanguage" : "swift"
+          },
+          "names" : {
+            "title" : "something()"
+          },
+          "location" : {
+            "uri" : "file:///path/to/someSource.swift"
+          },
+          "declarationFragments" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "func"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "something"
+            },
+            {
+              "kind" : "text",
+              "spelling" : "() -> "
+            },
+            {
+              "kind" : "keyword",
+              "spelling" : "Any"
+            }
+          ]
+        }
+        """.data(using: .utf8)!
 
         let symbol = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraph)
         XCTAssertNil(symbol.mixins[SymbolGraph.Symbol.Location.mixinKey])
@@ -237,51 +237,51 @@ class SymbolTests: XCTestCase {
     /// Check that an Extension mixin keeps the `typeKind` information if available and doesn't throw if it is absent.
     func testOptionalExtensionTypeKindCoding() throws {
         let inputGraphWithTypeKindInformation = """
-{
-  "accessLevel" : "public",
-  "kind" : {
-    "displayName" : "Instance Method",
-    "identifier" : "swift.method"
-  },
-  "pathComponents" : [
-    "ClassName",
-    "something()"
-  ],
-  "identifier" : {
-    "precise" : "precise-identifier",
-    "interfaceLanguage" : "swift"
-  },
-  "names" : {
-    "title" : "something()"
-  },
-  "swiftExtension": {
-    "extendedModule": "ExtendedModule",
-    "typeKind": "class"
-  },
-  "declarationFragments" : [
-    {
-      "kind" : "keyword",
-      "spelling" : "func"
-    },
-    {
-      "kind" : "text",
-      "spelling" : " "
-    },
-    {
-      "kind" : "identifier",
-      "spelling" : "something"
-    },
-    {
-      "kind" : "text",
-      "spelling" : "() -> "
-    },
-    {
-      "kind" : "keyword",
-      "spelling" : "Any"
-    }
-  ]
-}
-""".data(using: .utf8)!
+        {
+          "accessLevel" : "public",
+          "kind" : {
+            "displayName" : "Instance Method",
+            "identifier" : "swift.method"
+          },
+          "pathComponents" : [
+            "ClassName",
+            "something()"
+          ],
+          "identifier" : {
+            "precise" : "precise-identifier",
+            "interfaceLanguage" : "swift"
+          },
+          "names" : {
+            "title" : "something()"
+          },
+          "swiftExtension": {
+            "extendedModule": "ExtendedModule",
+            "typeKind": "class"
+          },
+          "declarationFragments" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "func"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "something"
+            },
+            {
+              "kind" : "text",
+              "spelling" : "() -> "
+            },
+            {
+              "kind" : "keyword",
+              "spelling" : "Any"
+            }
+          ]
+        }
+        """.data(using: .utf8)!
     
         let symbolWithTypeKind = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraphWithTypeKindInformation)
         XCTAssertNotNil((symbolWithTypeKind.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension)?.typeKind)
@@ -289,50 +289,50 @@ class SymbolTests: XCTestCase {
         XCTAssertTrue(String(data: try JSONEncoder().encode(symbolWithTypeKind), encoding: .utf8)!.contains("\"typeKind\":\"class\""))
         
         let inputGraphWithoutTypeKindInformation = """
-{
-  "accessLevel" : "public",
-  "kind" : {
-    "displayName" : "Instance Method",
-    "identifier" : "swift.method"
-  },
-  "pathComponents" : [
-    "ClassName",
-    "something()"
-  ],
-  "identifier" : {
-    "precise" : "precise-identifier",
-    "interfaceLanguage" : "swift"
-  },
-  "names" : {
-    "title" : "something()"
-  },
-  "swiftExtension": {
-    "extendedModule": "ExtendedModule",
-  },
-  "declarationFragments" : [
-    {
-      "kind" : "keyword",
-      "spelling" : "func"
-    },
-    {
-      "kind" : "text",
-      "spelling" : " "
-    },
-    {
-      "kind" : "identifier",
-      "spelling" : "something"
-    },
-    {
-      "kind" : "text",
-      "spelling" : "() -> "
-    },
-    {
-      "kind" : "keyword",
-      "spelling" : "Any"
-    }
-  ]
-}
-""".data(using: .utf8)!
+        {
+          "accessLevel" : "public",
+          "kind" : {
+            "displayName" : "Instance Method",
+            "identifier" : "swift.method"
+          },
+          "pathComponents" : [
+            "ClassName",
+            "something()"
+          ],
+          "identifier" : {
+            "precise" : "precise-identifier",
+            "interfaceLanguage" : "swift"
+          },
+          "names" : {
+            "title" : "something()"
+          },
+          "swiftExtension": {
+            "extendedModule": "ExtendedModule",
+          },
+          "declarationFragments" : [
+            {
+              "kind" : "keyword",
+              "spelling" : "func"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "something"
+            },
+            {
+              "kind" : "text",
+              "spelling" : "() -> "
+            },
+            {
+              "kind" : "keyword",
+              "spelling" : "Any"
+            }
+          ]
+        }
+        """.data(using: .utf8)!
     
         let symbolWithoutTypeKind = try JSONDecoder().decode(SymbolGraph.Symbol.self, from: inputGraphWithoutTypeKindInformation)
         XCTAssertNotNil((symbolWithoutTypeKind.mixins[SymbolGraph.Symbol.Swift.Extension.mixinKey] as? SymbolGraph.Symbol.Swift.Extension))
@@ -365,46 +365,46 @@ private func encodedSymbol(withDocComment: (lines: [String], rangeStart: (line: 
     }
     
     return """
-{
-  "accessLevel" : "public",
-  "kind" : {
-    "displayName" : "Instance Method",
-    "identifier" : "swift.method"
-  },
-  "pathComponents" : [
-    "ClassName",
-    "something()"
-  ],
-  "identifier" : {
-    "precise" : "precise-identifier",
-    "interfaceLanguage" : "swift"
-  },
-  "names" : {
-    "title" : "something()"
-  },
-  "docComment" : \(docCommentJSON),
-  "declarationFragments" : [
     {
-      "kind" : "keyword",
-      "spelling" : "func"
-    },
-    {
-      "kind" : "text",
-      "spelling" : " "
-    },
-    {
-      "kind" : "identifier",
-      "spelling" : "something"
-    },
-    {
-      "kind" : "text",
-      "spelling" : "() -> "
-    },
-    {
-      "kind" : "keyword",
-      "spelling" : "Any"
+      "accessLevel" : "public",
+      "kind" : {
+        "displayName" : "Instance Method",
+        "identifier" : "swift.method"
+      },
+      "pathComponents" : [
+        "ClassName",
+        "something()"
+      ],
+      "identifier" : {
+        "precise" : "precise-identifier",
+        "interfaceLanguage" : "swift"
+      },
+      "names" : {
+        "title" : "something()"
+      },
+      "docComment" : \(docCommentJSON),
+      "declarationFragments" : [
+        {
+          "kind" : "keyword",
+          "spelling" : "func"
+        },
+        {
+          "kind" : "text",
+          "spelling" : " "
+        },
+        {
+          "kind" : "identifier",
+          "spelling" : "something"
+        },
+        {
+          "kind" : "text",
+          "spelling" : "() -> "
+        },
+        {
+          "kind" : "keyword",
+          "spelling" : "Any"
+        }
+      ]
     }
-  ]
-}
-"""
+    """
 }
