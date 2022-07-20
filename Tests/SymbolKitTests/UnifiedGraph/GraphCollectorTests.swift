@@ -67,21 +67,16 @@ class GraphCollectorTests: XCTestCase {
         
         XCTAssertEqual(unifiedGraphs.count, 2)
         
-        for graph in unifiedGraphs.values {
-            if graph.moduleName == "A" {
-                XCTAssertEqual(graph.symbols.count, 1)
-                XCTAssertTrue(graph.symbols.keys.contains("s:AA"))
-            } else if graph.moduleName == "B" {
-                XCTAssertEqual(graph.symbols.count, 2)
-                XCTAssertTrue(graph.symbols.keys.contains("s:BB"))
-                XCTAssertTrue(graph.symbols.keys.contains("s:BBAatB"))
-            } else {
-                XCTFail()
-            }
-        }
+        var graphA = try XCTUnwrap(unifiedGraphs["A"])
+        XCTAssertEqual(graphA.symbols.count, 1)
+        XCTAssert(graphA.symbols.keys.contains("s:AA"))
+        var graphB = try XCTUnwrap(unifiedGraphs["B"])
+        XCTAssertEqual(graphB.symbols.count, 2)
+        XCTAssert(graphB.symbols.keys.contains("s:BB"))
+        XCTAssert(graphB.symbols.keys.contains("s:BBAatB"))
         
         // test with extendingGraph association strategy (extension graphs get attached to extend**ing** graph
-        collector = GraphCollector(strategy: .init(extensionGraphAssociation: .extendingGraph))
+        collector = GraphCollector(extensionGraphAssociationStrategy: .extendingGraph)
         
         collector.mergeSymbolGraph(a, at: .init(fileURLWithPath: "A.symbols.json"))
         collector.mergeSymbolGraph(b, at: .init(fileURLWithPath: "B.symbols.json"))
@@ -91,17 +86,12 @@ class GraphCollectorTests: XCTestCase {
         
         XCTAssertEqual(unifiedGraphs.count, 2)
         
-        for graph in unifiedGraphs.values {
-            if graph.moduleName == "A" {
-                XCTAssertEqual(graph.symbols.count, 2)
-                XCTAssertTrue(graph.symbols.keys.contains("s:AA"))
-                XCTAssertTrue(graph.symbols.keys.contains("s:BBAatB"))
-            } else if graph.moduleName == "B" {
-                XCTAssertEqual(graph.symbols.count, 1)
-                XCTAssertTrue(graph.symbols.keys.contains("s:BB"))
-            } else {
-                XCTFail()
-            }
-        }
+        graphA = try XCTUnwrap(unifiedGraphs["A"])
+        XCTAssertEqual(graphA.symbols.count, 2)
+        XCTAssert(graphA.symbols.keys.contains("s:AA"))
+        XCTAssert(graphA.symbols.keys.contains("s:BBAatB"))
+        graphB = try XCTUnwrap(unifiedGraphs["B"])
+        XCTAssertEqual(graphB.symbols.count, 1)
+        XCTAssert(graphB.symbols.keys.contains("s:BB"))
     }
 }
