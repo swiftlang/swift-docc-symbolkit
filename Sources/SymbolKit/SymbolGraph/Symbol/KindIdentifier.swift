@@ -39,6 +39,8 @@ extension SymbolGraph.Symbol {
         case `var`
 
         case module
+        
+        case `extension`
 
         case unknown
 
@@ -70,6 +72,7 @@ extension SymbolGraph.Symbol {
             case .typealias: return "typealias"
             case .var: return "var"
             case .module: return "module"
+            case .extension: return "extension"
             case .unknown: return "unknown"
             }
         }
@@ -105,6 +108,7 @@ extension SymbolGraph.Symbol {
             case "typealias": return .typealias
             case "var": return .var
             case "module": return .module
+            case "extension": return .extension
             default: return nil
             }
         }
