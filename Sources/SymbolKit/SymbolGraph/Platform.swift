@@ -10,7 +10,7 @@
 
 extension SymbolGraph {
     /// A ``Platform`` describes the deployment environment for a ``Module-swift.struct``.
-    public struct Platform: Codable {
+    public struct Platform: Codable, Equatable {
         /**
          The name of the architecture that this module targets, such as `x86_64` or `arm64`. If the module doesn't have a specific architecture, this may be undefined.
          */
