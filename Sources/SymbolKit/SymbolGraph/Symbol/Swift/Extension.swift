@@ -33,6 +33,11 @@ extension SymbolGraph.Symbol.Swift {
             case extendedModule
             case constraints
         }
+        
+        public init(extendedModule: String, constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]) {
+            self.extendedModule = extendedModule
+            self.constraints = constraints
+        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
