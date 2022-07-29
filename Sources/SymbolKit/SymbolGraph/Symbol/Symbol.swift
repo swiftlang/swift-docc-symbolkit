@@ -54,6 +54,9 @@ extension SymbolGraph {
         /// The in-source documentation comment attached to a symbol.
         public var docComment: LineList?
 
+        /// If true, the symbol was created implicitly and not from source.
+        public var isVirtual: Bool
+
         /// If the symbol has a documentation comment, whether the documentation comment is from
         /// the same module as the symbol or not.
         ///
@@ -102,13 +105,14 @@ extension SymbolGraph {
         /// Information about a symbol that is not necessarily common to all symbols.
         public var mixins: [String: Mixin] = [:]
 
-        public init(identifier: Identifier, names: Names, pathComponents: [String], docComment: LineList?, accessLevel: AccessControl, kind: Kind, mixins: [String: Mixin]) {
+        public init(identifier: Identifier, names: Names, pathComponents: [String], docComment: LineList?, accessLevel: AccessControl, kind: Kind, mixins: [String: Mixin], isVirtual: Bool = false) {
             self.identifier = identifier
             self.names = names
             self.pathComponents = pathComponents
             self.docComment = docComment
             self.accessLevel = accessLevel
             self.kind = kind
+            self.isVirtual = isVirtual
             self.mixins = mixins
         }
 
@@ -121,6 +125,7 @@ extension SymbolGraph {
             case names
             case docComment
             case accessLevel
+            case isVirtual
 
             // Mixins
             case availability
@@ -157,6 +162,7 @@ extension SymbolGraph {
             names = try container.decode(Names.self, forKey: .names)
             docComment = try container.decodeIfPresent(LineList.self, forKey: .docComment)
             accessLevel = try container.decode(AccessControl.self, forKey: .accessLevel)
+            isVirtual = try container.decodeIfPresent(Bool.self, forKey: .isVirtual) ?? false
             let leftoverMetadataKeys = Set(container.allKeys).intersection(CodingKeys.mixinKeys)
             for key in leftoverMetadataKeys {
                 if let decoded = try decodeMetadataItemForKey(key, from: container) {
@@ -178,6 +184,9 @@ extension SymbolGraph {
             try container.encode(names, forKey: .names)
             try container.encodeIfPresent(docComment, forKey: .docComment)
             try container.encode(accessLevel, forKey: .accessLevel)
+            if isVirtual {
+                try container.encode(isVirtual, forKey: .isVirtual)
+            }
 
             // Mixins
 

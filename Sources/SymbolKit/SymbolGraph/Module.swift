@@ -12,7 +12,7 @@ import Foundation
 
 extension SymbolGraph {
     /// A ``Module-swift.struct``  describes the module from which the symbols were extracted..
-    public struct Module: Codable {
+    public struct Module: Codable, Equatable {
         /// The name of the module.
         public var name: String
 
@@ -25,11 +25,25 @@ extension SymbolGraph {
         /// The [semantic version](https://semver.org) of the module, if availble.
         public var version: SemanticVersion?
 
-        public init(name: String, platform: Platform, version: SemanticVersion? = nil, bystanders: [String]? = nil) {
+        /// `true` if the module represents a virtual module, not created from source,
+        /// but one created implicitly to hold relationships.
+        public var isVirtual: Bool = false
+
+        public init(name: String, platform: Platform, version: SemanticVersion? = nil, bystanders: [String]? = nil, isVirtual: Bool = false) {
             self.name = name
             self.platform = platform
             self.version = version
             self.bystanders = bystanders
+            self.isVirtual = isVirtual
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            self.name = try container.decode(String.self, forKey: .name)
+            self.bystanders = try container.decodeIfPresent([String].self, forKey: .bystanders)
+            self.platform = try container.decode(Platform.self, forKey: .platform)
+            self.version = try container.decodeIfPresent(SemanticVersion.self, forKey: .version)
+            self.isVirtual = try container.decodeIfPresent(Bool.self, forKey: .isVirtual) ?? false
         }
     }
 }
