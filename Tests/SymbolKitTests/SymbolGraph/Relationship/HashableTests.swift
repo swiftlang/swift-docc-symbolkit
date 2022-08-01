@@ -36,8 +36,8 @@ class HashableTests: XCTestCase {
         XCTAssertEqual(Set([a1, a2]).count, 1)
     }
     
-    /// Check that Mixins that do not implement Hashable of different type
-    /// are considered unequal.
+    /// Check that Mixins of different type that both do not implement Hashable
+    /// are considered equal.
     func testHashingWithDifferentTypeNonHashableMixins() throws {
         var a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
         a1.mixins[NotHashableMixin<String>.mixinKey] = NotHashableMixin(value: "a.1.value")
@@ -45,7 +45,37 @@ class HashableTests: XCTestCase {
         var a2 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
         a2.mixins[NotHashableMixin<Int>.mixinKey] = NotHashableMixin(value: 2)
         
+        XCTAssertEqual(Set([a1, a2]).count, 1)
+    }
+    
+    /// Check that Mixins of different type where one does not implement Hashable
+    /// are considered unequal.
+    func testHashingWithDifferentTypeOneHashableMixinOneNonHashable() throws {
+        // in this first test, equality should return false based on the count of equatable mixins
+        var a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a1.mixins["a"] = NotHashableMixin(value: "a.1.value")
+        
+        var a2 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a2.mixins["a"] = SymbolGraph.Relationship.SourceOrigin(identifier: "a.2.origin", displayName: "a.2.origin")
+        
         XCTAssertEqual(Set([a1, a2]).count, 2)
+        
+        // This test is interesting because the equality implementation of relationship
+        // only iterates over the `lhs` mixins. Thus, depending on what relationship comes out
+        // as the `lhs`, the equality might fail at different times (though it will always fail).
+        // In this example, if `a1` is `lhs`, the comparison for `"a"` will be skipped (since the
+        // lhs is not `Equatable`), but the comparision for `"b"` will return false.
+        // In contrast, if `a2` is `lhs`, the comparison for `"a"` will return false right away.
+        a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a1.mixins["a"] = NotHashableMixin(value: "a.1.value")
+        a1.mixins["b"] = SymbolGraph.Relationship.SourceOrigin(identifier: "a.1.origin", displayName: "a.1.origin")
+        
+        a2 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a2.mixins["a"] = SymbolGraph.Relationship.SourceOrigin(identifier: "a.2.origin", displayName: "a.2.origin")
+        a2.mixins["b"] = NotHashableMixin(value: "a.2.value")
+        
+        XCTAssertEqual(Set([a1, a2]).count, 2)
+        XCTAssertEqual(Set([a2, a1]).count, 2)
     }
 }
 
