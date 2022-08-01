@@ -68,7 +68,7 @@ extension SymbolGraph.Symbol {
 
 You can now easily edit this information on an existing Symbol Graph.
 
-Before you can encode and decode this information, you need to register your custom Mixin on your encoder/decoder using ``SymbolGraph/Symbol/register(mixins:to:onEncodingError:onDecodingError:)`` / ``SymbolGraph/Relationship/register(mixins:to:onEncodingError:onDecodingError:)``, respectively. If you forget this step, you custom mixins will be ignored!
+Before you can encode and decode this information, you need to register your custom Mixin on your encoder/decoder using ``SymbolGraph/Symbol/register(mixins:to:onEncodingError:onDecodingError:)`` (for ``SymbolGraph/Symbol``) or ``SymbolGraph/Relationship/register(mixins:to:onEncodingError:onDecodingError:)`` (for ``SymbolGraph/Relationship``). If you forget this step, you custom mixins will be ignored!
 
 - Note: There exist handy shorcuts on Foundation's `JSONEncoder` and `JSONDecoder` for all the registration functions.
 

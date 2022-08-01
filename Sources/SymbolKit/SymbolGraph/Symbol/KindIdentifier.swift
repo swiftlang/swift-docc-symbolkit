@@ -117,8 +117,8 @@ extension SymbolGraph.Symbol {
         /// If a type is not registered, language prefixes cannot be removed correctly.
         ///
         /// - Note: When working in an uncontrolled environment where other parts of your executable might be disturbed by your
-        /// modifications to the symbol graph structure, register identifiers on your coder instead using
-        /// ``register(_:to:)`` and maintain your own list of ``allCases``.
+        /// modifications to the symbol graph structure or might be registering identifiers concurrently, register identifiers on your
+        /// coder instead using ``register(_:to:)`` and maintain your own list of ``allCases``.
         public static func register(_ identifiers: Self...) {
             for identifier in identifiers {
                 _allCases[identifier.rawValue] = identifier
