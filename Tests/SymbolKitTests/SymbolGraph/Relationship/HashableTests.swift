@@ -36,6 +36,29 @@ class HashableTests: XCTestCase {
         XCTAssertEqual(Set([a1, a2]).count, 1)
     }
     
+    /// Check that Hashable Mixins without any Mixin for the respective `mixinKey` on the other
+    /// relationship fail equality.
+    func testHashingWithMissingEquatableMixin() throws {
+        var a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a1.mixins["1"] = SymbolGraph.Relationship.SourceOrigin(identifier: "a.1.origin", displayName: "a.1.origin")
+        
+        var a2 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a2.mixins["2"] = SymbolGraph.Relationship.SourceOrigin(identifier: "a.2.origin", displayName: "a.2.origin")
+        
+        XCTAssertEqual(Set([a1, a2]).count, 2)
+    }
+    
+    /// Check that Non-Hashable Mixins without any Mixin for the respective `mixinKey` on the other
+    /// relationship do not fail equality.
+    func testHashingWithMissingNonEquatableMixin() throws {
+        var a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        a1.mixins["1"] = NotHashableMixin(value: 1)
+        
+        let a2 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
+        
+        XCTAssertEqual(Set([a1, a2]).count, 1)
+    }
+    
     /// Check that Mixins of different type that both do not implement Hashable
     /// are considered equal.
     func testHashingWithDifferentTypeNonHashableMixins() throws {
@@ -48,7 +71,7 @@ class HashableTests: XCTestCase {
         XCTAssertEqual(Set([a1, a2]).count, 1)
     }
     
-    /// Check that Mixins of different type where one does not implement Hashable
+    /// Check that Mixins of different type where one does implement Hashable
     /// are considered unequal.
     func testHashingWithDifferentTypeOneHashableMixinOneNonHashable() throws {
         // in this first test, equality should return false based on the count of equatable mixins
