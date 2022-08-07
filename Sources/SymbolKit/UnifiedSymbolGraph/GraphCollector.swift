@@ -42,19 +42,17 @@ extension GraphCollector {
     ///   - url: The file name where the given symbol graph is located. Used to determine whether a symbol graph
     ///     contains primary symbols or extensions.
     public func mergeSymbolGraph(_ inputGraph: SymbolGraph, at url: URL, forceLoading: Bool = false) {
-        var graph = inputGraph
-        let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(graph, at: url)
+        let (moduleName, isMainSymbolGraph) = Self.moduleNameFor(inputGraph, at: url)
 
         if !isMainSymbolGraph && !forceLoading {
-            graph.module.name = moduleName
-            self.extensionGraphs[url] = graph
+            self.extensionGraphs[url] = inputGraph
             return
         }
 
         if let existingGraph = self.unifiedGraphs[moduleName] {
-            existingGraph.mergeGraph(graph: graph, at: url)
+            existingGraph.mergeGraph(graph: inputGraph, at: url)
         } else {
-            self.unifiedGraphs[moduleName] = UnifiedSymbolGraph(fromSingleGraph: graph, at: url)
+            self.unifiedGraphs[moduleName] = UnifiedSymbolGraph(fromSingleGraph: inputGraph, at: url)
         }
 
         let graphURL: GraphKind

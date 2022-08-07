@@ -12,7 +12,7 @@ extension SymbolGraph {
     /**
      The operating system intended for a ``Module-swift.struct``'s deployment.
      */
-    public struct OperatingSystem: Codable {
+    public struct OperatingSystem: Codable, Equatable {
         /**
          The name of the operating system, such as `macOS` or `Linux`.
          */

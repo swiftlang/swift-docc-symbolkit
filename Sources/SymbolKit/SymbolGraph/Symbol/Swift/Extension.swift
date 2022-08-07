@@ -25,29 +25,43 @@ extension SymbolGraph.Symbol.Swift {
         public var extendedModule: String
 
         /**
+         The ``SymbolGraph/Symbol/KindIdentifier`` of the symbol this
+         extension extends.
+          
+         Usually, this will be either of ``SymbolGraph/Symbol/KindIdentifier/struct``,
+         ``SymbolGraph/Symbol/KindIdentifier/class``, ``SymbolGraph/Symbol/KindIdentifier/enum``
+         or ``SymbolGraph/Symbol/KindIdentifier/protocol``.
+         */
+        public var typeKind: SymbolGraph.Symbol.KindIdentifier?
+        
+        /**
          The generic constraints on the extension, if any.
          */
         public var constraints: [GenericConstraint]
 
         enum CodingKeys: String, CodingKey {
             case extendedModule
+            case typeKind
             case constraints
         }
         
-        public init(extendedModule: String, constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]) {
+        public init(extendedModule: String, typeKind: SymbolGraph.Symbol.KindIdentifier? = nil, constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]) {
             self.extendedModule = extendedModule
+            self.typeKind = typeKind
             self.constraints = constraints
         }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             extendedModule = try container.decode(String.self, forKey: .extendedModule)
+            typeKind = try container.decodeIfPresent(SymbolGraph.Symbol.KindIdentifier.self, forKey: .typeKind)
             constraints = try container.decodeIfPresent([GenericConstraint].self, forKey: .constraints) ?? []
         }
 
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(extendedModule, forKey: .extendedModule)
+            try container.encodeIfPresent(typeKind, forKey: .typeKind)
             if !constraints.isEmpty {
                 try container.encode(constraints, forKey: .constraints)
             }
