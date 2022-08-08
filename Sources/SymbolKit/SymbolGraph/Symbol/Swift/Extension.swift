@@ -44,6 +44,12 @@ extension SymbolGraph.Symbol.Swift {
             case typeKind
             case constraints
         }
+        
+        public init(extendedModule: String, typeKind: SymbolGraph.Symbol.KindIdentifier? = nil, constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]) {
+            self.extendedModule = extendedModule
+            self.typeKind = typeKind
+            self.constraints = constraints
+        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
