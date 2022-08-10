@@ -47,6 +47,11 @@ extension SymbolGraph.Symbol.Swift {
          There is a *conformance constraint* involving `S`.
          */
         public var constraints: [GenericConstraint]
+        
+        public init(parameters: [SymbolGraph.Symbol.Swift.GenericParameter], constraints: [SymbolGraph.Symbol.Swift.GenericConstraint]) {
+            self.parameters = parameters
+            self.constraints = constraints
+        }
 
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
