@@ -30,6 +30,11 @@ extension SymbolGraph.Symbol {
          */
         public var returns: [DeclarationFragments.Fragment]
 
+        public init(parameters: [SymbolGraph.Symbol.FunctionSignature.FunctionParameter], returns: [SymbolGraph.Symbol.DeclarationFragments.Fragment]) {
+            self.parameters = parameters
+            self.returns = returns
+        }
+        
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             parameters = try container.decodeIfPresent([FunctionParameter].self, forKey: .parameters) ?? []
