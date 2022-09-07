@@ -232,7 +232,7 @@ extension Decoder {
 }
 
 extension CodingUserInfoKey {
-    static let relationshipMixinKey = CodingUserInfoKey(rawValue: "apple.symbolkit.relationshipMixinKey")!
+    static let relationshipMixinKey = CodingUserInfoKey(rawValue: "org.swift.symbolkit.relationshipMixinKey")!
 }
 
 // MARK: Hashable/Equatable Conformance

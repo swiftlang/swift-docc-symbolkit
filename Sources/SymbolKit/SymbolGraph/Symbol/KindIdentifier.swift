@@ -261,5 +261,5 @@ extension Decoder {
 }
 
 extension CodingUserInfoKey {
-    static let symbolKindIdentifierKey = CodingUserInfoKey(rawValue: "apple.symbolkit.symbolKindIdentifierKey")!
+    static let symbolKindIdentifierKey = CodingUserInfoKey(rawValue: "org.swift.symbolkit.symbolKindIdentifierKey")!
 }

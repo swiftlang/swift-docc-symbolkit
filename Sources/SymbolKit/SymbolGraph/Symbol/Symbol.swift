@@ -349,5 +349,5 @@ extension Decoder {
 }
 
 extension CodingUserInfoKey {
-    static let symbolMixinKey = CodingUserInfoKey(rawValue: "apple.symbolkit.symbolMixinKey")!
+    static let symbolMixinKey = CodingUserInfoKey(rawValue: "org.swift.symbolkit.symbolMixinKey")!
 }
