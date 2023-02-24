@@ -224,6 +224,14 @@ extension SymbolGraph.Symbol {
         static let functionSignature = FunctionSignature.symbolCodingInfo
         static let spi = SPI.symbolCodingInfo
         static let snippet = Snippet.symbolCodingInfo
+        static let minimum = Minimum.symbolCodingInfo
+        static let maximum = Maximum.symbolCodingInfo
+        static let minimumExclusive = MinimumExclusive.symbolCodingInfo
+        static let maximumExclusive = MaximumExclusive.symbolCodingInfo
+        static let minimumLength = MinimumLength.symbolCodingInfo
+        static let maximumLength = MaximumLength.symbolCodingInfo
+        static let allowedValues = AllowedValues.symbolCodingInfo
+        static let defaultValue = DefaultValue.symbolCodingInfo
         
         static let mixinCodingInfo: [String: SymbolMixinCodingInfo] = [
             CodingKeys.availability.codingKey.stringValue: Self.availability,
@@ -236,6 +244,14 @@ extension SymbolGraph.Symbol {
             CodingKeys.functionSignature.codingKey.stringValue: Self.functionSignature,
             CodingKeys.spi.codingKey.stringValue: Self.spi,
             CodingKeys.snippet.codingKey.stringValue: Self.snippet,
+            CodingKeys.minimum.codingKey.stringValue: Self.minimum,
+            CodingKeys.maximum.codingKey.stringValue: Self.maximum,
+            CodingKeys.minimumExclusive.codingKey.stringValue: Self.minimumExclusive,
+            CodingKeys.maximumExclusive.codingKey.stringValue: Self.maximumExclusive,
+            CodingKeys.minimumLength.codingKey.stringValue: Self.minimumLength,
+            CodingKeys.maximumLength.codingKey.stringValue: Self.maximumLength,
+            CodingKeys.allowedValues.codingKey.stringValue: Self.allowedValues,
+            CodingKeys.defaultValue.codingKey.stringValue: Self.defaultValue,
         ]
         
         static func == (lhs: SymbolGraph.Symbol.CodingKeys, rhs: SymbolGraph.Symbol.CodingKeys) -> Bool {

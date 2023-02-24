@@ -40,4 +40,9 @@ extension SymbolGraph.Symbol {
             try container.encode(isReadOnly)
         }
     }
+    
+    /// Convenience method to fetch the mutability mixin value.
+    public var isReadOnly : Bool? {
+        (mixins[Mutability.mixinKey] as? Mutability)?.isReadOnly
+    }
 }
