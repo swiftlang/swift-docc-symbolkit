@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -86,5 +86,35 @@ extension MixinCodingInformation {
                 return try decodingErrorHandler(error)
             }
         })
+    }
+}
+
+/// Special-cased ``Mixin`` protocol wherein the coded value is held in a single `value` property.
+/// 
+/// The associated type, ``ValueType``, specifies the data type of the ``value`` property.
+/// It can be a scalar value, such as `Int` or `String`, an array of values, or another object.
+/// There is little value in wrapping an object—the object should be made the mixin directly, if possible.
+/// 
+/// The protocol provides default implementations of the `Codable` methods
+/// `Decodable/init(from:)` and `Encodable/encode(to:)` that
+/// read and write the `value` property.
+public protocol SingleValueMixin: Mixin {
+    /// The type of the wrapped value.
+    associatedtype ValueType: Codable
+    /// The property holded the encoded/decoded value.
+    var value: ValueType { get set }
+    /// The constructor for the concrete type, taking just the wrapped value as its argument.
+    init(_: ValueType)
+}
+
+extension SingleValueMixin {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        self.init(try container.decode(ValueType.self))
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.value)
     }
 }

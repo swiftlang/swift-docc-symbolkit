@@ -154,4 +154,10 @@ extension SymbolGraph.Symbol {
             try container.encode(declarationFragments)
         }
     }
+    
+    //// Convenience method to fetch the declaration fragment mixin value.
+    public var declarationFragments : [DeclarationFragments.Fragment]? {
+        (mixins[DeclarationFragments.mixinKey] as? DeclarationFragments)?
+            .declarationFragments
+    }
 }

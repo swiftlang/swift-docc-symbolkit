@@ -31,6 +31,18 @@ extension SymbolGraph.Relationship {
         public static let memberOf = Kind(rawValue: "memberOf")
 
         /**
+         A symbol `A` is an optional member of another symbol `B`.
+
+         For example, a key for a dictionary could be
+         a member of that dictionary, but the key is not guaranteed
+         to be present.
+
+         The implied inverse of this relationship is that
+         symbol `B` is the owner of a member symbol `A`.
+         */
+        public static let optionalMemberOf = Kind(rawValue: "optionalMemberOf")
+
+        /**
          A symbol `A` conforms to an interface/protocol symbol `B`.
 
          For example, a class `C` that conforms to protocol `P` in Swift would

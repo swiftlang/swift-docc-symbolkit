@@ -72,6 +72,10 @@ extension SymbolGraph.Symbol {
         public static let module = KindIdentifier(rawValue: "module")
         
         public static let `extension` = KindIdentifier(rawValue: "extension")
+        
+        public static let dictionary = KindIdentifier(rawValue: "dictionary")
+
+        public static let dictionaryKey = KindIdentifier(rawValue: "dictionaryKey")
 
         /// A string that uniquely identifies the symbol kind.
         ///
@@ -109,6 +113,8 @@ extension SymbolGraph.Symbol {
             Self.var.rawValue: .var,
             Self.module.rawValue: .module,
             Self.extension.rawValue: .extension,
+            Self.dictionary.rawValue: .dictionary,
+            Self.dictionaryKey.rawValue: .dictionaryKey,
         ]
         
         /// Register custom ``SymbolGraph/Symbol/KindIdentifier``s so they can be parsed correctly and

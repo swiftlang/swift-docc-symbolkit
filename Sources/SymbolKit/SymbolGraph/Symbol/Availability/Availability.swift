@@ -53,4 +53,9 @@ extension SymbolGraph.Symbol {
             self.availability = availability
         }
     }
+    
+    /// Convenience method to fetch the availability mixin value.
+    public var availability: [Availability.AvailabilityItem]? {
+        (mixins[Availability.mixinKey] as? Availability)?.availability
+    }
 }
