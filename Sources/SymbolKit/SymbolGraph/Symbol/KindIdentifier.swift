@@ -77,6 +77,14 @@ extension SymbolGraph.Symbol {
 
         public static let dictionaryKey = KindIdentifier(rawValue: "dictionaryKey")
 
+        public static let httpRequest = KindIdentifier(rawValue: "httpRequest")
+
+        public static let httpParameter = KindIdentifier(rawValue: "httpParameter")
+
+        public static let httpResponse = KindIdentifier(rawValue: "httpResponse")
+
+        public static let httpBody = KindIdentifier(rawValue: "httpBody")
+
         /// A string that uniquely identifies the symbol kind.
         ///
         /// If the original kind string was not recognized, this will return `"unknown"`.
@@ -115,6 +123,10 @@ extension SymbolGraph.Symbol {
             Self.extension.rawValue: .extension,
             Self.dictionary.rawValue: .dictionary,
             Self.dictionaryKey.rawValue: .dictionaryKey,
+            Self.httpRequest.rawValue: .httpRequest,
+            Self.httpParameter.rawValue: .httpParameter,
+            Self.httpResponse.rawValue: .httpResponse,
+            Self.httpBody.rawValue: .httpBody,
         ]
         
         /// Register custom ``SymbolGraph/Symbol/KindIdentifier``s so they can be parsed correctly and
