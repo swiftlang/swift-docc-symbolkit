@@ -32,6 +32,9 @@ class ValueConstraintsTests: XCTestCase {
             "maximum": 3.5,
             "default": "str",
             "allowedValues": ["a", 1, null],
+            "typeDetails": [
+              { "baseType": "integer", "arrayMode": false, "fragments": [{"kind": "text", "spelling": "integer"}] }
+            ]
         }
         """.data(using: .utf8)
         
@@ -47,6 +50,13 @@ class ValueConstraintsTests: XCTestCase {
         XCTAssertEqual(allowedValues[0], .string("a"))
         XCTAssertEqual(allowedValues[1], .integer(1))
         XCTAssertEqual(allowedValues[2], .null)
+        
+        let typeDetails = try XCTUnwrap(symbol.typeDetails)
+        XCTAssertEqual(typeDetails.count, 1)
+        XCTAssertEqual(typeDetails[0].baseType, "integer")
+        XCTAssertEqual(typeDetails[0].arrayMode, false)
+        XCTAssertEqual(typeDetails[0].fragments?.count, 1)
+        XCTAssertEqual(typeDetails[0].fragments?[0].spelling, "integer")
     }
 }
 

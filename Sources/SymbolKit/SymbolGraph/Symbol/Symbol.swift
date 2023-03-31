@@ -232,6 +232,7 @@ extension SymbolGraph.Symbol {
         static let maximumLength = MaximumLength.symbolCodingInfo
         static let allowedValues = AllowedValues.symbolCodingInfo
         static let defaultValue = DefaultValue.symbolCodingInfo
+        static let typeDetails = TypeDetails.symbolCodingInfo
         static let httpEndpoint = HTTP.Endpoint.symbolCodingInfo
         static let httpParameterSource = HTTP.ParameterSource.symbolCodingInfo
         static let httpMediaType = HTTP.MediaType.symbolCodingInfo
@@ -255,6 +256,7 @@ extension SymbolGraph.Symbol {
             CodingKeys.maximumLength.codingKey.stringValue: Self.maximumLength,
             CodingKeys.allowedValues.codingKey.stringValue: Self.allowedValues,
             CodingKeys.defaultValue.codingKey.stringValue: Self.defaultValue,
+            CodingKeys.typeDetails.codingKey.stringValue: Self.typeDetails,
             CodingKeys.httpEndpoint.codingKey.stringValue: Self.httpEndpoint,
             CodingKeys.httpParameterSource.codingKey.stringValue: Self.httpParameterSource,
             CodingKeys.httpMediaType.codingKey.stringValue: Self.httpMediaType,
