@@ -107,5 +107,16 @@ extension SymbolGraph.Relationship {
          by an extension block symbol `A`.
          */
         public static let extensionTo = Kind(rawValue: "extensionTo")
+
+        /**
+         A symbol `A` references a symbol `B` in its implementation.
+
+         This relationship can be used to describe implementation details of functions or
+         properties, by noting which symbols are used in its implementation.
+
+         The implied inverse of this relationship is that the symbol `B` is referenced by the
+         symbol `A`.
+         */
+        public static let references = Kind(rawValue: "references")
     }
 }
