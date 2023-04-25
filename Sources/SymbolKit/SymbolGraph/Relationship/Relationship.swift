@@ -116,10 +116,12 @@ extension SymbolGraph.Relationship {
         // Mixins
         static let swiftConstraints = Swift.GenericConstraints.relationshipCodingInfo
         static let sourceOrigin = SourceOrigin.relationshipCodingInfo
+        static let referenceLocation = ReferenceLocation.relationshipCodingInfo
         
         static let mixinKeys: [String: RelationshipMixinCodingInfo] = [
             CodingKeys.swiftConstraints.codingKey.stringValue: Self.swiftConstraints,
             CodingKeys.sourceOrigin.codingKey.stringValue: Self.sourceOrigin,
+            CodingKeys.referenceLocation.codingKey.stringValue: Self.referenceLocation,
         ]
         
         static func == (lhs: SymbolGraph.Relationship.CodingKeys, rhs: SymbolGraph.Relationship.CodingKeys) -> Bool {
