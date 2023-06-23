@@ -63,6 +63,19 @@ class SymbolGraphTests: XCTestCase {
         XCTAssertTrue(declaration.declarationFragments.contains(where: { fragment in
             fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
         }))
+
+        // The async declaration should have been saved as an alternate declaration
+        let alternateDeclarations = try XCTUnwrap(symbol.alternateDeclarations)
+        XCTAssertEqual(alternateDeclarations.count, 1)
+        let alternate = try XCTUnwrap(alternateDeclarations.first)
+
+        XCTAssertTrue(alternate.declarationFragments.contains(where: { fragment in
+            fragment.kind == .keyword && fragment.spelling == "async"
+        }))
+
+        XCTAssertFalse(alternate.declarationFragments.contains(where: { fragment in
+            fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
+        }))
     }
 }
 
