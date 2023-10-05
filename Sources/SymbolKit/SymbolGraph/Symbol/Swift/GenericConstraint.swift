@@ -69,6 +69,12 @@ extension SymbolGraph.Symbol.Swift {
          */
         public var rightTypeName: String
 
+        public init(kind: Kind, leftTypeName: String, rightTypeName: String) {
+            self.kind = kind
+            self.leftTypeName = leftTypeName
+            self.rightTypeName = rightTypeName
+        }
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             kind = try container.decode(Kind.self, forKey: .kind)
