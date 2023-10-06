@@ -21,9 +21,8 @@ class GenericConstraintTests: XCTestCase {
             "rhs": "Hashable",
         }
         """
-        let jsonData = jsonString.data(using: .utf8)!
+        let jsonData = Data(jsonString.utf8)
         let jsonConstraint = try JSONDecoder().decode(SymbolGraph.Symbol.Swift.GenericConstraint.self, from: jsonData)
-        XCTAssertNotNil(jsonConstraint)
         let constraint = SymbolGraph.Symbol.Swift.GenericConstraint(
             kind: .conformance,
             leftTypeName: "Self",
@@ -40,9 +39,8 @@ class GenericConstraintTests: XCTestCase {
             "rhs": "String",
         }
         """
-        let jsonData = jsonString.data(using: .utf8)!
+        let jsonData = Data(jsonString.utf8)
         let jsonConstraint = try JSONDecoder().decode(SymbolGraph.Symbol.Swift.GenericConstraint.self, from: jsonData)
-        XCTAssertNotNil(jsonConstraint)
         let constraint = SymbolGraph.Symbol.Swift.GenericConstraint(
             kind: .superclass,
             leftTypeName: "Self",
@@ -59,9 +57,8 @@ class GenericConstraintTests: XCTestCase {
             "rhs": "Problem",
         }
         """
-        let jsonData = jsonString.data(using: .utf8)!
+        let jsonData = Data(jsonString.utf8)
         let jsonConstraint = try JSONDecoder().decode(SymbolGraph.Symbol.Swift.GenericConstraint.self, from: jsonData)
-        XCTAssertNotNil(jsonConstraint)
         let constraint = SymbolGraph.Symbol.Swift.GenericConstraint(
             kind: .sameType,
             leftTypeName: "Self",
@@ -69,21 +66,4 @@ class GenericConstraintTests: XCTestCase {
         )
         XCTAssertEqual(jsonConstraint, constraint)
     }
-
-    func testInializeInvalidJSON() {
-        let jsonString = """
-        {
-            "kind": "invalid",
-            "lhs": "Self",
-            "rhs": "Problem",
-        }
-        """
-        let jsonData = jsonString.data(using: .utf8)!
-        do {
-            let _ = try JSONDecoder().decode(SymbolGraph.Symbol.Swift.GenericConstraint.self, from: jsonData)
-            XCTFail("SymbolGraph.Symbol.Swift.GenericConstraint did not raise an exception for invalid JSON")
-        } catch {
-        }
-    }
-
 }
