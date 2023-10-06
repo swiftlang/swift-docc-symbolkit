@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2023 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -69,6 +69,14 @@ extension SymbolGraph.Symbol.Swift {
          */
         public var rightTypeName: String
 
+        /// Create a new GenericConstraint for the given kind and type names.
+        public init(kind: Kind, leftTypeName: String, rightTypeName: String) {
+            self.kind = kind
+            self.leftTypeName = leftTypeName
+            self.rightTypeName = rightTypeName
+        }
+
+        /// Create a new GenericConstraint by decoding a native format.
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             kind = try container.decode(Kind.self, forKey: .kind)
@@ -76,6 +84,7 @@ extension SymbolGraph.Symbol.Swift {
             rightTypeName = try container.decode(String.self, forKey: .rightTypeName)
         }
 
+        /// Encode a GenericConstraint to a native format.
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(kind, forKey: .kind)
