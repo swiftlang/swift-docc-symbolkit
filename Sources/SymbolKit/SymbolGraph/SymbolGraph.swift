@@ -77,12 +77,22 @@ public struct SymbolGraph: Codable {
             if lhs.names.title.count < rhs.names.title.count {
                 result = rhs
                 other = lhs
-            } else {
+            } else if rhs.names.title.count < lhs.names.title.count {
                 result = lhs
                 other = rhs
+            } else {
+                // If, by total coincidence, both symbols have the same length, try a lexicographic
+                // sort and pick the first one.
+                if lhs.names.title <= rhs.names.title {
+                    result = lhs
+                    other = rhs
+                } else {
+                    result = rhs
+                    other = lhs
+                }
             }
             result.addAlternateDeclaration(from: other)
-            return other
+            return result
         }
     }
 }
