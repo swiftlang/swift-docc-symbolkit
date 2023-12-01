@@ -67,7 +67,7 @@ class SymbolGraphTests: XCTestCase {
         // The async declaration should have been saved as an alternate declaration
         let alternateDeclarations = try XCTUnwrap(symbol.alternateDeclarations)
         XCTAssertEqual(alternateDeclarations.count, 1)
-        let alternate = try XCTUnwrap(alternateDeclarations.first)
+        let alternate = alternateDeclarations[0]
 
         XCTAssertTrue(alternate.declarationFragments.contains(where: { fragment in
             fragment.kind == .keyword && fragment.spelling == "async"

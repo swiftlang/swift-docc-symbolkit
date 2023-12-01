@@ -46,7 +46,7 @@ extension SymbolGraph.Symbol {
             alternateDeclarations.declarations.append(declaration)
             mixins[AlternateDeclarations.mixinKey] = alternateDeclarations
         } else {
-            mixins[AlternateDeclarations.mixinKey] = AlternateDeclarations.init(declarations: [declaration])
+            mixins[AlternateDeclarations.mixinKey] = AlternateDeclarations(declarations: [declaration])
         }
     }
 
