@@ -552,11 +552,11 @@ components:
         - declaration
       properties:
         name:
-          description: The external argument name.
+          description: The parameter name.
           type: string
           nullable: true
-        internalName:
-          description: The internal parameter name, if different from the external name.
+        externalName:
+          description: The external argument name, if different from the parameter name.
           type: string
           nullable: true
         declaration:

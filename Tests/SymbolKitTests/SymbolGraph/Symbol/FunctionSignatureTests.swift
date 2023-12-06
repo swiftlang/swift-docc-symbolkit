@@ -122,10 +122,8 @@ class FunctionSignatureTests: XCTestCase {
         
         let parameter = try XCTUnwrap(functionSignature.parameters.first)
         XCTAssertEqual(parameter.externalName, "with")
-        XCTAssertEqual(parameter.internalName, "someValue")
-        XCTAssertEqual(parameter.declarationFragments.map(\.spelling).joined(), "someValue: Int")
-        
         XCTAssertEqual(parameter.name, "someValue")
+        XCTAssertEqual(parameter.declarationFragments.map(\.spelling).joined(), "someValue: Int")
         
         XCTAssertEqual(functionSignature.returns.count, 1)
         XCTAssertEqual(functionSignature.returns.first?.spelling, "Void")
@@ -139,8 +137,8 @@ class FunctionSignatureTests: XCTestCase {
         let functionSignatureWithDifferentParameterNames = SymbolGraph.Symbol.FunctionSignature(
             parameters: [
                 .init(
+                    name: "parameterName",
                     externalName: "externalName",
-                    internalName: "internalName",
                     declarationFragments: [
                         .init(kind: .identifier, spelling: "internalParam", preciseIdentifier: nil),
                         .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
@@ -177,8 +175,8 @@ class FunctionSignatureTests: XCTestCase {
                       "spelling" : "Int"
                     }
                   ],
-                  "internalName" : "internalName",
-                  "name" : "externalName"
+                  "externalName" : "externalName",
+                  "name" : "parameterName"
                 }
               ],
               "returns" : [
@@ -196,8 +194,8 @@ class FunctionSignatureTests: XCTestCase {
         let functionSignatureWithSameParameterNames = SymbolGraph.Symbol.FunctionSignature(
             parameters: [
                 .init(
+                    name: "externalName",
                     externalName: "externalName",
-                    internalName: "externalName",
                     declarationFragments: [
                         .init(kind: .identifier, spelling: "externalParam", preciseIdentifier: nil),
                         .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
@@ -252,8 +250,8 @@ class FunctionSignatureTests: XCTestCase {
         let functionSignatureWithNoInternalParameterNames = SymbolGraph.Symbol.FunctionSignature(
             parameters: [
                 .init(
-                    externalName: "externalName",
-                    internalName: nil,
+                    name: "externalName",
+                    externalName: nil,
                     declarationFragments: [
                         .init(kind: .identifier, spelling: "externalParam", preciseIdentifier: nil),
                         .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
@@ -299,154 +297,6 @@ class FunctionSignatureTests: XCTestCase {
                   "preciseIdentifier" : "s:s4Voida",
                   "spelling" : "Void"
                 }
-              ]
-            }
-            """
-        )
-    }
-    
-    func testSettingFunctionParameterName() throws {
-        let encoder = JSONEncoder()
-        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
-        
-        // Different external and internal parameter names
-        var functionSignatureWithDifferentParameterNames = SymbolGraph.Symbol.FunctionSignature(
-            parameters: [
-                .init(
-                    externalName: "externalName",
-                    internalName: "internalName",
-                    declarationFragments: [],
-                    children: []
-                )
-            ],
-            returns: []
-        )
-        functionSignatureWithDifferentParameterNames.parameters[0].name = "newName"
-        
-        let encodedDifferentParameterNames = try XCTUnwrap(String(data: encoder.encode(functionSignatureWithDifferentParameterNames), encoding: .utf8))
-        XCTAssertEqual(encodedDifferentParameterNames, """
-            {
-              "parameters" : [
-                {
-                  "children" : [
-
-                  ],
-                  "declarationFragments" : [
-
-                  ],
-                  "internalName" : "newName",
-                  "name" : "externalName"
-                }
-              ],
-              "returns" : [
-
-              ]
-            }
-            """
-        )
-        
-        // Same external and internal parameter name
-        var functionSignatureWithSameParameterNames = SymbolGraph.Symbol.FunctionSignature(
-            parameters: [
-                .init(
-                    externalName: "externalName",
-                    internalName: "externalName",
-                    declarationFragments: [],
-                    children: []
-                )
-            ],
-            returns: []
-        )
-        functionSignatureWithSameParameterNames.parameters[0].name = "newName"
-            
-        let encodedSameParameterNames = try XCTUnwrap(String(data: encoder.encode(functionSignatureWithSameParameterNames), encoding: .utf8))
-        XCTAssertEqual(encodedSameParameterNames, """
-            {
-              "parameters" : [
-                {
-                  "children" : [
-
-                  ],
-                  "declarationFragments" : [
-
-                  ],
-                  "name" : "newName"
-                }
-              ],
-              "returns" : [
-
-              ]
-            }
-            """
-        )
-        
-        // Initialized with no internal name
-        var functionSignatureWithNoInternalParameterNames = SymbolGraph.Symbol.FunctionSignature(
-            parameters: [
-                .init(
-                    externalName: "externalName",
-                    internalName: nil,
-                    declarationFragments: [],
-                    children: []
-                )
-            ],
-            returns: []
-        )
-        functionSignatureWithNoInternalParameterNames.parameters[0].name = "newName"
-        
-        let encodedNoInternalParameterName = try XCTUnwrap(String(data: encoder.encode(functionSignatureWithNoInternalParameterNames), encoding: .utf8))
-        XCTAssertEqual(encodedNoInternalParameterName, """
-            {
-              "parameters" : [
-                {
-                  "children" : [
-
-                  ],
-                  "declarationFragments" : [
-
-                  ],
-                  "name" : "newName"
-                }
-              ],
-              "returns" : [
-
-              ]
-            }
-            """
-        )
-        
-        // Different external and internal parameter names
-        var functionSignatureInternalParameterNameSetAfterInitialization = SymbolGraph.Symbol.FunctionSignature(
-            parameters: [
-                .init(
-                    externalName: "externalName",
-                    internalName: nil,
-                    declarationFragments: [],
-                    children: []
-                )
-            ],
-            returns: []
-        )
-        functionSignatureInternalParameterNameSetAfterInitialization.parameters[0].internalName = "newInternalName"
-        functionSignatureInternalParameterNameSetAfterInitialization.parameters[0].name = "newName"
-        
-        let encodedInternalParameterNameSetAfterInitialization = try XCTUnwrap(String(data: encoder.encode(functionSignatureInternalParameterNameSetAfterInitialization), encoding: .utf8))
-        XCTAssertEqual(encodedInternalParameterNameSetAfterInitialization, """
-            {
-              "parameters" : [
-                {
-                  "children" : [
-
-                  ],
-                  "declarationFragments" : [
-
-                  ],
-                  "internalName" : "newName",
-                  "name" : "externalName"
-                }
-              ],
-              "returns" : [
-
               ]
             }
             """
