@@ -62,13 +62,37 @@ public struct SymbolGraph: Codable {
 
     public static func _symbolToKeepInCaseOfPreciseIdentifierConflict(_ lhs: Symbol, _ rhs: Symbol) -> Symbol {
         if lhs.declarationContainsAsyncKeyword() {
-            return rhs
+            var result = rhs
+            result.addAlternateDeclaration(from: lhs)
+            return result
         } else if rhs.declarationContainsAsyncKeyword() {
-            return lhs
+            var result = lhs
+            result.addAlternateDeclaration(from: rhs)
+            return result
         } else {
             // It's not expected to ever end up here, but if we do, we return the symbol with the longer name
             // to have consistent results.
-            return lhs.names.title.count < rhs.names.title.count ? rhs : lhs
+            var result: Symbol
+            let other: Symbol
+            if lhs.names.title.count < rhs.names.title.count {
+                result = rhs
+                other = lhs
+            } else if rhs.names.title.count < lhs.names.title.count {
+                result = lhs
+                other = rhs
+            } else {
+                // If, by total coincidence, both symbols have the same length, try a lexicographic
+                // sort and pick the first one.
+                if lhs.names.title <= rhs.names.title {
+                    result = lhs
+                    other = rhs
+                } else {
+                    result = rhs
+                    other = lhs
+                }
+            }
+            result.addAlternateDeclaration(from: other)
+            return result
         }
     }
 }
