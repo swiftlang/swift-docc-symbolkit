@@ -46,7 +46,9 @@ extension SymbolGraph.Symbol {
         public static let macro = KindIdentifier(rawValue: "macro")
         
         public static let method = KindIdentifier(rawValue: "method")
-        
+
+        public static let namespace = KindIdentifier(rawValue: "namespace")
+
         public static let property = KindIdentifier(rawValue: "property")
         
         public static let `protocol` = KindIdentifier(rawValue: "protocol")
@@ -108,6 +110,7 @@ extension SymbolGraph.Symbol {
             Self.ivar.rawValue: .ivar,
             Self.macro.rawValue: .macro,
             Self.method.rawValue: .method,
+            Self.namespace.rawValue: .namespace,
             Self.property.rawValue: .property,
             Self.protocol.rawValue: .protocol,
             Self.snippet.rawValue: .snippet,
