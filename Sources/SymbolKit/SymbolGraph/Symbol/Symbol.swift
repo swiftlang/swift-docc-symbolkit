@@ -236,7 +236,8 @@ extension SymbolGraph.Symbol {
         static let httpEndpoint = HTTP.Endpoint.symbolCodingInfo
         static let httpParameterSource = HTTP.ParameterSource.symbolCodingInfo
         static let httpMediaType = HTTP.MediaType.symbolCodingInfo
-        
+        static let alternateDeclarations = AlternateDeclarations.symbolCodingInfo
+
         static let mixinCodingInfo: [String: SymbolMixinCodingInfo] = [
             CodingKeys.availability.codingKey.stringValue: Self.availability,
             CodingKeys.declarationFragments.codingKey.stringValue: Self.declarationFragments,
@@ -260,6 +261,7 @@ extension SymbolGraph.Symbol {
             CodingKeys.httpEndpoint.codingKey.stringValue: Self.httpEndpoint,
             CodingKeys.httpParameterSource.codingKey.stringValue: Self.httpParameterSource,
             CodingKeys.httpMediaType.codingKey.stringValue: Self.httpMediaType,
+            CodingKeys.alternateDeclarations.codingKey.stringValue: Self.alternateDeclarations,
         ]
         
         static func == (lhs: SymbolGraph.Symbol.CodingKeys, rhs: SymbolGraph.Symbol.CodingKeys) -> Bool {
