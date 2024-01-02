@@ -68,7 +68,9 @@ extension SymbolGraph.Symbol {
         public static let typeSubscript = KindIdentifier(rawValue: "type.subscript")
         
         public static let `typealias` = KindIdentifier(rawValue: "typealias")
-        
+
+        public static let union = KindIdentifier(rawValue: "union")
+
         public static let `var` = KindIdentifier(rawValue: "var")
         
         public static let module = KindIdentifier(rawValue: "module")
@@ -121,6 +123,7 @@ extension SymbolGraph.Symbol {
             Self.typeProperty.rawValue: .typeProperty,
             Self.typeSubscript.rawValue: .typeSubscript,
             Self.typealias.rawValue: .typealias,
+            Self.union.rawValue: .union,
             Self.var.rawValue: .var,
             Self.module.rawValue: .module,
             Self.extension.rawValue: .extension,
