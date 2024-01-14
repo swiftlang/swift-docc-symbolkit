@@ -22,7 +22,7 @@ extension SymbolGraph {
         /// The platform intended for deployment.
         public var platform: Platform
 
-        /// The [semantic version](https://semver.org) of the module, if availble.
+        /// The [semantic version](https://semver.org) of the module, if available.
         public var version: SemanticVersion?
 
         /// `true` if the module represents a virtual module, not created from source,

@@ -13,7 +13,7 @@ import XCTest
 import SymbolKit
 
 class HashableTests: XCTestCase {
-    /// Test hasing works as expected if Mixins conform to Hashable
+    /// Test hashing works as expected if Mixins conform to Hashable
     func testHashingWithHashableMixins() throws {
         var a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
         a1.mixins[SymbolGraph.Relationship.SourceOrigin.mixinKey] = SymbolGraph.Relationship.SourceOrigin(identifier: "a.1.origin", displayName: "a.1.origin")
@@ -87,7 +87,7 @@ class HashableTests: XCTestCase {
         // only iterates over the `lhs` mixins. Thus, depending on what relationship comes out
         // as the `lhs`, the equality might fail at different times (though it will always fail).
         // In this example, if `a1` is `lhs`, the comparison for `"a"` will be skipped (since the
-        // lhs is not `Equatable`), but the comparision for `"b"` will return false.
+        // lhs is not `Equatable`), but the comparison for `"b"` will return false.
         // In contrast, if `a2` is `lhs`, the comparison for `"a"` will return false right away.
         a1 = SymbolGraph.Relationship(source: "a.source", target: "a.target", kind: .conformsTo, targetFallback: nil)
         a1.mixins["a"] = NotHashableMixin(value: "a.1.value")
