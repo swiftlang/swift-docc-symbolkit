@@ -145,7 +145,7 @@ extension SymbolGraph.Relationship {
     /// decoding relationships.
     ///
     /// If ``SymbolGraph/Relationship`` does not know the concrete type of a ``Mixin``, it cannot encode
-    /// or decode that type and thus skipps such entries. Note that ``Mixin``s that occur on relationships
+    /// or decode that type and thus skips such entries. Note that ``Mixin``s that occur on relationships
     /// in the default symbol graph format do not have to be registered!
     ///
     /// - Parameter userInfo: A property which allows editing the `userInfo` member of the
@@ -154,7 +154,7 @@ extension SymbolGraph.Relationship {
     /// You can log warnings and either re-throw or consume the error.
     /// - Parameter onDecodingError: Defines the behavior when an error occurs while decoding these types of ``Mixin``s.
     /// Next to logging warnings, the function allows for either re-throwing the error,
-    /// skipping the errornous entry, or providing a default value.
+    /// skipping the erroneous entry, or providing a default value.
     public static func register<M: Sequence>(mixins mixinTypes: M,
                                              to userInfo: inout [CodingUserInfoKey: Any],
                                              onEncodingError: ((_ error: Error, _ mixin: Mixin) throws -> Void)?,
@@ -181,14 +181,14 @@ public extension JSONEncoder {
     /// Register types conforming to ``Mixin`` so they can be included when encoding relationships.
     ///
     /// If ``SymbolGraph/Relationship`` does not know the concrete type of a ``Mixin``, it cannot encode
-    /// that type and thus skipps such entries. Note that ``Mixin``s that occur on relationships
+    /// that type and thus skips such entries. Note that ``Mixin``s that occur on relationships
     /// in the default symbol graph format do not have to be registered!
     ///
     /// - Parameter onEncodingError: Defines the behavior when an error occurs while encoding these types of ``Mixin``s.
     /// You can log warnings and either re-throw or consume the error.
     /// - Parameter onDecodingError: Defines the behavior when an error occurs while decoding these types of ``Mixin``s.
     /// Next to logging warnings, the function allows for either re-throwing the error,
-    /// skipping the errornous entry, or providing a default value.
+    /// skipping the erroneous entry, or providing a default value.
     func register(relationshipMixins mixinTypes: Mixin.Type...,
                   onEncodingError: ((_ error: Error, _ mixin: Mixin) throws -> Void)? = nil,
                   onDecodingError: ((_ error: Error) throws -> Mixin?)? = nil) {
@@ -203,14 +203,14 @@ public extension JSONDecoder {
     /// Register types conforming to ``Mixin`` so they can be included when decoding relationships.
     ///
     /// If ``SymbolGraph/Relationship`` does not know the concrete type of a ``Mixin``, it cannot decode
-    /// that type and thus skipps such entries. Note that ``Mixin``s that occur on relationships
+    /// that type and thus skips such entries. Note that ``Mixin``s that occur on relationships
     /// in the default symbol graph format do not have to be registered!
     ///
     /// - Parameter onEncodingError: Defines the behavior when an error occurs while encoding these types of ``Mixin``s.
     /// You can log warnings and either re-throw or consume the error.
     /// - Parameter onDecodingError: Defines the behavior when an error occurs while decoding these types of ``Mixin``s.
     /// Next to logging warnings, the function allows for either re-throwing the error,
-    /// skipping the errornous entry, or providing a default value.
+    /// skipping the erroneous entry, or providing a default value.
     func register(relationshipMixins mixinTypes: Mixin.Type...,
                   onEncodingError: ((_ error: Error, _ mixin: Mixin) throws -> Void)? = nil,
                   onDecodingError: ((_ error: Error) throws -> Mixin?)? = nil) {
@@ -259,7 +259,7 @@ extension SymbolGraph.Relationship: Hashable, Equatable {
         }
     }
 
-    /// A custom equality implmentation for a relationship.
+    /// A custom equality implementation for a relationship.
     ///
     /// - Note: ``Mixin``s that do not conform to `Equatable` will be ignored entirely, including their count and
     /// ``Mixin/mixinKey``.

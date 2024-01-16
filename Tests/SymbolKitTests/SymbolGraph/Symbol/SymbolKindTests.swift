@@ -56,7 +56,7 @@ class SymbolKindTests: XCTestCase {
         XCTAssertEqual(kind.identifier, "custom")
         
         // Verify an unknown identifier is parsed correctly if it is
-        // registered with the deocder.
+        // registered with the decoder.
         let otherCustom = SymbolGraph.Symbol.KindIdentifier(rawValue: "other.custom")
         let decoder = JSONDecoder()
         decoder.register(symbolKinds: otherCustom)
