@@ -11,19 +11,19 @@
 import Foundation
 
 // `Mixin` does not conform to `Equatable` right now primarily because
-// this would complicate its usage in many situtations because of "Self
+// this would complicate its usage in many situations because of "Self
 // or associated type" requirements errors. Thus, in order to compare
 // `Mixin`s for equality, we need to somehow get access to the `Mixin`'s
 // `Equatable` conformance and the `==(lhs:rhs:)` function specifically.
 //
-// Note that all of this would be siginificantly easier in Swift 5.7, so
+// Note that all of this would be significantly easier in Swift 5.7, so
 // it might be worth updating the implementation once SymbolKit adopts
 // Swift 5.7 as its minimum language requirement.
 
 
 // When working with `Mixin` values in a generic (non-specific) context,
 // we only know their value conforms to the existential type `Mixin`. This
-// extension to `Mixin` and the `equals` property defined in it is essentiall for
+// extension to `Mixin` and the `equals` property defined in it is essential for
 // the whole process to work:
 // The `equals` property does not expose the `Self` type in its interface and
 // therefore is accessible from the existential type `Mixin`. Inside `equals`,

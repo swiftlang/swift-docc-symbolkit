@@ -20,7 +20,7 @@ extension SymbolGraph.Symbol {
      For example,
      a class introduced in iOS 11 would have:
 
-     - a availability domain of `"iOS"` and
+     - an availability domain of `"iOS"` and
      - an `introduced` version of `11.0.0`.
 
      As another example,

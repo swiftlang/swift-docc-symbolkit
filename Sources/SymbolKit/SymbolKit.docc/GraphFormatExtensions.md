@@ -4,7 +4,7 @@ Define custom Symbol or Relationship kinds and store custom information in the g
 
 ## Overview
 
-SymbolKit makes it easy to parse Symbol Graph Files and inspect or edit the resulting graph's _contents_. However, sometimes you migth want to go beyond that by changing the _structure_ of the graph. SymbolKit allows you to define custom Symbol and Relationship kinds and lets you extend nodes and edges with custom properties.
+SymbolKit makes it easy to parse Symbol Graph Files and inspect or edit the resulting graph's _contents_. However, sometimes you might want to go beyond that by changing the _structure_ of the graph. SymbolKit allows you to define custom Symbol and Relationship kinds and lets you extend nodes and edges with custom properties.
 
 ## Defining Custom Symbol or Relationship Kinds
 
@@ -22,7 +22,7 @@ extension SymbolGraph.Relationship.Kind {
 }
 ```
 
-Use these constants when manually initializing Symbols/Relationships of the respective kind instead of initilaizing new instances of ``SymbolGraph/Symbol/KindIdentifier`` / ``SymbolGraph/Relationship/Kind-swift.struct`` all the time.
+Use these constants when manually initializing Symbols/Relationships of the respective kind instead of initializing new instances of ``SymbolGraph/Symbol/KindIdentifier`` / ``SymbolGraph/Relationship/Kind-swift.struct`` all the time.
 
 After defining a custom Symbol kind, make sure to register it using ``SymbolGraph/Symbol/KindIdentifier/register(_:)``. This ensures all static functionality defined on ``SymbolGraph/Symbol/KindIdentifier`` works as expected.
 
@@ -42,7 +42,7 @@ Start out by defining the information you want to capture:
 ```swift
 /// Commit metadata of the last commit that modified this Symbol.
 struct LastCommit: Mixin, Hashable {
-    static let mixinKey = "lastCommit"    
+    static let mixinKey = "lastCommit"
 
     let hash: String
     let date: Date
@@ -70,7 +70,7 @@ You can now easily edit this information on an existing Symbol Graph.
 
 Before you can encode and decode this information, you need to register your custom Mixin on your encoder/decoder using ``SymbolGraph/Symbol/register(mixins:to:onEncodingError:onDecodingError:)`` (for ``SymbolGraph/Symbol``) or ``SymbolGraph/Relationship/register(mixins:to:onEncodingError:onDecodingError:)`` (for ``SymbolGraph/Relationship``). If you forget this step, you custom mixins will be ignored!
 
-- Note: There exist handy shorcuts on Foundation's `JSONEncoder` and `JSONDecoder` for all the registration functions.
+- Note: There exist handy shortcuts on Foundation's `JSONEncoder` and `JSONDecoder` for all the registration functions.
 
 ```swift
 // prepare encoder and decoder to deal with custom mixin

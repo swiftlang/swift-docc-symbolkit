@@ -101,7 +101,7 @@ extension MixinCodingInformation {
 public protocol SingleValueMixin: Mixin {
     /// The type of the wrapped value.
     associatedtype ValueType: Codable
-    /// The property holded the encoded/decoded value.
+    /// The property holding the encoded/decoded value.
     var value: ValueType { get set }
     /// The constructor for the concrete type, taking just the wrapped value as its argument.
     init(_: ValueType)
