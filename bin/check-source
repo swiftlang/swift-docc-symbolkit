@@ -44,7 +44,7 @@ for language in swift-or-c bash md-or-tutorial html docker; do
   declare -a matching_files
   declare -a exceptions
   declare -a reader
-  expections=( )
+  exceptions=( )
   matching_files=( -name '*' )
   reader=head
   case "$language" in

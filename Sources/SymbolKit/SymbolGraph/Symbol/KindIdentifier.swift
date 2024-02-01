@@ -19,7 +19,7 @@ extension SymbolGraph.Symbol {
         
         /// Create a new ``SymbolGraph/Symbol/KindIdentifier``.
         ///
-        /// - Note: Only use this initilaizer for defining a new kind. For initializing instances manually,
+        /// - Note: Only use this initializer for defining a new kind. For initializing instances manually,
         /// copy the initial initializer. For extracting identifiers form raw strings, use ``init(identifier:)``.
         public init(rawValue: String) {
             self.rawValue = rawValue

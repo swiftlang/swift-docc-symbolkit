@@ -31,7 +31,7 @@ public class GraphCollector {
 
     /// Initialize a new collector for merging ``SymbolGraph``s into ``UnifiedSymbolGraph``s.
     ///
-    /// - Parameter extensionGraphAssociationStrategy: Optionally specifiy how extension graphs are to be merged.
+    /// - Parameter extensionGraphAssociationStrategy: Optionally specify how extension graphs are to be merged.
     public init(extensionGraphAssociationStrategy: ExtensionGraphAssociation = .extendedGraph) {
         self.unifiedGraphs = [:]
         self.graphSources = [:]
