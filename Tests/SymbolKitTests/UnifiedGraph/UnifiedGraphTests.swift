@@ -134,6 +134,273 @@ class UnifiedGraphTests: XCTestCase {
         let extensionSymModule = try XCTUnwrap(extensionSym.modules[.init(forSymbolGraph: extensionSyms)!])
         XCTAssertEqual(extensionSymModule.name, "OtherKit")
     }
+
+    func testCreateOverloadGroupSymbols() throws {
+        // - SomeClass
+        //   - someMethod() [x2]
+        let symbolGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:SomeClass", interfaceLanguage: "swift"),
+                    names: .init(title: "SomeClass", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-1", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-2", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+            ],
+            relations: [
+                .init(source: "s:SomeClass:someMethod-1",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:SomeClass:someMethod-2",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+            ]
+        )
+
+        do {
+            let collector = GraphCollector()
+            collector.mergeSymbolGraph(symbolGraph, at: .init(fileURLWithPath: "DemoKit.symbols.json"))
+            let (unifiedGraphs, _) = collector.finishLoading(createOverloadGroups: true)
+
+            let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+            // There was only one symbol graph, so there should only be one selector
+            let relationships = try XCTUnwrap(demoGraph.relationshipsByLanguage.values.first)
+
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = relationships.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), ["s:SomeClass:someMethod-1", "s:SomeClass:someMethod-2"])
+
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssert(overloadGroupIdentifier.hasSuffix("::OverloadGroup"))
+            XCTAssert(demoGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+            // Make sure that the existing memberOf relationship was cloned onto the overload group
+            let overloadGroupRelations = relationships.filter({ $0.source == overloadGroupIdentifier })
+            XCTAssertEqual(overloadGroupRelations.count, 1)
+            XCTAssertEqual(overloadGroupRelations.first?.kind, .memberOf)
+            XCTAssertEqual(overloadGroupRelations.first?.target, "s:SomeClass")
+        }
+
+        // Also check that overload groups are not created when the language is restricted
+        do {
+            let collector = GraphCollector()
+            collector.mergeSymbolGraph(symbolGraph, at: .init(fileURLWithPath: "DemoKit.symbols.json"))
+            let (unifiedGraphs, _) = collector.finishLoading(createOverloadGroups: true, restrictOverloadGroupLanguages: ["cpp"])
+
+            let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+            // There was only one symbol graph, so there should only be one selector
+            let relationships = try XCTUnwrap(demoGraph.relationshipsByLanguage.values.first)
+
+            XCTAssertFalse(relationships.contains(where: { $0.kind == .overloadOf }))
+            XCTAssertFalse(demoGraph.symbols.keys.contains(where: { $0.hasSuffix("::OverloadGroup") }))
+        }
+    }
+
+    func testCreateDifferentOverloadGroupSymbolsPerKind() throws {
+        // - SomeClass
+        //   - someMethod() [instance method, x2]
+        //   - someMethod() [class method, x2]
+        let symbolGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:SomeClass", interfaceLanguage: "swift"),
+                    names: .init(title: "SomeClass", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-1", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-2", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-3", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .typeMethod, displayName: "Class Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-4", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .typeMethod, displayName: "Class Method"),
+                    mixins: [:]),
+            ],
+            relations: [
+                .init(source: "s:SomeClass:someMethod-1",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:SomeClass:someMethod-2",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:SomeClass:someMethod-3",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:SomeClass:someMethod-4",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+            ]
+        )
+
+        let collector = GraphCollector()
+        collector.mergeSymbolGraph(symbolGraph, at: .init(fileURLWithPath: "DemoKit.symbols.json"))
+        let (unifiedGraphs, _) = collector.finishLoading(createOverloadGroups: true)
+
+        let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+        // There was only one symbol graph, so there should only be one selector
+        let relationships = try XCTUnwrap(demoGraph.relationshipsByLanguage.values.first)
+
+        // Make sure that the overloaded symbols all received an overloadOf relation
+        let overloadRelations = relationships.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 4)
+
+        // Pull out the overload group symbols. There should be two of them - one for the instance
+        // method, one for the class method
+        let overloadGroups = Set(overloadRelations.map(\.target))
+        XCTAssertEqual(overloadGroups.count, 2)
+        let overloadGroupSymbols = try overloadGroups.map({ try XCTUnwrap(demoGraph.symbols[$0]) })
+        XCTAssertEqual(Set(overloadGroupSymbols.map(\.kind.first?.value.identifier)), [.method, .typeMethod])
+    }
+
+    func testCreateDifferentOverloadGroupsPerPath() throws {
+        // - SomeClass
+        //   - someMethod() [x2]
+        // - OtherClass
+        //   - someMethod() [x2]
+        let symbolGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:SomeClass", interfaceLanguage: "swift"),
+                    names: .init(title: "SomeClass", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-1", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:SomeClass:someMethod-2", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["SomeClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:OtherClass", interfaceLanguage: "swift"),
+                    names: .init(title: "OtherClass", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["OtherClass"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:OtherClass:someMethod-1", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["OtherClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:OtherClass:someMethod-2", interfaceLanguage: "swift"),
+                    names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["OtherClass", "someMethod"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+            ],
+            relations: [
+                .init(source: "s:SomeClass:someMethod-1",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:SomeClass:someMethod-2",
+                      target: "s:SomeClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:OtherClass:someMethod-1",
+                      target: "s:OtherClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+                .init(source: "s:OtherClass:someMethod-2",
+                      target: "s:OtherClass",
+                      kind: .memberOf,
+                      targetFallback: nil),
+            ]
+        )
+
+        let collector = GraphCollector()
+        collector.mergeSymbolGraph(symbolGraph, at: .init(fileURLWithPath: "DemoKit.symbols.json"))
+        let (unifiedGraphs, _) = collector.finishLoading(createOverloadGroups: true)
+
+        let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+        // There was only one symbol graph, so there should only be one selector
+        let relationships = try XCTUnwrap(demoGraph.relationshipsByLanguage.values.first)
+
+        // Make sure that all the overloaded symbols received an overloadOf relation
+        let overloadRelations = relationships.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 4)
+
+        // Pull out the overload group symbols. There should be two of them - one for
+        // SomeClass/someMethod(), one for OtherClass/someMethod()
+        let overloadGroups = Set(overloadRelations.map(\.target))
+        XCTAssertEqual(overloadGroups.count, 2)
+        let overloadGroupSymbols = try overloadGroups.map({ try XCTUnwrap(demoGraph.symbols[$0]) })
+        XCTAssertEqual(Set(overloadGroupSymbols.map({ $0.pathComponents.first?.value.first })), ["SomeClass", "OtherClass"])
+    }
 }
 
 /// Compare the given lists of relationships and assert that they contain the same relationships.

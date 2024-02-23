@@ -237,6 +237,23 @@ extension SymbolGraph.Symbol {
             }
             return identifier
         }
+
+        /// Whether the kind supports grouping as overloads.
+        internal var isOverloadableKind: Bool {
+            switch self {
+            case .method,
+                 .typeMethod,
+                 .`func`,
+                 .`init`,
+                 .macro,
+                 .subscript,
+                 .typeSubscript,
+                 .`operator`:
+                return true
+            default:
+                return false
+            }
+        }
     }
 }
 

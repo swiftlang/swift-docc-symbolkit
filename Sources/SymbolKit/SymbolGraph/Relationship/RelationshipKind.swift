@@ -118,5 +118,17 @@ extension SymbolGraph.Relationship {
          symbol `A`.
          */
         public static let references = Kind(rawValue: "references")
+
+        /**
+         A symbol `A` overloads other symbols referenced by `B`.
+
+         This relationship can be added by the unified symbol graph collector
+         to reference a synthesized "overload group" symbol that collects
+         together a group of overloaded symbols.
+
+         The implied inverse of this relationship is that the symbol `B` is an
+         overload group containing `A`.
+         */
+        public static let overloadOf = Kind(rawValue: "overloadOf")
     }
 }

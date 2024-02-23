@@ -74,6 +74,20 @@ extension UnifiedSymbolGraph {
             self.mixins = [selector: sym.mixins]
         }
 
+        internal init(cloning originalSymbol: UnifiedSymbolGraph.Symbol, withIdentifier identifier: String? = nil) {
+            self.uniqueIdentifier = identifier ?? originalSymbol.uniqueIdentifier
+            self.mainGraphSelectors = originalSymbol.mainGraphSelectors
+            self.modules = originalSymbol.modules
+            self.kind = originalSymbol.kind
+            self.pathComponents = originalSymbol.pathComponents
+            self.type = originalSymbol.type
+            self.names = originalSymbol.names
+            self.docComment = originalSymbol.docComment
+            self.accessLevel = originalSymbol.accessLevel
+            self.isVirtual = originalSymbol.isVirtual
+            self.mixins = originalSymbol.mixins
+        }
+
         /// Add the given symbol to this unified view.
         ///
         /// - Warning: `symbol` must refer to the same symbol as this view (i.e. their precise identifiers must be the same).
