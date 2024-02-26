@@ -215,6 +215,15 @@ extension UnifiedSymbolGraph {
                 // Create a new "overload group" symbol and add it to the list
                 let overloadGroupIdentifier = firstOverload.uniqueIdentifier + "::OverloadGroup"
                 let overloadGroupSymbol = UnifiedSymbolGraph.Symbol(cloning: firstOverload, withIdentifier: overloadGroupIdentifier)
+
+                if let simplifiedDeclaration = overloadGroupSymbol.overloadSubheadingFragments(selector: selector),
+                   var overloadNames = overloadGroupSymbol.names[selector]
+                {
+                    overloadNames.navigator = simplifiedDeclaration
+                    overloadNames.subHeading = simplifiedDeclaration
+                    overloadGroupSymbol.names[selector] = overloadNames
+                }
+
                 self.symbols[overloadGroupIdentifier] = overloadGroupSymbol
 
                 // Clone the relationships from the first overload and add them to the overload group

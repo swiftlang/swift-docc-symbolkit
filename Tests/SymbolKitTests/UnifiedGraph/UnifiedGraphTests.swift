@@ -401,6 +401,126 @@ class UnifiedGraphTests: XCTestCase {
         let overloadGroupSymbols = try overloadGroups.map({ try XCTUnwrap(demoGraph.symbols[$0]) })
         XCTAssertEqual(Set(overloadGroupSymbols.map({ $0.pathComponents.first?.value.first })), ["SomeClass", "OtherClass"])
     }
+
+    func testCreateOverloadWithSimplifiedDeclaration() throws {
+        // func myFunc(param: Int) -> Int
+        // func myFunc(param: String) -> String
+        let symbolGraph = makeSymbolGraph(
+            symbols: [
+                try makeSymbol(fromJson: """
+                {
+                    "kind": { "identifier": "swift.func", "displayName": "Function" },
+                    "identifier": {
+                        "precise": "s:9SwiftDemo6myFunc5paramS2S_tF",
+                        "interfaceLanguage": "swift"
+                    },
+                    "pathComponents": [ "myFunc(param:)" ],
+                    "names": {
+                        "title": "myFunc(param:)",
+                        "subHeading": [
+                            { "kind": "keyword", "spelling": "func" },
+                            { "kind": "text", "spelling": " " },
+                            { "kind": "identifier", "spelling": "myFunc" },
+                            { "kind": "text", "spelling": "(" },
+                            { "kind": "externalParam", "spelling": "param" },
+                            { "kind": "text", "spelling": ": " },
+                            { "kind": "typeIdentifier", "spelling": "String", "preciseIdentifier": "s:SS" },
+                            { "kind": "text", "spelling": ") -> " },
+                            { "kind": "typeIdentifier", "spelling": "String", "preciseIdentifier": "s:SS" }
+                        ]
+                    },
+                    "functionSignature": {
+                        "parameters": [
+                            { "name": "param" }
+                        ],
+                        "returns": [
+                            { "kind": "typeIdentifier", "spelling": "String", "preciseIdentifier": "s:SS" }
+                        ]
+                    },
+                    "declarationFragments": [
+                        { "kind": "keyword", "spelling": "func" },
+                        { "kind": "text", "spelling": " " },
+                        { "kind": "identifier", "spelling": "myFunc" },
+                        { "kind": "text", "spelling": "(" },
+                        { "kind": "externalParam", "spelling": "param" },
+                        { "kind": "text", "spelling": ": " },
+                        { "kind": "typeIdentifier", "spelling": "String", "preciseIdentifier": "s:SS" },
+                        { "kind": "text", "spelling": ") -> " },
+                        { "kind": "typeIdentifier", "spelling": "String", "preciseIdentifier": "s:SS" }
+                    ],
+                    "accessLevel": "public"
+                }
+                """),
+                try makeSymbol(fromJson: """
+                {
+                    "kind": { "identifier": "swift.func", "displayName": "Function" },
+                    "identifier": {
+                        "precise": "s:9SwiftDemo6myFunc5paramS2i_tF",
+                        "interfaceLanguage": "swift"
+                    },
+                    "pathComponents": [ "myFunc(param:)" ],
+                    "names": {
+                        "title": "myFunc(param:)",
+                        "subHeading": [
+                            { "kind": "keyword", "spelling": "func" },
+                            { "kind": "text", "spelling": " " },
+                            { "kind": "identifier", "spelling": "myFunc" },
+                            { "kind": "text", "spelling": "(" },
+                            { "kind": "externalParam", "spelling": "param" },
+                            { "kind": "text", "spelling": ": " },
+                            { "kind": "typeIdentifier", "spelling": "Int", "preciseIdentifier": "s:Si" },
+                            { "kind": "text", "spelling": ") -> " },
+                            { "kind": "typeIdentifier", "spelling": "Int", "preciseIdentifier": "s:Si" }
+                        ]
+                    },
+                    "functionSignature": {
+                        "parameters": [
+                            { "name": "param" }
+                        ],
+                        "returns": [
+                            { "kind": "typeIdentifier", "spelling": "Int", "preciseIdentifier": "s:Si" }
+                        ]
+                    },
+                    "declarationFragments": [
+                        { "kind": "keyword", "spelling": "func" },
+                        { "kind": "text", "spelling": " " },
+                        { "kind": "identifier", "spelling": "myFunc" },
+                        { "kind": "text", "spelling": "(" },
+                        { "kind": "externalParam", "spelling": "param" },
+                        { "kind": "text", "spelling": ": " },
+                        { "kind": "typeIdentifier", "spelling": "Int", "preciseIdentifier": "s:Si" },
+                        { "kind": "text", "spelling": ") -> " },
+                        { "kind": "typeIdentifier", "spelling": "Int", "preciseIdentifier": "s:Si" }
+                    ],
+                    "accessLevel": "public"
+                }
+                """)
+            ],
+            relations: [])
+
+        let collector = GraphCollector()
+        collector.mergeSymbolGraph(symbolGraph, at: .init(fileURLWithPath: "DemoKit.symbols.json"))
+        let (unifiedGraphs, _) = collector.finishLoading(createOverloadGroups: true)
+
+        let demoGraph = try XCTUnwrap(unifiedGraphs["DemoKit"])
+
+        let overloadSymbolIdentifier = try XCTUnwrap(demoGraph.symbols.keys.first(where: { $0.hasSuffix("::OverloadGroup") }))
+        let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadSymbolIdentifier])
+        let overloadSelector = try XCTUnwrap(overloadSymbol.mainGraphSelectors.first)
+        XCTAssertNotNil(overloadSymbol.names[overloadSelector]?.subHeading)
+        XCTAssertNotNil(overloadSymbol.names[overloadSelector]?.navigator)
+        XCTAssertEqual(overloadSymbol.names[overloadSelector]?.subHeading, overloadSymbol.names[overloadSelector]?.navigator)
+
+        // func myFunc(param:)
+        XCTAssertEqual(overloadSymbol.names[overloadSelector]?.subHeading, [
+            .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "param", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ":)", preciseIdentifier: nil),
+        ])
+    }
 }
 
 /// Compare the given lists of relationships and assert that they contain the same relationships.
@@ -531,4 +651,9 @@ private func makeSymbolGraph(symbols: [SymbolGraph.Symbol], relations: [SymbolGr
         symbols: symbols,
         relationships: relations
     )
+}
+
+private func makeSymbol(fromJson json: String) throws -> SymbolGraph.Symbol {
+    let decoder = JSONDecoder()
+    return try decoder.decode(SymbolGraph.Symbol.self, from: json.data(using: .utf8)!)
 }
