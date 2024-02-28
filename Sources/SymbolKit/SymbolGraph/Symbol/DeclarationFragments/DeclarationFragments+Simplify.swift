@@ -28,21 +28,16 @@ fileprivate extension UnifiedSymbolGraph.Symbol {
     }
 }
 
-internal extension UnifiedSymbolGraph.Symbol {
+internal extension SymbolGraph.Symbol {
     func overloadSubheadingFragments(
-        selector: UnifiedSymbolGraph.Selector,
         argumentSeparator: String = ":",
         printTrailingArgumentSeparator: Bool = true
-    ) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment]? {
-        guard let sourceFragments = self.declarationFragments(selector: selector) ?? self.names[selector]?.subHeading ?? self.names[selector]?.navigator else {
-            if let title = self.names[selector]?.title {
-                return [.init(textFragment: title)]
-            } else {
-                return nil
-            }
+    ) -> [DeclarationFragments.Fragment] {
+        guard let sourceFragments = self.declarationFragments ?? self.names.subHeading ?? self.names.navigator, !sourceFragments.isEmpty else {
+            return [.init(textFragment: self.names.title)]
         }
 
-        var simplifiedFragments = [SymbolGraph.Symbol.DeclarationFragments.Fragment]()
+        var simplifiedFragments = [DeclarationFragments.Fragment]()
 
         // In Swift, methods have a keyword as their first token; if the declaration follows that
         // pattern then pull that out
@@ -66,7 +61,7 @@ internal extension UnifiedSymbolGraph.Symbol {
         simplifiedFragments.append(.init(textFragment: "("))
         var insertedParameter = false
 
-        if let functionSignature = self.functionSignature(selector: selector) {
+        if let functionSignature = self.functionSignature {
             for parameter in functionSignature.parameters {
                 // Scan through the declaration fragments to see whether this parameter's name is
                 // externally-facing or not.

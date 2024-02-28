@@ -74,9 +74,9 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
         }
         """
 
-        let unifiedSymbol = try makeUnifiedSymbol(fromJson: inputJson)
+        let symbol = try makeSymbol(fromJson: inputJson)
 
-        let overloadDeclaration = try XCTUnwrap(unifiedSymbol.overloadSubheadingFragments(selector: .init(interfaceLanguage: "swift", platform: nil)))
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
         // func myFunc(paramOne:paramTwo:)
         XCTAssertEqual(overloadDeclaration, [
             .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
@@ -168,9 +168,9 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
             "accessLevel": "public"
         }
         """
-        let unifiedSymbol = try makeUnifiedSymbol(fromJson: inputJson)
+        let symbol = try makeSymbol(fromJson: inputJson)
 
-        let overloadDeclaration = try XCTUnwrap(unifiedSymbol.overloadSubheadingFragments(selector: .init(interfaceLanguage: "swift", platform: nil)))
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
         // func asdf(param:paramTwo:)
         XCTAssertEqual(overloadDeclaration, [
             .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
@@ -242,9 +242,9 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
             "accessLevel": "public"
         }
         """
-        let unifiedSymbol = try makeUnifiedSymbol(fromJson: inputJson)
+        let symbol = try makeSymbol(fromJson: inputJson)
 
-        let overloadDeclaration = try XCTUnwrap(unifiedSymbol.overloadSubheadingFragments(selector: .init(interfaceLanguage: "swift", platform: nil)))
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
         // func myFunc(param:_:)
         XCTAssertEqual(overloadDeclaration, [
             .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
@@ -304,9 +304,9 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
             "accessLevel": "public"
         }
         """
-        let unifiedSymbol = try makeUnifiedSymbol(fromJson: inputJson)
+        let symbol = try makeSymbol(fromJson: inputJson)
 
-        let overloadDeclaration = try XCTUnwrap(unifiedSymbol.overloadSubheadingFragments(selector: .init(interfaceLanguage: "swift", platform: nil)))
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
         // subscript(_:other:)
         XCTAssertEqual(overloadDeclaration, [
             .init(kind: .keyword, spelling: "subscript", preciseIdentifier: nil),
@@ -476,9 +476,9 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
             "accessLevel": "public"
         }
         """
-        let unifiedSymbol = try makeUnifiedSymbol(fromJson: inputJson)
+        let symbol = try makeSymbol(fromJson: inputJson)
 
-        let overloadDeclaration = try XCTUnwrap(unifiedSymbol.overloadSubheadingFragments(selector: .init(interfaceLanguage: "swift", platform: nil)))
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
         // func someFunction(first:second:third:fourth:fifth:sixth:seventh:)
         XCTAssertEqual(overloadDeclaration, [
             .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
@@ -503,8 +503,7 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
     }
 }
 
-fileprivate func makeUnifiedSymbol(fromJson json: String) throws -> UnifiedSymbolGraph.Symbol {
+fileprivate func makeSymbol(fromJson json: String) throws -> SymbolGraph.Symbol {
     let decoder = JSONDecoder()
-    let inputSymbol = try decoder.decode(SymbolGraph.Symbol.self, from: json.data(using: .utf8)!)
-    return .init(fromSingleSymbol: inputSymbol, module: .init(name: "MyModule", platform: .init()), isMainGraph: true)
+    return try decoder.decode(SymbolGraph.Symbol.self, from: json.data(using: .utf8)!)
 }

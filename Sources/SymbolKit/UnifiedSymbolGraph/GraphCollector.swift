@@ -88,16 +88,13 @@ extension GraphCollector {
         }
     }
 
-    public func finishLoading(createOverloadGroups: Bool = false, restrictOverloadGroupLanguages overloadLanguages: [String]? = nil) -> (unifiedGraphs: [String: UnifiedSymbolGraph], graphSources: [String: [GraphKind]]) {
+    public func finishLoading() -> (unifiedGraphs: [String: UnifiedSymbolGraph], graphSources: [String: [GraphKind]]) {
         for (url, graph) in self.extensionGraphs {
             self.mergeSymbolGraph(graph, at: url, forceLoading: true)
         }
 
         for (_, graph) in self.unifiedGraphs {
             graph.collectOrphans()
-            if createOverloadGroups {
-                graph.createOverloadGroups(restrictByLanguage: overloadLanguages)
-            }
         }
 
         return (self.unifiedGraphs, self.graphSources)
