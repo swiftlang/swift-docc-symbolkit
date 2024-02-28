@@ -239,7 +239,7 @@ extension SymbolGraph.Symbol {
         }
 
         /// Whether the kind supports grouping as overloads.
-        internal var isOverloadableKind: Bool {
+        public var isOverloadableKind: Bool {
             switch self {
             case .method,
                  .typeMethod,
