@@ -28,7 +28,13 @@ extension SymbolGraph {
         var newRelationships = [Relationship]()
 
         for overloadSymbols in symbolsByPath.values where overloadSymbols.count > 1 {
-            let firstOverload = overloadSymbols.first!
+            let sortedOverloads: [Symbol]
+            if overloadSymbols.allSatisfy({ $0.declarationFragments != nil }) {
+                sortedOverloads = overloadSymbols.sorted(by: { $0.declarationFragments! < $1.declarationFragments! })
+            } else {
+                sortedOverloads = overloadSymbols.sorted(by: { $0.identifier.precise < $1.identifier.precise })
+            }
+            let firstOverload = sortedOverloads.first!
 
             let overloadGroupIdentifier = firstOverload.identifier.precise + Symbol.overloadGroupIdentifierSuffix
             var overloadGroupSymbol = firstOverload
@@ -53,13 +59,20 @@ extension SymbolGraph {
                 newRelationships.append(newRelationship)
             }
 
-            // Make new 'overloadOf' relationships between the overloaded symbols and the new overload group
-            for overloadSymbol in overloadSymbols {
+            for overloadIndex in sortedOverloads.indices {
+                let overloadSymbol = sortedOverloads[overloadIndex]
+                // Make new 'overloadOf' relationships between the overloaded symbols and the new overload group
                 newRelationships.append(.init(
                     source: overloadSymbol.identifier.precise,
                     target: overloadGroupIdentifier,
                     kind: .overloadOf,
                     targetFallback: nil))
+
+                // Add overload data to each symbol
+                let overloadData = Symbol.OverloadData(
+                    overloadGroupIdentifier: overloadGroupIdentifier,
+                    overloadGroupIndex: overloadIndex)
+                self.symbols[overloadSymbol.identifier.precise]?.mixins[Symbol.OverloadData.mixinKey] = overloadData
             }
         }
 
@@ -74,5 +87,14 @@ extension SymbolGraph.Symbol {
 
     public var isOverloadGroup: Bool {
         self.identifier.precise.hasSuffix(Self.overloadGroupIdentifierSuffix)
+    }
+}
+
+fileprivate extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    static func < (lhs: Self, rhs: Self) -> Bool {
+        let renderedLhs = lhs.map(\.spelling).joined()
+        let renderedRhs = rhs.map(\.spelling).joined()
+
+        return renderedLhs < renderedRhs
     }
 }

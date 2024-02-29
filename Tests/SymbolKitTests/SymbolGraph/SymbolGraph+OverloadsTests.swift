@@ -54,15 +54,21 @@ class SymbolGraphOverloadsTests: XCTestCase {
             ]
         )
 
+        let overloadSymbols = [
+            "s:SomeClass:someMethod-1",
+            "s:SomeClass:someMethod-2",
+        ]
+        let expectedOverloadGroupIdentifier = "s:SomeClass:someMethod-1::OverloadGroup"
+
         // Make sure that overloadOf relationships were added
         let overloadRelations = demoGraph.relationships.filter({ $0.kind == .overloadOf })
         XCTAssertEqual(overloadRelations.count, 2)
         XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), ["s:SomeClass:someMethod-1", "s:SomeClass:someMethod-2"])
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
         // Pull out the overload group's identifier and make sure that it exists
         let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssert(overloadGroupIdentifier.hasSuffix("::OverloadGroup"))
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
         XCTAssert(demoGraph.symbols.keys.contains(overloadGroupIdentifier))
 
         // Make sure that the existing memberOf relationship was cloned onto the overload group
@@ -70,6 +76,15 @@ class SymbolGraphOverloadsTests: XCTestCase {
         XCTAssertEqual(overloadGroupRelations.count, 1)
         XCTAssertEqual(overloadGroupRelations.first?.kind, .memberOf)
         XCTAssertEqual(overloadGroupRelations.first?.target, "s:SomeClass")
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.overloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
     }
 
     func testCreateDifferentOverloadGroupSymbolsPerKind() throws {
@@ -335,14 +350,22 @@ class SymbolGraphOverloadsTests: XCTestCase {
             ],
             relations: [])
 
-        let overloadSymbolIdentifier = try XCTUnwrap(demoGraph.symbols.keys.first(where: { $0.hasSuffix("::OverloadGroup") }))
-        let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadSymbolIdentifier])
-        XCTAssertNotNil(overloadSymbol.names.subHeading)
-        XCTAssertNotNil(overloadSymbol.names.navigator)
-        XCTAssertEqual(overloadSymbol.names.subHeading, overloadSymbol.names.navigator)
+        // Int should sort before String, even though lowercase letters sort after uppercase ones in
+        // a case-sensitive sort
+        let overloadSymbols = [
+            "s:9SwiftDemo6myFunc5paramS2i_tF",
+            "s:9SwiftDemo6myFunc5paramS2S_tF",
+        ]
+        let expectedOverloadGroup = "s:9SwiftDemo6myFunc5paramS2i_tF::OverloadGroup"
+
+        XCTAssert(demoGraph.symbols.keys.contains(expectedOverloadGroup))
+        let overloadGroupSymbol = try XCTUnwrap(demoGraph.symbols[expectedOverloadGroup])
+        XCTAssertNotNil(overloadGroupSymbol.names.subHeading)
+        XCTAssertNotNil(overloadGroupSymbol.names.navigator)
+        XCTAssertEqual(overloadGroupSymbol.names.subHeading, overloadGroupSymbol.names.navigator)
 
         // func myFunc(param:)
-        XCTAssertEqual(overloadSymbol.names.subHeading, [
+        XCTAssertEqual(overloadGroupSymbol.names.subHeading, [
             .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
             .init(kind: .text, spelling: " ", preciseIdentifier: nil),
             .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
@@ -350,6 +373,16 @@ class SymbolGraphOverloadsTests: XCTestCase {
             .init(kind: .externalParameter, spelling: "param", preciseIdentifier: nil),
             .init(kind: .text, spelling: ":)", preciseIdentifier: nil),
         ])
+
+        // Since these symbols had declaration fragments, ensure that their overload data reflects
+        // the appropriate sorting
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.overloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroup)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
     }
 }
 
