@@ -22,17 +22,6 @@ extension SymbolGraph.Symbol {
         public let overloadGroupIdentifier: String
 
         /// The sorted index of this overload in its overload group.
-        ///
-        /// When creating overload groups, symbols are sorted by one of two metrics:
-        ///
-        /// 1. If all the symbols in an overload group have ``DeclarationFragments`` information,
-        ///    the declarations are flattened into a string by their
-        ///    ``DeclarationFragments/Fragment/spelling`` and sorted lexicographically.
-        /// 2. Otherwise, the symbols are sorted by their precise identifiers.
-        ///
-        /// If this sort index is `0`, i.e. it came first in the sorting, then the overload group
-        /// is created by cloning this symbol's data, and should reference the same declaration,
-        /// documentation comment, etc.
         public let overloadGroupIndex: Int
 
         public init(overloadGroupIdentifier: String, overloadGroupIndex: Int) {

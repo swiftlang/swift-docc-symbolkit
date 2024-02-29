@@ -11,6 +11,28 @@
 import Foundation
 
 extension SymbolGraph {
+    /// Create "overload group" symbols based on name and kind collisions.
+    ///
+    /// For this method, an "overload" is a symbol whose ``Symbol/pathComponents`` and
+    /// ``Symbol/kind-swift.property`` are the same as another symbol in the same symbol graph.
+    /// Such symbols are usually found in languages that allow for function overloading based on
+    /// parameter or return types.
+    ///
+    /// When this method is called, it first looks for any symbols with an overloadable symbol kind
+    /// (see ``Symbol/KindIdentifier/isOverloadableKind``) which collide on both kind and path. It
+    /// then sorts these colliding symbols in one of two ways:
+    ///
+    /// 1. If all the colliding symbols have ``Symbol/DeclarationFragments-swift.struct``, these
+    ///    declarations are condensed into strings by their
+    ///    ``Symbol/DeclarationFragments-swift.struct/Fragment/spelling``, which are then sorted.
+    /// 2. Otherwise, the symbols are sorted by their unique identifier.
+    ///
+    /// The symbol that appears first in this sorting is then cloned to create an "overload group".
+    /// This symbol will have a unique identifier based on the original symbol, but suffixed with
+    /// ``Symbol/overloadGroupIdentifierSuffix``. New ``Relationship/Kind/overloadOf``
+    /// relationships are created between the colliding symbols and the new overload group symbol.
+    /// In addition, any existing relationships the original symbol had are also cloned for the
+    /// overload group.
     public mutating func createOverloadGroupSymbols() {
         struct OverloadKey: Hashable {
             let path: [String]
@@ -83,8 +105,12 @@ extension SymbolGraph {
 }
 
 extension SymbolGraph.Symbol {
+    /// A suffix added to the precise identifier string for overload group symbols created by
+    /// ``SymbolGraph/createOverloadGroupSymbols()``.
     public static let overloadGroupIdentifierSuffix = "::OverloadGroup"
 
+    /// Whether the precise identifier string for this symbol contains the suffix added by
+    /// ``SymbolGraph/createOverloadGroupSymbols()``.
     public var isOverloadGroup: Bool {
         self.identifier.precise.hasSuffix(Self.overloadGroupIdentifierSuffix)
     }
