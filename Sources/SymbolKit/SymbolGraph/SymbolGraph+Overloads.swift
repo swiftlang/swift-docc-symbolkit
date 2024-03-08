@@ -39,13 +39,10 @@ extension SymbolGraph {
             let kind: SymbolGraph.Symbol.KindIdentifier
         }
 
-        var symbolsByPath = [OverloadKey: [SymbolGraph.Symbol]]()
-
-        for symbol in self.symbols.values {
-            if symbol.kind.identifier.isOverloadableKind {
-                symbolsByPath[.init(path: symbol.pathComponents, kind: symbol.kind.identifier), default: []].append(symbol)
-            }
-        }
+        let symbolsByPath = [OverloadKey: [SymbolGraph.Symbol]](
+            grouping: symbols.values.filter(\.kind.identifier.isOverloadableKind),
+            by: { .init(path: $0.pathComponents, kind: $0.kind.identifier) }
+        )
 
         var newRelationships = [Relationship]()
 
