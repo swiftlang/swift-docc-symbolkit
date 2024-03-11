@@ -60,9 +60,10 @@ extension SymbolGraph {
             overloadGroupSymbol.identifier.precise = overloadGroupIdentifier
             overloadGroupSymbol.isVirtual = true
 
-            let simplifiedDeclaration = overloadGroupSymbol.overloadSubheadingFragments()
-            overloadGroupSymbol.names.navigator = simplifiedDeclaration
-            overloadGroupSymbol.names.subHeading = simplifiedDeclaration
+            if let simplifiedDeclaration = overloadGroupSymbol.overloadSubheadingFragments() {
+                overloadGroupSymbol.names.navigator = simplifiedDeclaration
+                overloadGroupSymbol.names.subHeading = simplifiedDeclaration
+            }
 
             self.symbols[overloadGroupSymbol.identifier.precise] = overloadGroupSymbol
 

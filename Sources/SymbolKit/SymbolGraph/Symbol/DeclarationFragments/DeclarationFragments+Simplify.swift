@@ -32,9 +32,9 @@ internal extension SymbolGraph.Symbol {
     func overloadSubheadingFragments(
         argumentSeparator: String = ":",
         printTrailingArgumentSeparator: Bool = true
-    ) -> [DeclarationFragments.Fragment] {
+    ) -> [DeclarationFragments.Fragment]? {
         guard let sourceFragments = self.declarationFragments ?? self.names.subHeading ?? self.names.navigator, !sourceFragments.isEmpty else {
-            return [.init(textFragment: self.names.title)]
+            return nil
         }
 
         var simplifiedFragments = [DeclarationFragments.Fragment]()
