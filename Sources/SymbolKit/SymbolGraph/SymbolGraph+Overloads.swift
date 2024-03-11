@@ -67,15 +67,16 @@ extension SymbolGraph {
             self.symbols[overloadGroupSymbol.identifier.precise] = overloadGroupSymbol
 
             // Clone the relationships from the first overload and add them to the overload group
-            for relationship in self.relationships where relationship.source == firstOverload.identifier.precise {
-                var newRelationship = relationship
-                newRelationship.source = overloadGroupIdentifier
-                newRelationships.append(newRelationship)
-            }
-            for relationship in self.relationships where relationship.target == firstOverload.identifier.precise {
-                var newRelationship = relationship
-                newRelationship.target = overloadGroupIdentifier
-                newRelationships.append(newRelationship)
+            for relationship in self.relationships {
+                if relationship.source == firstOverload.identifier.precise {
+                    var newRelationship = relationship
+                    newRelationship.source = overloadGroupIdentifier
+                    newRelationships.append(newRelationship)
+                } else if relationship.target == firstOverload.identifier.precise {
+                    var newRelationship = relationship
+                    newRelationship.target = overloadGroupIdentifier
+                    newRelationships.append(newRelationship)
+                }
             }
 
             for overloadIndex in sortedOverloads.indices {
