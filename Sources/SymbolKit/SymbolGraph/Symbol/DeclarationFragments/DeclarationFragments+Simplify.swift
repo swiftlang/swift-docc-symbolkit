@@ -29,10 +29,7 @@ fileprivate extension UnifiedSymbolGraph.Symbol {
 }
 
 internal extension SymbolGraph.Symbol {
-    func overloadSubheadingFragments(
-        argumentSeparator: String = ":",
-        printTrailingArgumentSeparator: Bool = true
-    ) -> [DeclarationFragments.Fragment]? {
+    func overloadSubheadingFragments() -> [DeclarationFragments.Fragment]? {
         guard let sourceFragments = self.declarationFragments ?? self.names.subHeading ?? self.names.navigator, !sourceFragments.isEmpty else {
             return nil
         }
@@ -59,7 +56,6 @@ internal extension SymbolGraph.Symbol {
         // use that to parse the data out.
 
         simplifiedFragments.append(.init(textFragment: "("))
-        var insertedParameter = false
 
         if let functionSignature = self.functionSignature {
             for parameter in functionSignature.parameters {
@@ -74,22 +70,17 @@ internal extension SymbolGraph.Symbol {
                     // FIXME: This is a Swift-centric assumption; change this if/when we support C++ overloads
                     fragment = .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil)
                 }
-                if insertedParameter {
-                    simplifiedFragments.append(.init(textFragment: argumentSeparator))
-                }
                 simplifiedFragments.append(fragment)
-                insertedParameter = true
+                simplifiedFragments.append(.init(textFragment: ":"))
             }
         } else {
-            let parameterFragments = sourceFragments.extractFunctionParameters(argumentSeparator: argumentSeparator)
+            let parameterFragments = sourceFragments.extractFunctionParameters()
             simplifiedFragments.append(contentsOf: parameterFragments)
-            if !parameterFragments.isEmpty {
-                insertedParameter = true
-            }
         }
 
-        if insertedParameter && printTrailingArgumentSeparator {
-            simplifiedFragments.append(.init(textFragment: argumentSeparator + ")"))
+        if simplifiedFragments.last?.kind == .text, var lastFragment = simplifiedFragments.popLast() {
+            lastFragment.spelling += ")"
+            simplifiedFragments.append(lastFragment)
         } else {
             simplifiedFragments.append(.init(textFragment: ")"))
         }
@@ -99,7 +90,7 @@ internal extension SymbolGraph.Symbol {
 }
 
 internal extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-    func extractFunctionParameters(argumentSeparator: String = ":") -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    func extractFunctionParameters() -> [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
         var parameterFragments = [SymbolGraph.Symbol.DeclarationFragments.Fragment]()
 
         // A parameter can be named one of three ways:
@@ -112,8 +103,6 @@ internal extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
         // for arguments flanked by parentheses, we should instead rely on the symbol graph to have
         // included the FunctionSignature mixin so that this method isn't called. This function will
         // fail to distinguish the parameter names and simply render them all inline.
-
-        var insertedParameter = false
 
         // If there are no parameter fragments in this declaration, assume no parameters and bail
         guard var currentIndex = self.firstIndex(where: \.isParameter) else {
@@ -129,11 +118,6 @@ internal extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
         while currentIndex < endOfArguments {
             let currentFragment = self[currentIndex]
             if currentFragment.isParameter {
-                if insertedParameter {
-                    parameterFragments.append(.init(textFragment: argumentSeparator))
-                } else {
-                    insertedParameter = true
-                }
                 if currentFragment.kind == .externalParameter {
                     parameterFragments.append(currentFragment)
 
@@ -151,6 +135,7 @@ internal extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
                     // FIXME: This is a Swift-centric assumption; change this if/when we support C++ overloads
                     parameterFragments.append(.init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil))
                 }
+                parameterFragments.append(.init(textFragment: ":"))
             }
 
             currentIndex += 1
