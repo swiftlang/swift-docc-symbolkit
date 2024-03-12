@@ -38,7 +38,14 @@ internal extension SymbolGraph.Symbol {
 
         // In Swift, methods have a keyword as their first token; if the declaration follows that
         // pattern then pull that out
-        if let firstFragment = sourceFragments.first, firstFragment.kind == .keyword {
+
+        // Sometimes symbols are decorated with attributes or extra keywords in the full declaration.
+        // In this case, the sub-heading declaration doesn't include those decorations, so pull that
+        // keyword if it exists
+        if let firstFragment = self.names.subHeading?.first, firstFragment.kind == .keyword {
+            simplifiedFragments.append(firstFragment)
+        } else if let firstFragment = sourceFragments.first(where: { $0.kind != .attribute && $0.kind != .text }), firstFragment.kind == .keyword {
+            // If we only have full declaration fragments, still try to skip a leading attribute if possible
             simplifiedFragments.append(firstFragment)
         }
 

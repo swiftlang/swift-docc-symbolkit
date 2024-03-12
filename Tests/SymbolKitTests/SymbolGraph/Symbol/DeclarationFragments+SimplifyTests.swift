@@ -501,6 +501,187 @@ class DeclarationFragmentsSimplifyTests: XCTestCase {
             .init(kind: .text, spelling: ":)", preciseIdentifier: nil),
         ])
     }
+
+    func testAttribute() throws {
+        // @MainActor public func something() {}
+        let inputJSON = """
+        {
+          "kind": {
+            "identifier": "swift.method",
+            "displayName": "Instance Method"
+          },
+          "identifier": {
+            "precise": "s:10ModuleName9SomethingV9somethingyyF",
+            "interfaceLanguage": "swift"
+          },
+          "pathComponents": [
+            "Something",
+            "something()"
+          ],
+          "names": {
+            "title": "something()",
+            "subHeading": [
+              {
+                "kind": "keyword",
+                "spelling": "func"
+              },
+              {
+                "kind": "text",
+                "spelling": " "
+              },
+              {
+                "kind": "identifier",
+                "spelling": "something"
+              },
+              {
+                "kind": "text",
+                "spelling": "()"
+              }
+            ]
+          },
+          "functionSignature": {
+            "returns": [
+              {
+                "kind": "text",
+                "spelling": "()"
+              }
+            ]
+          },
+          "declarationFragments": [
+            {
+              "kind": "attribute",
+              "spelling": "@"
+            },
+            {
+              "kind": "attribute",
+              "spelling": "MainActor",
+              "preciseIdentifier": "s:ScM"
+            },
+            {
+              "kind": "text",
+              "spelling": " "
+            },
+            {
+              "kind": "keyword",
+              "spelling": "func"
+            },
+            {
+              "kind": "text",
+              "spelling": " "
+            },
+            {
+              "kind": "identifier",
+              "spelling": "something"
+            },
+            {
+              "kind": "text",
+              "spelling": "()"
+            }
+          ],
+          "accessLevel": "public"
+        }
+        """
+        let symbol = try makeSymbol(fromJson: inputJSON)
+
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
+        // func something()
+        XCTAssertEqual(overloadDeclaration?.map(\.spelling).joined(), "func something()")
+        XCTAssertEqual(overloadDeclaration, [
+            .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .identifier, spelling: "something", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "()", preciseIdentifier: nil),
+        ])
+    }
+
+    func testRequiredInit() throws {
+        // required init(_: String)
+        let inputJSON = """
+        {
+          "kind": {
+            "identifier": "swift.init",
+            "displayName": "Initializer"
+          },
+          "identifier": {
+            "precise": "s:10ModuleName8SubClassCyACSgSScfc",
+            "interfaceLanguage": "swift"
+          },
+          "pathComponents": [
+            "SubClass",
+            "init(_:)"
+          ],
+          "names": {
+            "title": "init(_:)",
+            "subHeading": [
+              {
+                "kind": "keyword",
+                "spelling": "init"
+              },
+              {
+                "kind": "text",
+                "spelling": "("
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "String",
+                "preciseIdentifier": "s:SS"
+              },
+              {
+                "kind": "text",
+                "spelling": ")"
+              }
+            ]
+          },
+          "declarationFragments": [
+            {
+              "kind": "keyword",
+              "spelling": "required"
+            },
+            {
+              "kind": "text",
+              "spelling": " "
+            },
+            {
+              "kind": "keyword",
+              "spelling": "init"
+            },
+            {
+              "kind": "text",
+              "spelling": "("
+            },
+            {
+              "kind": "externalParam",
+              "spelling": "_"
+            },
+            {
+              "kind": "text",
+              "spelling": ": "
+            },
+            {
+              "kind": "typeIdentifier",
+              "spelling": "String",
+              "preciseIdentifier": "s:SS"
+            },
+            {
+              "kind": "text",
+              "spelling": ")"
+            }
+          ],
+          "accessLevel": "public"
+        }
+        """
+        let symbol = try makeSymbol(fromJson: inputJSON)
+
+        let overloadDeclaration = symbol.overloadSubheadingFragments()
+        // init()
+        XCTAssertEqual(overloadDeclaration?.map(\.spelling).joined(), "init(_:)")
+        XCTAssertEqual(overloadDeclaration, [
+            .init(kind: .keyword, spelling: "init", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ":)", preciseIdentifier: nil),
+        ])
+    }
 }
 
 fileprivate func makeSymbol(fromJson json: String) throws -> SymbolGraph.Symbol {
