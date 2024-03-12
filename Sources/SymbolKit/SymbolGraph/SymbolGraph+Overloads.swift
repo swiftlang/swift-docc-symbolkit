@@ -14,17 +14,17 @@ extension SymbolGraph {
     /// Create "overload group" symbols based on name and kind collisions.
     ///
     /// For this method, an "overload" is a symbol whose ``Symbol/pathComponents`` and
-    /// ``Symbol/kind-swift.property`` are the same as another symbol in the same symbol graph.
-    /// Such symbols are usually found in languages that allow for function overloading based on
-    /// parameter or return types.
+    /// ``Symbol/kind`` are the same as another symbol in the same symbol graph. Such symbols are
+    /// usually found in languages that allow for function overloading based on parameter or return
+    /// types.
     ///
     /// When this method is called, it first looks for any symbols with an overloadable symbol kind
     /// (see ``Symbol/KindIdentifier/isOverloadableKind``) which collide on both kind and path. It
     /// then sorts these colliding symbols in one of two ways:
     ///
-    /// 1. If all the colliding symbols have ``Symbol/DeclarationFragments-swift.struct``, these
-    ///    declarations are condensed into strings by their
-    ///    ``Symbol/DeclarationFragments-swift.struct/Fragment/spelling``, which are then sorted.
+    /// 1. If all the colliding symbols have ``Symbol/DeclarationFragments``, these declarations are
+    ///    condensed into strings by their ``Symbol/DeclarationFragments/Fragment/spelling``, which
+    ///    are then sorted.
     /// 2. Otherwise, the symbols are sorted by their unique identifier.
     ///
     /// The symbol that appears first in this sorting is then cloned to create an "overload group".
