@@ -39,8 +39,12 @@ extension SymbolGraph {
             let kind: SymbolGraph.Symbol.KindIdentifier
         }
 
+        let defaultImplementationSymbols = relationships.filter({ $0.kind == .defaultImplementationOf }).map(\.source)
+
         let symbolsByPath = [OverloadKey: [SymbolGraph.Symbol]](
-            grouping: symbols.values.filter(\.kind.identifier.isOverloadableKind),
+            grouping: symbols.values
+                .filter({ !defaultImplementationSymbols.contains($0.identifier.precise) })
+                .filter(\.kind.identifier.isOverloadableKind),
             by: { .init(path: $0.pathComponents, kind: $0.kind.identifier) }
         )
 

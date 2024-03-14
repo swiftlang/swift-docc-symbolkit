@@ -384,6 +384,57 @@ class SymbolGraphOverloadsTests: XCTestCase {
             XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
         }
     }
+
+    /// Ensure that default implementation symbols are not collected into an overload group.
+    func testDefaultImplementationDoesNotCreateAnOverloadGroup() throws {
+        // protocol MyProtocol
+        // - requirement someFunc()
+        // - default implementation someFunc()
+        let demoGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:MyProtocol", interfaceLanguage: "swift"),
+                    names: .init(title: "MyProtocol", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyProtocol"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .protocol, displayName: "Protocol"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:MyProtocol:someFunc-1", interfaceLanguage: "swift"),
+                    names: .init(title: "someFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyProtocol", "someFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+                .init(
+                    identifier: .init(precise: "s:MyProtocol:someFunc-2", interfaceLanguage: "swift"),
+                    names: .init(title: "someFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["MyProtocol", "someFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                    mixins: [:]),
+            ],
+            relations: [
+                .init(
+                    source: "s:MyProtocol:someFunc-1",
+                    target: "s:MyProtocol",
+                    kind: .requirementOf,
+                    targetFallback: nil),
+                .init(
+                    source: "s:MyProtocol:someFunc-2",
+                    target: "s:MyProtocol:someFunc-1",
+                    kind: .defaultImplementationOf,
+                    targetFallback: nil),
+            ]
+        )
+
+        // Even though the two someFunc symbols collide on kind and path, one is a default
+        // implementation of the other, so they should not be combined together
+        XCTAssertFalse(demoGraph.relationships.contains(where: { $0.kind == .overloadOf }))
+    }
 }
 
 private func makeSymbolGraph(symbols: [SymbolGraph.Symbol], relations: [SymbolGraph.Relationship]) -> SymbolGraph {
