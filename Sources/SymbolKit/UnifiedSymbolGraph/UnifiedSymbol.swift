@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -72,6 +72,20 @@ extension UnifiedSymbolGraph {
             self.accessLevel = [selector: sym.accessLevel]
             self.isVirtual = [selector: sym.isVirtual]
             self.mixins = [selector: sym.mixins]
+        }
+
+        internal init(cloning originalSymbol: UnifiedSymbolGraph.Symbol, withIdentifier identifier: String? = nil) {
+            self.uniqueIdentifier = identifier ?? originalSymbol.uniqueIdentifier
+            self.mainGraphSelectors = originalSymbol.mainGraphSelectors
+            self.modules = originalSymbol.modules
+            self.kind = originalSymbol.kind
+            self.pathComponents = originalSymbol.pathComponents
+            self.type = originalSymbol.type
+            self.names = originalSymbol.names
+            self.docComment = originalSymbol.docComment
+            self.accessLevel = originalSymbol.accessLevel
+            self.isVirtual = originalSymbol.isVirtual
+            self.mixins = originalSymbol.mixins
         }
 
         /// Add the given symbol to this unified view.

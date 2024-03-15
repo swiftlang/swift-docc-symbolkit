@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -118,5 +118,17 @@ extension SymbolGraph.Relationship {
          symbol `A`.
          */
         public static let references = Kind(rawValue: "references")
+
+        /**
+         A symbol `A` overloads other symbols referenced by `B`.
+
+         This relationship can be added by the unified symbol graph collector
+         to reference a synthesized "overload group" symbol that collects
+         together a group of overloaded symbols.
+
+         The implied inverse of this relationship is that the symbol `B` is an
+         overload group containing `A`.
+         */
+        public static let overloadOf = Kind(rawValue: "overloadOf")
     }
 }
