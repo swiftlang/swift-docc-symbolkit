@@ -119,7 +119,7 @@ extension SymbolGraph.Symbol {
     }
 }
 
-fileprivate extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+internal extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
     static func < (lhs: Self, rhs: Self) -> Bool {
         let renderedLhs = lhs.map(\.spelling).joined()
         let renderedRhs = rhs.map(\.spelling).joined()

@@ -50,6 +50,14 @@ extension UnifiedSymbolGraph {
         /// Information about a symbol that is not necessarily common to all symbols.
         public var mixins: [Selector: [String: Mixin]]
 
+        /// Mixin information that has been unified across selectors.
+        ///
+        /// Some mixins, for example ``SymbolGraph/Symbol/OverloadData``, can be collected together
+        /// for a unified view across available selectors, rather than showing individual views for
+        /// each selector. These mixins can be populated here when a unified symbol graph is
+        /// finished in the ``GraphCollector``.
+        public var unifiedMixins: [String: Mixin]
+
         /// Initialize a combined symbol view from a single symbol.
         public init(fromSingleSymbol sym: SymbolGraph.Symbol, module: SymbolGraph.Module, isMainGraph: Bool) {
             let lang = sym.identifier.interfaceLanguage
@@ -72,20 +80,7 @@ extension UnifiedSymbolGraph {
             self.accessLevel = [selector: sym.accessLevel]
             self.isVirtual = [selector: sym.isVirtual]
             self.mixins = [selector: sym.mixins]
-        }
-
-        internal init(cloning originalSymbol: UnifiedSymbolGraph.Symbol, withIdentifier identifier: String? = nil) {
-            self.uniqueIdentifier = identifier ?? originalSymbol.uniqueIdentifier
-            self.mainGraphSelectors = originalSymbol.mainGraphSelectors
-            self.modules = originalSymbol.modules
-            self.kind = originalSymbol.kind
-            self.pathComponents = originalSymbol.pathComponents
-            self.type = originalSymbol.type
-            self.names = originalSymbol.names
-            self.docComment = originalSymbol.docComment
-            self.accessLevel = originalSymbol.accessLevel
-            self.isVirtual = originalSymbol.isVirtual
-            self.mixins = originalSymbol.mixins
+            self.unifiedMixins = [:]
         }
 
         /// Add the given symbol to this unified view.
