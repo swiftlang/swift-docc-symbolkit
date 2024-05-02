@@ -268,29 +268,17 @@ extension UnifiedSymbolGraph {
                 }
             }
 
-            func firstAvailableDeclaration(_ symbol: Symbol) -> SymbolGraph.Symbol.DeclarationFragments? {
-                symbol.mixins.values.lazy.compactMap({ mixins in
-                    mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments
-                }).first
-            }
-
             guard !overloadedSymbols.isEmpty else { continue }
 
             // 2. Sort the overloaded symbols with the same comparator as `SymbolGraph.createOverloadGroupSymbols()`.
             var allSymbolsHaveDeclaration = true
             let sortedOverloads = overloadedSymbols.map({ identifier in
                 let symbol = symbols[identifier]!
-                if firstAvailableDeclaration(symbol) == nil {
+                if !symbol.mixins.values.contains(where: { $0.keys.contains(SymbolGraph.Symbol.DeclarationFragments.mixinKey) }) {
                     allSymbolsHaveDeclaration = false
                 }
                 return symbol
-            }).sorted(by: { lhs, rhs in
-                if allSymbolsHaveDeclaration {
-                    return firstAvailableDeclaration(lhs)!.declarationFragments < firstAvailableDeclaration(rhs)!.declarationFragments
-                } else {
-                    return lhs.uniqueIdentifier < rhs.uniqueIdentifier
-                }
-            })
+            }).sorted(by: Symbol.sortForOverloads(orderByDeclaration: allSymbolsHaveDeclaration))
             let firstOverload = sortedOverloads.first!
             let computedOverloadGroup = firstOverload.uniqueIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 

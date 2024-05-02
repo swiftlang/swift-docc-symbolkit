@@ -178,6 +178,180 @@ class UnifiedGraphOverloadsTests: XCTestCase {
             $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
         }))
     }
+
+    func testOverloadsWithSameDeclaration() throws {
+        // func myFunc()
+        // func myFunc()
+        // (In a real-world scenario, these might differ by the swiftGenerics mixin, but here we can
+        // write a contrived situation like this)
+        let unifiedGraph = try unifySymbolGraphs(
+            ("DemoKit.symbols.json", makeSymbolGraph(
+                platform: "macosx",
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                        names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["myFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                                ])
+                        ]),
+                    .init(
+                        identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                        names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["myFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                                ])
+                        ]),
+                ],
+                relations: []))
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-1",
+            "s:myFunc-2",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+
+        let allRelations = unifiedGraph.unifiedRelationships
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+    }
+
+    func testOverloadWithPlatformSpecificDeclarations() throws {
+        // The symbol graphs here are the same as the last one, but on macOS the `myFunc()-2` version
+        // has an attribute in its declaration that causes it to sort above the other one. Make sure
+        // that we correctly sort it to the top in the unified graph even when the iOS version sorts
+        // `myFunc()-1` on top.
+        let unifiedGraph = try unifySymbolGraphs(
+            ("DemoKit-macos.symbols.json", makeSymbolGraph(
+                platform: "macosx",
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                        names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["myFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .text, spelling: "@Attribute myFunc()", preciseIdentifier: nil)
+                                ])
+                        ]),
+                    .init(
+                        identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                        names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["myFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                                ])
+                        ]),
+                ],
+                relations: [])),
+            ("DemoKit-ios.symbols.json", makeSymbolGraph(
+                platform: "ios",
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                        names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["myFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                                ])
+                        ]),
+                    .init(
+                        identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                        names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["myFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                    .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                                ])
+                        ]),
+                ],
+                relations: []))
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-2",
+            "s:myFunc-1",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
+
+        let allRelations = unifiedGraph.unifiedRelationships
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+
+        // Also make sure that the iOS overload group was dropped from the unified graph
+        let iOSOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+        XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
+        XCTAssertFalse(allRelations.contains(where: {
+            $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
+        }))
+    }
 }
 
 private extension Int {
