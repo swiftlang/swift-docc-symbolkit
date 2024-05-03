@@ -248,7 +248,7 @@ extension UnifiedSymbolGraph {
                 continue
             }
             var siblingOverloadGroups: Set<String> = []
-            var overloadedSymbols: Set<String> = []
+            var overloadedSymbolIdentifiers: Set<String> = []
             var pendingOverloadGroups: Set<String> = [overloadGroup]
 
             // 1. Collect all the overloaded symbols and all the overload groups they belong to.
@@ -258,7 +258,7 @@ extension UnifiedSymbolGraph {
                     siblingOverloadGroups.insert(processingOverloadGroup)
 
                     for overloadedSymbol in overloadGroups[processingOverloadGroup]! {
-                        overloadedSymbols.insert(overloadedSymbol)
+                        overloadedSymbolIdentifiers.insert(overloadedSymbol)
                         for otherOverloadGroup in overloadGroupsBySymbol[overloadedSymbol]! {
                             if !siblingOverloadGroups.contains(otherOverloadGroup),
                                !pendingOverloadGroups.contains(otherOverloadGroup)
@@ -270,17 +270,12 @@ extension UnifiedSymbolGraph {
                 }
             }
 
-            guard !overloadedSymbols.isEmpty else { continue }
+            guard !overloadedSymbolIdentifiers.isEmpty else { continue }
 
             // 2. Sort the overloaded symbols with the same comparator as `SymbolGraph.createOverloadGroupSymbols()`.
-            var allSymbolsHaveDeclaration = true
-            let sortedOverloads = overloadedSymbols.map({ identifier in
-                let symbol = symbols[identifier]!
-                if !symbol.mixins.values.contains(where: { $0.keys.contains(SymbolGraph.Symbol.DeclarationFragments.mixinKey) }) {
-                    allSymbolsHaveDeclaration = false
-                }
-                return symbol
-            }).sorted(by: Symbol.sortForOverloads(orderByDeclaration: allSymbolsHaveDeclaration))
+            let overloadedSymbols = overloadedSymbolIdentifiers.map({ symbols[$0]! })
+            let allSymbolsHaveDeclaration = overloadedSymbols.allSatisfy({ !$0.declarationFragments.isEmpty })
+            let sortedOverloads = overloadedSymbols.sorted(by: Symbol.sortForOverloads(orderByDeclaration: allSymbolsHaveDeclaration))
             let firstOverload = sortedOverloads.first!
             let computedOverloadGroup = firstOverload.uniqueIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
