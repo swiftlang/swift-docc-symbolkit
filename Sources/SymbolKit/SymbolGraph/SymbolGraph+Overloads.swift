@@ -104,41 +104,55 @@ extension SymbolGraph {
     }
 }
 
-/// Compares two symbols for ordering within an overload group.
-///
-/// This is the underlying implementation for both versions of `sortForOverloads(orderByDeclaration:)`.
-/// This method will use the given accessors to compare two symbols (single or unified) in the
-/// following manner:
-///
-/// - If we aren't meant to compare by declaration (`orderByDeclaration` is false), perform a
-///   lexicographical comparison between the symbols' identifiers, as fetched by `getIdentifier`.
-/// - If we are meant to compare by declaration (`orderByDeclaration` is true):
-///   - Fetch both symbols' declarations with `getDeclaration`.
-///   - If the declarations are equal, fall back to comparing by identifier.
-///   - Otherwise, perform a lexicographical comparison on the declarations.
-///
-/// - Parameters:
-///   - lhs: The first symbol to compare.
-///   - rhs: The second symbol to compare.
-///   - orderByDeclaration: Whether to sort by declaration fragments or by precise identifier.
-///   - getDeclaration: A function to render a declaration for a symbol.
-///   - getIdentifier: A function to get a symbol's precise identifier.
-/// - Returns: A comparator suitable for sorting an array of symbols for an overload group.
-fileprivate func isDeclarationBefore<S>(
-    _ lhs: S, _ rhs: S, orderByDeclaration: Bool,
-    getDeclaration: ((S) -> String),
-    getIdentifier: ((S) -> String)
-) -> Bool {
-    if orderByDeclaration {
-        let lhsDeclaration = getDeclaration(lhs)
-        let rhsDeclaration = getDeclaration(rhs)
+protocol OverloadsSortable {
+    var declaration: String? { get }
+    var identifierKey: String { get }
+}
+
+extension OverloadsSortable {
+    static func sortOverloadsByDeclaration(_ lhs: Self, _ rhs: Self) -> Bool {
+        guard let lhsDeclaration = lhs.declaration, let rhsDeclaration = rhs.declaration else {
+            preconditionFailure("Attempting to sort overloads by declaration, but one of the overloads did not have a declaration. lhs: '\(lhs.identifierKey)' ('\(lhs.declaration ?? "")') rhs: '\(rhs.identifierKey)' ('\(rhs.declaration ?? "")')")
+        }
+
         if lhsDeclaration == rhsDeclaration {
-            return getIdentifier(lhs) < getIdentifier(rhs)
+            return lhs.identifierKey < rhs.identifierKey
         } else {
             return lhsDeclaration < rhsDeclaration
         }
-    } else {
-        return getIdentifier(lhs) < getIdentifier(rhs)
+    }
+
+    static func sortOverloadsByIdentifier(_ lhs: Self, _ rhs: Self) -> Bool {
+        lhs.identifierKey < rhs.identifierKey
+    }
+
+    static func sortForOverloads(orderByDeclaration: Bool) -> ((Self, Self) -> Bool) {
+        if orderByDeclaration {
+            return sortOverloadsByDeclaration
+        } else {
+            return sortOverloadsByIdentifier
+        }
+    }
+}
+
+extension SymbolGraph.Symbol: OverloadsSortable {
+    var declaration: String? {
+        self.declarationFragments?.rendered
+    }
+    
+    var identifierKey: String {
+        self.identifier.precise
+    }
+}
+
+extension UnifiedSymbolGraph.Symbol: OverloadsSortable {
+    var declaration: String? {
+        let uniqueDeclarations = Set(declarationFragments.values.map(\.rendered))
+        return uniqueDeclarations.sorted().first
+    }
+    
+    var identifierKey: String {
+        self.uniqueIdentifier
     }
 }
 
@@ -151,43 +165,6 @@ extension SymbolGraph.Symbol {
     /// ``SymbolGraph/createOverloadGroupSymbols()``.
     public var isOverloadGroup: Bool {
         self.identifier.precise.hasSuffix(Self.overloadGroupIdentifierSuffix)
-    }
-
-    /// Returns a sort comparator suitable for sorting symbols within an overload group.
-    ///
-    /// The sort order for overloads follows the following algorithm:
-    /// - If `orderByDeclaration` is false, symbols are sorted by their precise identifier.
-    /// - If `orderByDeclaration` is true, symbols are sorted by their ``DeclarationFragments``
-    ///   mixin, falling back to their precise identifier if their declarations are equal.
-    internal static func sortForOverloads(orderByDeclaration: Bool) -> ((Self, Self) -> Bool) {
-        return { isDeclarationBefore(
-            $0, $1, orderByDeclaration: orderByDeclaration,
-            getDeclaration: { $0.declarationFragments!.rendered },
-            getIdentifier: { $0.identifier.precise }
-        )}
-    }
-}
-
-extension UnifiedSymbolGraph.Symbol {
-    /// If a symbol has declaration fragments mixins, returns the one that lexicographically sorts first.
-    var firstAvailableDeclaration: String? {
-        let uniqueDeclarations = Set(declarationFragments.values.map(\.rendered))
-        return uniqueDeclarations.sorted().first
-    }
-
-    /// Returns a sort comparator suitable for sorting symbols within an overload group.
-    ///
-    /// The sort order for overloads follows the following algorithm:
-    /// - If `orderByDeclaration` is false, symbols are sorted by their unique identifier.
-    /// - If `orderByDeclaration` is true, symbols are sorted by their declaration (as returned by
-    ///   ``firstAvailableDeclaration``), falling back to their unique identifier if their
-    ///   declarations are equal.
-    internal static func sortForOverloads(orderByDeclaration: Bool) -> ((UnifiedSymbolGraph.Symbol, UnifiedSymbolGraph.Symbol) -> Bool) {
-        return { isDeclarationBefore(
-            $0, $1, orderByDeclaration: orderByDeclaration,
-            getDeclaration: { $0.firstAvailableDeclaration! },
-            getIdentifier: { $0.uniqueIdentifier }
-        )}
     }
 }
 
