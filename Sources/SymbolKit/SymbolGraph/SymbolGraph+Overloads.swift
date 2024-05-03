@@ -168,7 +168,7 @@ extension SymbolGraph.Symbol {
     }
 }
 
-internal extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
     var rendered: String {
         map(\.spelling).joined()
     }
