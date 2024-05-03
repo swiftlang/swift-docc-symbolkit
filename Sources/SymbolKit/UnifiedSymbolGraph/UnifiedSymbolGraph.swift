@@ -231,6 +231,8 @@ extension UnifiedSymbolGraph {
         var overloadGroups: [String: Set<String>] = [:]
         /// A mapping of overloaded symbols to the overload groups they are part of.
         var overloadGroupsBySymbol: [String: Set<String>] = [:]
+        /// A collection of all the overload groups that have been processed.
+        var processedOverloadGroups: Set<String> = []
 
         for relationship in self.relationshipsByLanguage.flatMap(\.value)
             where relationship.kind == SymbolGraph.Relationship.Kind.overloadOf
@@ -240,9 +242,9 @@ extension UnifiedSymbolGraph {
         }
 
         for overloadGroup in overloadGroups.keys {
-            guard overloadGroups.keys.contains(overloadGroup) else {
-                // If this overload group was a sibling to another overload group, we'll have
-                // removed it from the dictionary, so don't try to process it again.
+            guard !processedOverloadGroups.contains(overloadGroup) else {
+                // If this overload group was a sibling to another overload group, don't try to
+                // process it again.
                 continue
             }
             var siblingOverloadGroups: Set<String> = []
@@ -325,14 +327,9 @@ extension UnifiedSymbolGraph {
 
             // 5. If there were any other overload groups that pointed to the same symbols, remove
             // them from the unified graph, along with any relationships that included them.
-            for siblingOverloadGroup in siblingOverloadGroups {
-                // Remove all the sibling groups from the dictionary we're iterating over so we don't
-                // recalculate all this all over again.
-                overloadGroups.removeValue(forKey: siblingOverloadGroup)
-
-                if siblingOverloadGroup != computedOverloadGroup {
-                    symbols.removeValue(forKey: siblingOverloadGroup)
-                }
+            processedOverloadGroups.formUnion(siblingOverloadGroups)
+            for siblingOverloadGroup in siblingOverloadGroups where siblingOverloadGroup != computedOverloadGroup {
+                symbols.removeValue(forKey: siblingOverloadGroup)
             }
             siblingOverloadGroups.remove(computedOverloadGroup)
             for selector in relationshipsByLanguage.keys {
