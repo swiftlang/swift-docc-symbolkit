@@ -296,23 +296,6 @@ extension UnifiedSymbolGraph {
             for overloadIndex in sortedOverloads.indices {
                 let overloadedSymbol = sortedOverloads[overloadIndex]
 
-                // 3. Ensure that all the overloaded symbols have `overloadOf` relationships pointing
-                // to the computed overload group.
-                for selector in overloadedSymbol.mainGraphSelectors {
-                    let newRelationship = SymbolGraph.Relationship(
-                        source: overloadedSymbol.uniqueIdentifier,
-                        target: computedOverloadGroup,
-                        kind: .overloadOf,
-                        targetFallback: nil)
-                    if relationshipsByLanguage[selector]?.contains(where: { otherRelationship in
-                        otherRelationship.source == newRelationship.source &&
-                        otherRelationship.target == newRelationship.target &&
-                        otherRelationship.kind == newRelationship.kind
-                    }) != true {
-                        relationshipsByLanguage[selector, default: []].append(newRelationship)
-                    }
-                }
-
                 // 4. Create a new OverloadData instance and save it to the overloaded symbol.
                 let overloadData = SymbolGraph.Symbol.OverloadData(
                     overloadGroupIdentifier: computedOverloadGroup,
@@ -323,15 +306,54 @@ extension UnifiedSymbolGraph {
             // 5. If there were any other overload groups that pointed to the same symbols, remove
             // them from the unified graph, along with any relationships that included them.
             processedOverloadGroups.formUnion(siblingOverloadGroups)
-            for siblingOverloadGroup in siblingOverloadGroups where siblingOverloadGroup != computedOverloadGroup {
+            siblingOverloadGroups.remove(computedOverloadGroup)
+            for siblingOverloadGroup in siblingOverloadGroups {
                 symbols.removeValue(forKey: siblingOverloadGroup)
             }
-            siblingOverloadGroups.remove(computedOverloadGroup)
-            for selector in relationshipsByLanguage.keys {
-                relationshipsByLanguage[selector]?.removeAll(where: { relationship in
-                    siblingOverloadGroups.contains(relationship.source) ||
-                    siblingOverloadGroups.contains(relationship.target)
+
+            // Performance optimization: The relationshipsByLanguage listings can become quite large
+            // in some situations, so iterating over it to check membership and remove extraneous
+            // relationships can become quite expensive. This loop intends to perform all the checks
+            // and modifications we need on the relationships in a single iteration, by pre-caching
+            // the things we need to check and inspecting the relationships as we go.
+
+            /// The overloaded symbols that exist in a given selector.
+            let overloadsPerSelector: [Selector: Set<String>] = overloadedSymbols.reduce(into: [:], { acc, symbol  in
+                for selector in symbol.mainGraphSelectors {
+                    acc[selector, default: []].insert(symbol.uniqueIdentifier)
+                }
+            })
+            for (selector, relationships) in relationshipsByLanguage {
+                guard var selectorOverloads = overloadsPerSelector[selector] else {
+                    // If there were no overloads that matched this selector, then we can assume
+                    // that no overload groups exist in this selector either. There is no need to
+                    // continue iterating the relationships here.
+                    continue
+                }
+
+                relationshipsByLanguage[selector] = relationships.filter({ relationship in
+                    // `filter` is already iterating over the collection anyway, so while we're
+                    // scanning for other overload groups' relationships to remove, also check to
+                    // ensure that all our overloads have relationships to the overload group.
+                    if selectorOverloads.contains(relationship.source),
+                       relationship.target == computedOverloadGroup,
+                       relationship.kind == .overloadOf {
+                        selectorOverloads.remove(relationship.source)
+                    }
+
+                    return !siblingOverloadGroups.contains(relationship.source) &&
+                        !siblingOverloadGroups.contains(relationship.target)
                 })
+
+                // 3. Ensure that all the overloaded symbols have `overloadOf` relationships pointing
+                // to the computed overload group.
+                relationshipsByLanguage[selector]?.append(contentsOf: selectorOverloads.map({ overloadID in
+                        .init(
+                            source: overloadID,
+                            target: computedOverloadGroup,
+                            kind: .overloadOf,
+                            targetFallback: nil)
+                }))
             }
         }
     }
