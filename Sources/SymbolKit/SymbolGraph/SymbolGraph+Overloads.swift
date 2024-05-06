@@ -137,7 +137,7 @@ extension OverloadsSortable {
 
 extension SymbolGraph.Symbol: OverloadsSortable {
     var declaration: String? {
-        self.declarationFragments?.rendered
+        self.declarationFragments?.plainText
     }
     
     var identifierKey: String {
@@ -147,7 +147,7 @@ extension SymbolGraph.Symbol: OverloadsSortable {
 
 extension UnifiedSymbolGraph.Symbol: OverloadsSortable {
     var declaration: String? {
-        let uniqueDeclarations = Set(declarationFragments.values.map(\.rendered))
+        let uniqueDeclarations = Set(declarationFragments.values.map(\.plainText))
         return uniqueDeclarations.sorted().first
     }
     
@@ -169,7 +169,7 @@ extension SymbolGraph.Symbol {
 }
 
 extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-    var rendered: String {
+    var plainText: String {
         map(\.spelling).joined()
     }
 }
