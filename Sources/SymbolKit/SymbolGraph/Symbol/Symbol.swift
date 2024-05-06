@@ -106,6 +106,10 @@ extension SymbolGraph {
 
         /// Information about a symbol that is not necessarily common to all symbols.
         ///
+        /// Mixins are keyed based on the ``Mixin/mixinKey`` of the mixin type itself. The decoding
+        /// method matches unknown JSON keys against registered mixin keys during the decoding
+        /// process, and decodes any matching type into this dictionary for later use.
+        ///
         /// - Note: If you intend to encode/decode this symbol, make sure to register
         /// any added ``Mixin``s that do not appear on symbols in the standard format
         /// on your coder using ``register(mixins:to:onEncodingError:onDecodingError:)``.

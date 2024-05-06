@@ -435,6 +435,70 @@ class SymbolGraphOverloadsTests: XCTestCase {
         // implementation of the other, so they should not be combined together
         XCTAssertFalse(demoGraph.relationships.contains(where: { $0.kind == .overloadOf }))
     }
+
+    func testOverloadsWithSameDeclarationAreSortedCorrectly() throws {
+        // func myFunc()
+        // func myFunc()
+        // (In a real-world scenario, these might differ by the swiftGenerics mixin, but here we can
+        // write a contrived situation like this)
+        let demoGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [
+                        SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                            SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                            ])
+                    ]),
+                .init(
+                    identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [
+                        SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                            SymbolGraph.Symbol.DeclarationFragments(declarationFragments: [
+                                .init(kind: .text, spelling: "myFunc()", preciseIdentifier: nil)
+                            ])
+                    ]),
+            ],
+            relations: []
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-1",
+            "s:myFunc-2",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = demoGraph.relationships.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(demoGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.overloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+    }
 }
 
 private func makeSymbolGraph(symbols: [SymbolGraph.Symbol], relations: [SymbolGraph.Relationship]) -> SymbolGraph {
