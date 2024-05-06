@@ -95,6 +95,7 @@ extension GraphCollector {
 
         for (_, graph) in self.unifiedGraphs {
             graph.collectOrphans()
+            graph.combineOverloadGroups()
         }
 
         return (self.unifiedGraphs, self.graphSources)
