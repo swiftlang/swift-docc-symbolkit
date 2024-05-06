@@ -252,19 +252,17 @@ extension UnifiedSymbolGraph {
             var pendingOverloadGroups: Set<String> = [overloadGroup]
 
             // 1. Collect all the overloaded symbols and all the overload groups they belong to.
-            while !pendingOverloadGroups.isEmpty {
-                for processingOverloadGroup in pendingOverloadGroups {
-                    pendingOverloadGroups.remove(processingOverloadGroup)
-                    siblingOverloadGroups.insert(processingOverloadGroup)
+            while let processingOverloadGroup = pendingOverloadGroups.popFirst() {
+                pendingOverloadGroups.remove(processingOverloadGroup)
+                siblingOverloadGroups.insert(processingOverloadGroup)
 
-                    for overloadedSymbol in overloadGroups[processingOverloadGroup]! {
-                        overloadedSymbolIdentifiers.insert(overloadedSymbol)
-                        for otherOverloadGroup in overloadGroupsBySymbol[overloadedSymbol]! {
-                            if !siblingOverloadGroups.contains(otherOverloadGroup),
-                               !pendingOverloadGroups.contains(otherOverloadGroup)
-                            {
-                                pendingOverloadGroups.insert(otherOverloadGroup)
-                            }
+                for overloadedSymbol in overloadGroups[processingOverloadGroup]! {
+                    overloadedSymbolIdentifiers.insert(overloadedSymbol)
+                    for otherOverloadGroup in overloadGroupsBySymbol[overloadedSymbol]! {
+                        if !siblingOverloadGroups.contains(otherOverloadGroup),
+                           !pendingOverloadGroups.contains(otherOverloadGroup)
+                        {
+                            pendingOverloadGroups.insert(otherOverloadGroup)
                         }
                     }
                 }
