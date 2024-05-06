@@ -49,8 +49,7 @@ extension UnifiedSymbolGraph {
 
         /// Information about a symbol that is not necessarily common to all symbols.
         ///
-        /// Like an individual symbol's mixins, the `String` keys in the inner dictionary refer to
-        /// ``Mixin/mixinKey``s.
+        /// Like an individual symbol's mixins, the `String` key for each mixin is its ``Mixin/mixinKey``.
         public var mixins: [Selector: [String: Mixin]]
 
         /// Mixin information that has been unified across selectors.
@@ -60,8 +59,7 @@ extension UnifiedSymbolGraph {
         /// each selector. These mixins can be populated here when a unified symbol graph is
         /// finished in the ``GraphCollector``.
         ///
-        /// Like an individual symbol's mixins, the `String` keys in this dictionary refer to
-        /// ``Mixin/mixinKey``s.
+        /// Like an individual symbol's mixins, the `String` key for each mixin is its ``Mixin/mixinKey``.
         public var unifiedMixins: [String: Mixin]
 
         /// Initialize a combined symbol view from a single symbol.
