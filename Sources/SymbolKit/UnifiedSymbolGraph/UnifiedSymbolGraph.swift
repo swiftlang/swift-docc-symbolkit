@@ -258,12 +258,8 @@ extension UnifiedSymbolGraph {
 
                 for overloadedSymbol in overloadGroups[processingOverloadGroup]! {
                     overloadedSymbolIdentifiers.insert(overloadedSymbol)
-                    for otherOverloadGroup in overloadGroupsBySymbol[overloadedSymbol]! {
-                        if !siblingOverloadGroups.contains(otherOverloadGroup),
-                           !pendingOverloadGroups.contains(otherOverloadGroup)
-                        {
+                    for otherOverloadGroup in overloadGroupsBySymbol[overloadedSymbol]! where !siblingOverloadGroups.contains(otherOverloadGroup) {
                             pendingOverloadGroups.insert(otherOverloadGroup)
-                        }
                     }
                 }
             }
@@ -333,8 +329,7 @@ extension UnifiedSymbolGraph {
                     // `filter` is already iterating over the collection anyway, so while we're
                     // scanning for other overload groups' relationships to remove, also check to
                     // ensure that all our overloads have relationships to the overload group.
-                    if selectorOverloads.contains(relationship.source),
-                       relationship.target == computedOverloadGroup,
+                    if relationship.target == computedOverloadGroup,
                        relationship.kind == .overloadOf {
                         selectorOverloads.remove(relationship.source)
                     }
