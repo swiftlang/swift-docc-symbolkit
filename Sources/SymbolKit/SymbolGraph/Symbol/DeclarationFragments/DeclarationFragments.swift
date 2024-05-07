@@ -161,3 +161,12 @@ extension SymbolGraph.Symbol {
             .declarationFragments
     }
 }
+
+extension UnifiedSymbolGraph.Symbol {
+    /// Convenience method to fetch the selector-specific declaration fragment mixins.
+    public var declarationFragments: [UnifiedSymbolGraph.Selector: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] {
+        mixins.compactMapValues({
+            ($0[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)?.declarationFragments
+        })
+    }
+}

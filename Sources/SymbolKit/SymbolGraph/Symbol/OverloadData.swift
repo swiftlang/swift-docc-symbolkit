@@ -35,3 +35,10 @@ extension SymbolGraph.Symbol {
         mixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData
     }
 }
+
+extension UnifiedSymbolGraph.Symbol {
+    /// Convenience accessor to fetch unified overload data for this symbol.
+    public var unifiedOverloadData: SymbolGraph.Symbol.OverloadData? {
+        unifiedMixins[SymbolGraph.Symbol.OverloadData.mixinKey] as? SymbolGraph.Symbol.OverloadData
+    }
+}

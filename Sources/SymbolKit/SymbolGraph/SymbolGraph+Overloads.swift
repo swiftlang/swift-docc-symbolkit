@@ -51,12 +51,9 @@ extension SymbolGraph {
         var newRelationships = [Relationship]()
 
         for overloadSymbols in symbolsByPath.values where overloadSymbols.count > 1 {
-            let sortedOverloads: [Symbol]
-            if overloadSymbols.allSatisfy({ $0.declarationFragments != nil }) {
-                sortedOverloads = overloadSymbols.sorted(by: { $0.declarationFragments! < $1.declarationFragments! })
-            } else {
-                sortedOverloads = overloadSymbols.sorted(by: { $0.identifier.precise < $1.identifier.precise })
-            }
+            let sortedOverloads: [Symbol] = overloadSymbols.sorted(
+                by: Symbol.sortForOverloads(
+                    orderByDeclaration: overloadSymbols.allSatisfy({ $0.declarationFragments != nil })))
             let firstOverload = sortedOverloads.first!
 
             let overloadGroupIdentifier = firstOverload.identifier.precise + Symbol.overloadGroupIdentifierSuffix
@@ -107,6 +104,58 @@ extension SymbolGraph {
     }
 }
 
+protocol OverloadsSortable {
+    var declaration: String? { get }
+    var identifierKey: String { get }
+}
+
+extension OverloadsSortable {
+    static func sortOverloadsByDeclaration(_ lhs: Self, _ rhs: Self) -> Bool {
+        guard let lhsDeclaration = lhs.declaration, let rhsDeclaration = rhs.declaration else {
+            preconditionFailure("Attempting to sort overloads by declaration, but one of the overloads did not have a declaration. lhs: '\(lhs.identifierKey)' ('\(lhs.declaration ?? "")') rhs: '\(rhs.identifierKey)' ('\(rhs.declaration ?? "")')")
+        }
+
+        if lhsDeclaration == rhsDeclaration {
+            return lhs.identifierKey < rhs.identifierKey
+        } else {
+            return lhsDeclaration < rhsDeclaration
+        }
+    }
+
+    static func sortOverloadsByIdentifier(_ lhs: Self, _ rhs: Self) -> Bool {
+        lhs.identifierKey < rhs.identifierKey
+    }
+
+    static func sortForOverloads(orderByDeclaration: Bool) -> ((Self, Self) -> Bool) {
+        if orderByDeclaration {
+            return sortOverloadsByDeclaration
+        } else {
+            return sortOverloadsByIdentifier
+        }
+    }
+}
+
+extension SymbolGraph.Symbol: OverloadsSortable {
+    var declaration: String? {
+        self.declarationFragments?.plainText
+    }
+    
+    var identifierKey: String {
+        self.identifier.precise
+    }
+}
+
+extension UnifiedSymbolGraph.Symbol: OverloadsSortable {
+    var declaration: String? {
+        let uniqueDeclarations = Set(declarationFragments.values.map(\.plainText))
+        return uniqueDeclarations.sorted().first
+    }
+    
+    var identifierKey: String {
+        self.uniqueIdentifier
+    }
+}
+
 extension SymbolGraph.Symbol {
     /// A suffix added to the precise identifier string for overload group symbols created by
     /// ``SymbolGraph/createOverloadGroupSymbols()``.
@@ -119,11 +168,8 @@ extension SymbolGraph.Symbol {
     }
 }
 
-fileprivate extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
-    static func < (lhs: Self, rhs: Self) -> Bool {
-        let renderedLhs = lhs.map(\.spelling).joined()
-        let renderedRhs = rhs.map(\.spelling).joined()
-
-        return renderedLhs < renderedRhs
+extension [SymbolGraph.Symbol.DeclarationFragments.Fragment] {
+    var plainText: String {
+        map(\.spelling).joined()
     }
 }
