@@ -27,6 +27,9 @@ extension SymbolGraph {
     ///    are then sorted.
     /// 2. Otherwise, the symbols are sorted by their unique identifier.
     ///
+    /// In all cases, if a symbol has deprecation information (whether a deprecation version or an
+    /// "unconditional deprecation"), it will be sorted after a symbol that is not deprecated.
+    ///
     /// The symbol that appears first in this sorting is then cloned to create an "overload group".
     /// This symbol will have a unique identifier based on the original symbol, but suffixed with
     /// ``Symbol/overloadGroupIdentifierSuffix``. New ``Relationship/Kind/overloadOf``
@@ -107,6 +110,7 @@ extension SymbolGraph {
 protocol OverloadsSortable {
     var declaration: String? { get }
     var identifierKey: String { get }
+    var isDeprecated: Bool { get }
 }
 
 extension OverloadsSortable {
@@ -115,15 +119,23 @@ extension OverloadsSortable {
             preconditionFailure("Attempting to sort overloads by declaration, but one of the overloads did not have a declaration. lhs: '\(lhs.identifierKey)' ('\(lhs.declaration ?? "")') rhs: '\(rhs.identifierKey)' ('\(rhs.declaration ?? "")')")
         }
 
-        if lhsDeclaration == rhsDeclaration {
-            return lhs.identifierKey < rhs.identifierKey
+        if lhs.isDeprecated == rhs.isDeprecated {
+            if lhsDeclaration == rhsDeclaration {
+                return lhs.identifierKey < rhs.identifierKey
+            } else {
+                return lhsDeclaration < rhsDeclaration
+            }
         } else {
-            return lhsDeclaration < rhsDeclaration
+            return !lhs.isDeprecated
         }
     }
 
     static func sortOverloadsByIdentifier(_ lhs: Self, _ rhs: Self) -> Bool {
-        lhs.identifierKey < rhs.identifierKey
+        if lhs.isDeprecated == rhs.isDeprecated {
+            return lhs.identifierKey < rhs.identifierKey
+        } else {
+            return !lhs.isDeprecated
+        }
     }
 
     static func sortForOverloads(orderByDeclaration: Bool) -> ((Self, Self) -> Bool) {
@@ -143,6 +155,10 @@ extension SymbolGraph.Symbol: OverloadsSortable {
     var identifierKey: String {
         self.identifier.precise
     }
+
+    var isDeprecated: Bool {
+        self.availability?.contains(where: { $0.deprecatedVersion != nil || $0.isUnconditionallyDeprecated }) ?? false
+    }
 }
 
 extension UnifiedSymbolGraph.Symbol: OverloadsSortable {
@@ -153,6 +169,12 @@ extension UnifiedSymbolGraph.Symbol: OverloadsSortable {
     
     var identifierKey: String {
         self.uniqueIdentifier
+    }
+
+    var isDeprecated: Bool {
+        self.availability.values.contains(where: { availabilityItems in
+            availabilityItems.contains(where: { $0.deprecatedVersion != nil || $0.isUnconditionallyDeprecated })
+        })
     }
 }
 
