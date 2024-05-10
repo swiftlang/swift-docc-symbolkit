@@ -59,3 +59,11 @@ extension SymbolGraph.Symbol {
         (mixins[Availability.mixinKey] as? Availability)?.availability
     }
 }
+
+extension UnifiedSymbolGraph.Symbol {
+    public var availability: [UnifiedSymbolGraph.Selector: [SymbolGraph.Symbol.Availability.AvailabilityItem]] {
+        mixins.compactMapValues({ mixins in
+            (mixins[SymbolGraph.Symbol.Availability.mixinKey] as? SymbolGraph.Symbol.Availability)?.availability
+        })
+    }
+}
