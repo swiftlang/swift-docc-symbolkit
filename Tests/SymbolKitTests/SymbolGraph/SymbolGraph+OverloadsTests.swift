@@ -499,6 +499,216 @@ class SymbolGraphOverloadsTests: XCTestCase {
             XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
         }
     }
+
+    /// Ensure that overload groups continue to sort overloads by identifier when both overloads are deprecated.
+    func testDeprecatedOverloads() throws {
+        let demoGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [
+                        SymbolGraph.Symbol.Availability.mixinKey:
+                            SymbolGraph.Symbol.Availability(availability: [
+                                .init(
+                                    domain: .init(rawValue: "macOS"),
+                                    introducedVersion: nil,
+                                    deprecatedVersion: .init(major: 10, minor: 0, patch: 0),
+                                    obsoletedVersion: nil,
+                                    message: "Use myOtherFunc, it's better",
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: false,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false)
+                            ])
+                    ]),
+                .init(
+                    identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [
+                        SymbolGraph.Symbol.Availability.mixinKey:
+                            SymbolGraph.Symbol.Availability(availability: [
+                                .init(
+                                    domain: .init(rawValue: "macOS"),
+                                    introducedVersion: nil,
+                                    deprecatedVersion: .init(major: 10, minor: 0, patch: 0),
+                                    obsoletedVersion: nil,
+                                    message: "Use myOtherFunc, it's better",
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: false,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false)
+                            ])
+                    ]),
+            ],
+            relations: []
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-1",
+            "s:myFunc-2",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = demoGraph.relationships.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(demoGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.overloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+    }
+
+    /// Ensure that an overload group does not select a deprecated overload as the overload group
+    /// when a non-deprecated overload is available.
+    func testPartiallyDeprecatedOverloads() throws {
+        let demoGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [
+                        SymbolGraph.Symbol.Availability.mixinKey:
+                            SymbolGraph.Symbol.Availability(availability: [
+                                .init(
+                                    domain: .init(rawValue: "macOS"),
+                                    introducedVersion: nil,
+                                    deprecatedVersion: .init(major: 10, minor: 0, patch: 0),
+                                    obsoletedVersion: nil,
+                                    message: "Use myOtherFunc, it's better",
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: false,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false)
+                            ])
+                    ]),
+                .init(
+                    identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [:]),
+            ],
+            relations: []
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-2",
+            "s:myFunc-1",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = demoGraph.relationships.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(demoGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.overloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+    }
+
+    /// Like the above, but ensure that the same behavior holds for "unconditionally deprecated" symbols.
+    func testPartiallyUnconditionallyDeprecatedOverloads() throws {
+        let demoGraph = makeSymbolGraph(
+            symbols: [
+                .init(
+                    identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [
+                        SymbolGraph.Symbol.Availability.mixinKey:
+                            SymbolGraph.Symbol.Availability(availability: [
+                                .init(
+                                    domain: .init(rawValue: "macOS"),
+                                    introducedVersion: nil,
+                                    deprecatedVersion: nil,
+                                    obsoletedVersion: nil,
+                                    message: "Use myOtherFunc, it's better",
+                                    renamed: nil,
+                                    isUnconditionallyDeprecated: true,
+                                    isUnconditionallyUnavailable: false,
+                                    willEventuallyBeDeprecated: false)
+                            ])
+                    ]),
+                .init(
+                    identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                    names: .init(title: "myFunc()", navigator: nil, subHeading: nil, prose: nil),
+                    pathComponents: ["myFunc()"],
+                    docComment: nil,
+                    accessLevel: .init(rawValue: "public"),
+                    kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                    mixins: [:]),
+            ],
+            relations: []
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-2",
+            "s:myFunc-1",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = demoGraph.relationships.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(demoGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(demoGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.overloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+    }
 }
 
 private func makeSymbolGraph(symbols: [SymbolGraph.Symbol], relations: [SymbolGraph.Relationship]) -> SymbolGraph {
