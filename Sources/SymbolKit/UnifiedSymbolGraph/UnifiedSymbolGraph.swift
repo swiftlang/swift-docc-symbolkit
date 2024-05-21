@@ -312,8 +312,8 @@ extension UnifiedSymbolGraph {
             // the things we need to check and inspecting the relationships as we go.
 
             /// The overloaded symbols that exist in a given selector.
-            let overloadsPerSelector: [Selector: Set<String>] = overloadedSymbols.reduce(into: [:], { acc, symbol  in
-                for selector in symbol.mainGraphSelectors {
+            let overloadsPerSelector: [Selector: Set<String>] = overloadedSymbols.reduce(into: [:], { acc, symbol in
+                for selector in symbol.allSelectors {
                     acc[selector, default: []].insert(symbol.uniqueIdentifier)
                 }
             })

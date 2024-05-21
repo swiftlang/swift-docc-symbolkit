@@ -574,11 +574,80 @@ class UnifiedGraphOverloadsTests: XCTestCase {
             XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
         }
     }
+
+    /// Ensure that a cross-platform overload group from an extension symbol graph properly cleans
+    /// up overload groups and relationships in the unified graph.
+    func testOverloadsFromExtensionGraphs() throws {
+        let unifiedGraph = try unifySymbolGraphs(
+            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [])),
+            ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [])),
+            ("OtherKit-macos@DemoKit.symbols.json", makeSymbolGraph(
+                platform: "macosx",
+                symbols: [1, 2].map(\.asOverloadSymbol),
+                relations: [1, 2].map(\.asOverloadRelationship)
+            )),
+            ("OtherKit-ios@DemoKit.symbols.json", makeSymbolGraph(
+                platform: "ios",
+                symbols: [2, 3].map(\.asOverloadSymbol),
+                relations: [2, 3].map(\.asOverloadRelationship)
+            ))
+        )
+
+        let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
+        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+
+        let allRelations = unifiedGraph.unifiedRelationships
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 3)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+
+        // Also make sure that the iOS overload group was dropped from the unified graph
+        let iOSOverloadGroupIdentifier = 2.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+        XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
+        XCTAssertFalse(allRelations.contains(where: {
+            $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
+        }))
+    }
 }
 
 private extension Int {
     var asOverloadIdentifier: String {
         "s:SomeClass:someMethod-\(self)"
+    }
+
+    var asOverloadSymbol: SymbolGraph.Symbol {
+        .init(
+            identifier: .init(precise: self.asOverloadIdentifier, interfaceLanguage: "swift"),
+            names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
+            pathComponents: ["SomeClass", "someMethod"],
+            docComment: nil,
+            accessLevel: .init(rawValue: "public"),
+            kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+            mixins: [:])
+    }
+
+    var asOverloadRelationship: SymbolGraph.Relationship {
+        .init(source: self.asOverloadIdentifier,
+              target: "s:SomeClass",
+              kind: .memberOf,
+              targetFallback: nil)
     }
 }
 
@@ -616,22 +685,8 @@ private func makeOverloadsSymbolGraph(platform: String, withOverloads methodIndi
             accessLevel: .init(rawValue: "public"),
             kind: .init(parsedIdentifier: .class, displayName: "Class"),
             mixins: [:]),
-    ] + methodIndices.map({ index in
-        .init(
-            identifier: .init(precise: index.asOverloadIdentifier, interfaceLanguage: "swift"),
-            names: .init(title: "someMethod()", navigator: nil, subHeading: nil, prose: nil),
-            pathComponents: ["SomeClass", "someMethod"],
-            docComment: nil,
-            accessLevel: .init(rawValue: "public"),
-            kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
-            mixins: [:])
-    })
-    let relations: [SymbolGraph.Relationship] = methodIndices.map({ index in
-            .init(source: index.asOverloadIdentifier,
-              target: "s:SomeClass",
-              kind: .memberOf,
-              targetFallback: nil)
-    })
+    ] + methodIndices.map(\.asOverloadSymbol)
+    let relations = methodIndices.map(\.asOverloadRelationship)
 
     return makeSymbolGraph(platform: platform, symbols: symbols, relations: relations)
 }
