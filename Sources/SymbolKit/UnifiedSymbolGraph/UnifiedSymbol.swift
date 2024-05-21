@@ -21,6 +21,13 @@ extension UnifiedSymbolGraph {
         /// The selector that originated from the "main module" symbol graph, as opposed to an extension.
         public var mainGraphSelectors: [Selector]
 
+        /// All the selectors that this symbol appeared in, regardless of whether it was for a
+        /// "main module" symbol graph or an extension.
+        public var allSelectors: [Selector] {
+            .init(modules.keys)
+        }
+
+        /// The module information where this symbol appears.
         public var modules: [Selector: SymbolGraph.Module]
 
         /// The kind of symbol.
