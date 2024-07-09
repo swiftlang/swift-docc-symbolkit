@@ -30,9 +30,9 @@ Add the dependency to any targets you've declared in your manifest:
 ```
 
 
-## Contributing to Symbolkit
+## Contributing to SymbolKit
 
-Contributions to /swift-docc-symbolkit are welcomed and encouraged! Please see the
+Contributions to SymbolKit are welcomed and encouraged! Please see the
 [Contributing to Swift guide](https://swift.org/contributing/).
 
 Before submitting the pull request, please make sure you have [tested your
