@@ -82,6 +82,13 @@ extension UnifiedSymbolGraph {
                 uniqueIdentifier: overloadGroupIdentifier,
                 withSelectorsFromSourceLanguage: overloadKey.interfaceLanguage)
 
+            overloadGroupSymbol.isVirtual = overloadGroupSymbol.isVirtual.mapValues({ _ in true })
+
+            for (selector, simplifiedDeclaration) in overloadGroupSymbol.overloadSubheadingFragments() {
+                overloadGroupSymbol.names[selector]?.navigator = simplifiedDeclaration
+                overloadGroupSymbol.names[selector]?.subHeading = simplifiedDeclaration
+            }
+
             self.symbols[overloadGroupIdentifier] = overloadGroupSymbol
             self.overloadGroupSymbols.insert(overloadGroupIdentifier)
 

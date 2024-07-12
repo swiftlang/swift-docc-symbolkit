@@ -28,71 +28,103 @@ fileprivate extension UnifiedSymbolGraph.Symbol {
     }
 }
 
+private func overloadFragments(
+    declarationFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment]?,
+    subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment]?,
+    navigator: [SymbolGraph.Symbol.DeclarationFragments.Fragment]?,
+    functionSignature: SymbolGraph.Symbol.FunctionSignature?
+) -> [SymbolGraph.Symbol.DeclarationFragments.Fragment]? {
+    guard let sourceFragments = declarationFragments ?? subHeading ?? navigator, !sourceFragments.isEmpty else {
+        return nil
+    }
+
+    var simplifiedFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = []
+
+    // In Swift, methods have a keyword as their first token; if the declaration follows that
+    // pattern then pull that out
+
+    // Sometimes symbols are decorated with attributes or extra keywords in the full declaration.
+    // In this case, the sub-heading declaration doesn't include those decorations, so pull that
+    // keyword if it exists
+    if let firstFragment = subHeading?.first, firstFragment.kind == .keyword {
+        simplifiedFragments.append(firstFragment)
+    } else if let firstFragment = sourceFragments.first(where: { $0.kind != .attribute && $0.kind != .text }), firstFragment.kind == .keyword {
+        // If we only have full declaration fragments, still try to skip a leading attribute if possible
+        simplifiedFragments.append(firstFragment)
+    }
+
+    // Then, look for the first identifier, which should contain the symbol's name, and add that
+    if let firstIdentifier = sourceFragments.first(where: { $0.kind == .identifier }) {
+        if !simplifiedFragments.isEmpty {
+            simplifiedFragments.append(.init(textFragment: " "))
+        }
+        simplifiedFragments.append(firstIdentifier)
+    }
+
+    // Assumption: All symbols that can be considered "overloads" are written with method
+    // syntax, including a list of arguments surrounded by parentheses. In Swift symbol graphs,
+    // method parameters are included in the FunctionSignature mixin, so if that's present we
+    // use that to parse the data out.
+
+    simplifiedFragments.append(.init(textFragment: "("))
+
+    if let functionSignature = functionSignature {
+        for parameter in functionSignature.parameters {
+            // Scan through the declaration fragments to see whether this parameter's name is
+            // externally-facing or not.
+            let fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment
+            let parameterName = parameter.externalName ?? parameter.name
+            if let paramNameFragment = sourceFragments.first(where: { $0.spelling == parameterName && $0.kind == .externalParameter }) {
+                fragment = paramNameFragment
+            } else {
+                // If not, then insert an underscore for this parameter.
+                // FIXME: This is a Swift-centric assumption; change this if/when we support C++ overloads
+                fragment = .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil)
+            }
+            simplifiedFragments.append(fragment)
+            simplifiedFragments.append(.init(textFragment: ":"))
+        }
+    } else {
+        let parameterFragments = sourceFragments.extractFunctionParameters()
+        simplifiedFragments.append(contentsOf: parameterFragments)
+    }
+
+    if simplifiedFragments.last?.kind == .text, var lastFragment = simplifiedFragments.popLast() {
+        lastFragment.spelling += ")"
+        simplifiedFragments.append(lastFragment)
+    } else {
+        simplifiedFragments.append(.init(textFragment: ")"))
+    }
+
+    return simplifiedFragments
+}
+
 internal extension SymbolGraph.Symbol {
     func overloadSubheadingFragments() -> [DeclarationFragments.Fragment]? {
-        guard let sourceFragments = self.declarationFragments ?? self.names.subHeading ?? self.names.navigator, !sourceFragments.isEmpty else {
-            return nil
-        }
+        return overloadFragments(
+            declarationFragments: self.declarationFragments,
+            subHeading: self.names.subHeading,
+            navigator: self.names.navigator,
+            functionSignature: self.functionSignature)
+    }
+}
 
-        var simplifiedFragments = [DeclarationFragments.Fragment]()
+internal extension UnifiedSymbolGraph.Symbol {
+    func overloadSubheadingFragments() -> [UnifiedSymbolGraph.Selector: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] {
+        var fragmentsMap: [UnifiedSymbolGraph.Selector: [SymbolGraph.Symbol.DeclarationFragments.Fragment]] = [:]
 
-        // In Swift, methods have a keyword as their first token; if the declaration follows that
-        // pattern then pull that out
-
-        // Sometimes symbols are decorated with attributes or extra keywords in the full declaration.
-        // In this case, the sub-heading declaration doesn't include those decorations, so pull that
-        // keyword if it exists
-        if let firstFragment = self.names.subHeading?.first, firstFragment.kind == .keyword {
-            simplifiedFragments.append(firstFragment)
-        } else if let firstFragment = sourceFragments.first(where: { $0.kind != .attribute && $0.kind != .text }), firstFragment.kind == .keyword {
-            // If we only have full declaration fragments, still try to skip a leading attribute if possible
-            simplifiedFragments.append(firstFragment)
-        }
-
-        // Then, look for the first identifier, which should contain the symbol's name, and add that
-        if let firstIdentifier = sourceFragments.first(where: { $0.kind == .identifier }) {
-            if !simplifiedFragments.isEmpty {
-                simplifiedFragments.append(.init(textFragment: " "))
+        for selector in self.allSelectors {
+            if let fragments = overloadFragments(
+                declarationFragments: self.declarationFragments(selector: selector),
+                subHeading: self.names[selector]?.subHeading,
+                navigator: self.names[selector]?.navigator,
+                functionSignature: self.functionSignature(selector: selector)
+            ) {
+                fragmentsMap[selector] = fragments
             }
-            simplifiedFragments.append(firstIdentifier)
         }
 
-        // Assumption: All symbols that can be considered "overloads" are written with method
-        // syntax, including a list of arguments surrounded by parentheses. In Swift symbol graphs,
-        // method parameters are included in the FunctionSignature mixin, so if that's present we
-        // use that to parse the data out.
-
-        simplifiedFragments.append(.init(textFragment: "("))
-
-        if let functionSignature = self.functionSignature {
-            for parameter in functionSignature.parameters {
-                // Scan through the declaration fragments to see whether this parameter's name is
-                // externally-facing or not.
-                let fragment: SymbolGraph.Symbol.DeclarationFragments.Fragment
-                let parameterName = parameter.externalName ?? parameter.name
-                if let paramNameFragment = sourceFragments.first(where: { $0.spelling == parameterName && $0.kind == .externalParameter }) {
-                    fragment = paramNameFragment
-                } else {
-                    // If not, then insert an underscore for this parameter.
-                    // FIXME: This is a Swift-centric assumption; change this if/when we support C++ overloads
-                    fragment = .init(kind: .externalParameter, spelling: "_", preciseIdentifier: nil)
-                }
-                simplifiedFragments.append(fragment)
-                simplifiedFragments.append(.init(textFragment: ":"))
-            }
-        } else {
-            let parameterFragments = sourceFragments.extractFunctionParameters()
-            simplifiedFragments.append(contentsOf: parameterFragments)
-        }
-
-        if simplifiedFragments.last?.kind == .text, var lastFragment = simplifiedFragments.popLast() {
-            lastFragment.spelling += ")"
-            simplifiedFragments.append(lastFragment)
-        } else {
-            simplifiedFragments.append(.init(textFragment: ")"))
-        }
-
-        return simplifiedFragments
+        return fragmentsMap
     }
 }
 

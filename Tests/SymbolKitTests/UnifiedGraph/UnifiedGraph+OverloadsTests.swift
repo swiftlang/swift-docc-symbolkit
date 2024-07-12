@@ -720,6 +720,138 @@ class UnifiedGraphOverloadsTests: XCTestCase {
             try assertOverloadGroups(unifiedGraph: unifiedGraph)
         }
     }
+
+    func testUnifiedOverloadGroupHasSimplifiedDeclaration() throws {
+        // func myFunc(paramOne one: Int, paramTwo two: Int) -> Int
+        let symbolName = "myFunc(paramOne:paramTwo:)"
+        let subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "paramOne", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "paramTwo", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+        ]
+        let declarationFragments: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "paramOne", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "one", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ", ", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "paramTwo", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .internalParameter, spelling: "two", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ": ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+            .init(kind: .text, spelling: ") -> ", preciseIdentifier: nil),
+            .init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si"),
+        ]
+        let functionSignature: SymbolGraph.Symbol.FunctionSignature = .init(
+            parameters: [
+                .init(name: "one", externalName: "paramOne", declarationFragments: [], children: []),
+                .init(name: "two", externalName: "paramTwo", declarationFragments: [], children: []),
+            ],
+            returns: [.init(kind: .typeIdentifier, spelling: "Int", preciseIdentifier: "s:Si")]
+        )
+        let unifiedGraph = try unifySymbolGraphs(
+            createOverloadGroups: true,
+            ("DemoKit-macos.symbols.json", makeSymbolGraph(
+                platform: "macosx",
+                createOverloadGroups: false,
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "s:myFunc-1", interfaceLanguage: "swift"),
+                        names: .init(title: symbolName, navigator: nil, subHeading: subHeading, prose: nil),
+                        pathComponents: [symbolName],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: declarationFragments),
+                            SymbolGraph.Symbol.FunctionSignature.mixinKey: functionSignature
+                        ]),
+                ],
+                relations: [])),
+            ("DemoKit-ios.symbols.json", makeSymbolGraph(
+                platform: "ios",
+                createOverloadGroups: false,
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "s:myFunc-2", interfaceLanguage: "swift"),
+                        names: .init(title: symbolName, navigator: nil, subHeading: subHeading, prose: nil),
+                        pathComponents: [symbolName],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .func, displayName: "Function"),
+                        mixins: [
+                            SymbolGraph.Symbol.DeclarationFragments.mixinKey:
+                                SymbolGraph.Symbol.DeclarationFragments(declarationFragments: declarationFragments),
+                            SymbolGraph.Symbol.FunctionSignature.mixinKey: functionSignature
+                        ]),
+                ],
+                relations: []))
+        )
+
+        let overloadSymbols = [
+            "s:myFunc-1",
+            "s:myFunc-2",
+        ]
+        let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+
+        let allRelations = unifiedGraph.unifiedRelationships
+
+        // Make sure that overloadOf relationships were added
+        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+        XCTAssertEqual(overloadRelations.count, 2)
+        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+
+        // Pull out the overload group's identifier and make sure that it exists
+        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+        XCTAssert(unifiedGraph.overloadGroupSymbols.contains(overloadGroupIdentifier))
+
+        // Make sure that the individual overloads reference the overload group and their index properly
+        for overloadIndex in overloadSymbols.indices {
+            let overloadIdentifier = overloadSymbols[overloadIndex]
+            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+        }
+
+        let expectedOverloadDeclaration: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
+            .init(kind: .keyword, spelling: "func", preciseIdentifier: nil),
+            .init(kind: .text, spelling: " ", preciseIdentifier: nil),
+            .init(kind: .identifier, spelling: "myFunc", preciseIdentifier: nil),
+            .init(kind: .text, spelling: "(", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "paramOne", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ":", preciseIdentifier: nil),
+            .init(kind: .externalParameter, spelling: "paramTwo", preciseIdentifier: nil),
+            .init(kind: .text, spelling: ":)", preciseIdentifier: nil),
+        ]
+
+        // Make sure that the overload group symbol has simplified names
+        let overloadGroupSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadGroupIdentifier])
+        for names in overloadGroupSymbol.names.values {
+            XCTAssertEqual(names.subHeading, expectedOverloadDeclaration)
+            XCTAssertEqual(names.navigator, expectedOverloadDeclaration)
+        }
+    }
 }
 
 private extension Int {
