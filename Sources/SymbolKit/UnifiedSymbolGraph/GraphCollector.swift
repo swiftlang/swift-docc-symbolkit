@@ -88,6 +88,11 @@ extension GraphCollector {
         }
     }
 
+    /// Finalizes the collected symbol graphs, loading in extension symbol graphs and processing orphan relationships.
+    ///
+    /// - Parameter createOverloadGroups: Whether to create overload group symbols in the resulting unified symbol graphs.
+    ///   If overload groups were created in the individual symbol graphs, they will be automatically combined regardless of this setting.
+    /// - Returns: A tuple containing a map of module names to unified symbol graphs, and a map of module names to symbol graph locations.
     public func finishLoading(
         createOverloadGroups: Bool = false
     ) -> (unifiedGraphs: [String: UnifiedSymbolGraph], graphSources: [String: [GraphKind]]) {
