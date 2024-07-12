@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2022 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -241,6 +241,7 @@ extension SymbolGraph.Symbol {
         static let httpParameterSource = HTTP.ParameterSource.symbolCodingInfo
         static let httpMediaType = HTTP.MediaType.symbolCodingInfo
         static let alternateDeclarations = AlternateDeclarations.symbolCodingInfo
+        static let plistDetails = PlistDetails.symbolCodingInfo
 
         static let mixinCodingInfo: [String: SymbolMixinCodingInfo] = [
             CodingKeys.availability.codingKey.stringValue: Self.availability,
@@ -266,6 +267,7 @@ extension SymbolGraph.Symbol {
             CodingKeys.httpParameterSource.codingKey.stringValue: Self.httpParameterSource,
             CodingKeys.httpMediaType.codingKey.stringValue: Self.httpMediaType,
             CodingKeys.alternateDeclarations.codingKey.stringValue: Self.alternateDeclarations,
+            CodingKeys.plistDetails.codingKey.stringValue: Self.plistDetails
         ]
         
         static func == (lhs: SymbolGraph.Symbol.CodingKeys, rhs: SymbolGraph.Symbol.CodingKeys) -> Bool {
