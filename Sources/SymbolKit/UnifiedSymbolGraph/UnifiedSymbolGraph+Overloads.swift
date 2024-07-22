@@ -63,9 +63,13 @@ extension UnifiedSymbolGraph {
             })
         }
 
+        let defaultImplementationSymbols = Set(relationshipsByLanguage.values.flatMap({
+            $0.filter({ $0.kind == .defaultImplementationOf }).map(\.source)
+        }))
+
         // Calculate all the overload keys for the remaining symbols.
         let overloadData = Overloads()
-        for symbol in symbols.values {
+        for (identifier, symbol) in symbols where !defaultImplementationSymbols.contains(identifier) {
             overloadData.calculateOverloadGroups(forSymbol: symbol)
         }
 

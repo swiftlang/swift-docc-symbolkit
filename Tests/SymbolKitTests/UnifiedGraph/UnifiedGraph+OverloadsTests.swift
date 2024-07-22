@@ -852,6 +852,63 @@ class UnifiedGraphOverloadsTests: XCTestCase {
             XCTAssertEqual(names.navigator, expectedOverloadDeclaration)
         }
     }
+
+    func testProtocolDefaultImplementationDoesNotCreateOverloads() throws {
+        // protocol MyProtocol
+        // - requirement someFunc()
+        // - default implementation someFunc()
+        let unifiedGraph = try unifySymbolGraphs(
+            createOverloadGroups: true,
+            ("DemoKit.symbols.json", makeSymbolGraph(
+                platform: "macosx",
+                createOverloadGroups: false,
+                symbols: [
+                    .init(
+                        identifier: .init(precise: "s:MyProtocol", interfaceLanguage: "swift"),
+                        names: .init(title: "MyProtocol", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["MyProtocol"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .protocol, displayName: "Protocol"),
+                        mixins: [:]),
+                    .init(
+                        identifier: .init(precise: "s:MyProtocol:someFunc-1", interfaceLanguage: "swift"),
+                        names: .init(title: "someFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["MyProtocol", "someFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                        mixins: [:]),
+                    .init(
+                        identifier: .init(precise: "s:MyProtocol:someFunc-2", interfaceLanguage: "swift"),
+                        names: .init(title: "someFunc()", navigator: nil, subHeading: nil, prose: nil),
+                        pathComponents: ["MyProtocol", "someFunc()"],
+                        docComment: nil,
+                        accessLevel: .init(rawValue: "public"),
+                        kind: .init(parsedIdentifier: .method, displayName: "Instance Method"),
+                        mixins: [:]),
+                ],
+                relations: [
+                    .init(
+                        source: "s:MyProtocol:someFunc-1",
+                        target: "s:MyProtocol",
+                        kind: .requirementOf,
+                        targetFallback: nil),
+                    .init(
+                        source: "s:MyProtocol:someFunc-2",
+                        target: "s:MyProtocol:someFunc-1",
+                        kind: .defaultImplementationOf,
+                        targetFallback: nil),
+                ]
+            ))
+        )
+
+        let allRelations = unifiedGraph.unifiedRelationships
+
+        XCTAssertFalse(allRelations.contains(where: { $0.kind == .overloadOf }))
+
+        XCTAssert(unifiedGraph.overloadGroupSymbols.isEmpty)
+    }
 }
 
 private extension Int {
