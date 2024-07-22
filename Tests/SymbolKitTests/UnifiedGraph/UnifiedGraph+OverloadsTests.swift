@@ -14,169 +14,169 @@ import Foundation
 
 class UnifiedGraphOverloadsTests: XCTestCase {
     func testUnifiedOverloadGroups() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [1, 2]))
-        )
+        try assertOnOverloadsGraphs(
+            ("DemoKit-macos.symbols.json", platform: "macosx", withOverloads: [1, 2])
+        ) { unifiedGraph in
+            let overloadSymbols = [1, 2].map(\.asOverloadIdentifier)
+            let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
-        let overloadSymbols = [1, 2].map(\.asOverloadIdentifier)
-        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     func testUnifiedOverloadGroupsAcrossPlatforms() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [1, 2])),
-            ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [1, 2]))
-        )
+        try assertOnOverloadsGraphs(
+            ("DemoKit-macos.symbols.json", platform: "macosx", withOverloads: [1, 2]),
+            ("DemoKit-ios.symbols.json", platform: "ios", withOverloads: [1, 2])
+        ) { unifiedGraph in
+            let overloadSymbols = [1, 2].map(\.asOverloadIdentifier)
+            let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
-        let overloadSymbols = [1, 2].map(\.asOverloadIdentifier)
-        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     func testOnePlatformDoesntOverload() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [1])),
-            ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [1, 2]))
-        )
+        try assertOnOverloadsGraphs(
+            ("DemoKit-macos.symbols.json", platform: "macosx", withOverloads: [1]),
+            ("DemoKit-ios.symbols.json", platform: "ios", withOverloads: [1, 2])
+        ) { unifiedGraph in
+            let overloadSymbols = [1, 2].map(\.asOverloadIdentifier)
+            let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
-        let overloadSymbols = [1, 2].map(\.asOverloadIdentifier)
-        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     func testDisjointOverloadGroups() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [1, 2])),
-            ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [1, 3]))
-        )
+        try assertOnOverloadsGraphs(
+            ("DemoKit-macos.symbols.json", platform: "macosx", withOverloads: [1, 2]),
+            ("DemoKit-ios.symbols.json", platform: "ios", withOverloads: [1, 3])
+        ) { unifiedGraph in
+            let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
+            let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
-        let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
-        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 3)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 3)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     func testRemoveExtraOverloadGroups() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [1, 2])),
-            ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [2, 3]))
-        )
+        try assertOnOverloadsGraphs(
+            ("DemoKit-macos.symbols.json", platform: "macosx", withOverloads: [1, 2]),
+            ("DemoKit-ios.symbols.json", platform: "ios", withOverloads: [2, 3])
+        ) { unifiedGraph in
+            let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
+            let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
-        let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
-        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 3)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 3)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
 
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Also make sure that the iOS overload group was dropped from the unified graph
+            let iOSOverloadGroupIdentifier = 2.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
+            XCTAssertFalse(allRelations.contains(where: {
+                $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
+            }))
         }
-
-        // Also make sure that the iOS overload group was dropped from the unified graph
-        let iOSOverloadGroupIdentifier = 2.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
-        XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
-        XCTAssertFalse(allRelations.contains(where: {
-            $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
-        }))
     }
 
     func testOverloadsWithSameDeclaration() throws {
@@ -184,8 +184,8 @@ class UnifiedGraphOverloadsTests: XCTestCase {
         // func myFunc()
         // (In a real-world scenario, these might differ by the swiftGenerics mixin, but here we can
         // write a contrived situation like this)
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit.symbols.json", makeSymbolGraph(
+        try assertOnUnifiedGraphs(
+            ("DemoKit.symbols.json",
                 platform: "macosx",
                 symbols: [
                     .init(
@@ -215,35 +215,35 @@ class UnifiedGraphOverloadsTests: XCTestCase {
                                 ])
                         ]),
                 ],
-                relations: []))
-        )
+                relations: [])
+        ) { unifiedGraph in
+            let overloadSymbols = [
+                "s:myFunc-1",
+                "s:myFunc-2",
+            ]
+            let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
 
-        let overloadSymbols = [
-            "s:myFunc-1",
-            "s:myFunc-2",
-        ]
-        let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
@@ -252,8 +252,8 @@ class UnifiedGraphOverloadsTests: XCTestCase {
         // has an attribute in its declaration that causes it to sort above the other one. Make sure
         // that we correctly sort it to the top in the unified graph even when the iOS version sorts
         // `myFunc()-1` on top.
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeSymbolGraph(
+        try assertOnUnifiedGraphs(
+            ("DemoKit-macos.symbols.json",
                 platform: "macosx",
                 symbols: [
                     .init(
@@ -283,8 +283,8 @@ class UnifiedGraphOverloadsTests: XCTestCase {
                                 ])
                         ]),
                 ],
-                relations: [])),
-            ("DemoKit-ios.symbols.json", makeSymbolGraph(
+                relations: []),
+            ("DemoKit-ios.symbols.json",
                 platform: "ios",
                 symbols: [
                     .init(
@@ -314,49 +314,49 @@ class UnifiedGraphOverloadsTests: XCTestCase {
                                 ])
                         ]),
                 ],
-                relations: []))
-        )
+                relations: [])
+        ) { unifiedGraph in
+            let overloadSymbols = [
+                "s:myFunc-2",
+                "s:myFunc-1",
+            ]
+            let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
 
-        let overloadSymbols = [
-            "s:myFunc-2",
-            "s:myFunc-1",
-        ]
-        let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
 
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Also make sure that the iOS overload group was dropped from the unified graph
+            let iOSOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+            XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
+            XCTAssertFalse(allRelations.contains(where: {
+                $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
+            }))
         }
-
-        // Also make sure that the iOS overload group was dropped from the unified graph
-        let iOSOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
-        XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
-        XCTAssertFalse(allRelations.contains(where: {
-            $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
-        }))
     }
 
     /// Ensure that overload groups continue to sort overloads by identifier when both overloads are deprecated.
     func testDeprecatedOverloads() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit.symbols.json", makeSymbolGraph(
+        try assertOnUnifiedGraphs(
+            ("DemoKit.symbols.json",
                 platform: "macosx",
                 symbols: [
                     .init(
@@ -404,43 +404,43 @@ class UnifiedGraphOverloadsTests: XCTestCase {
                                 ])
                         ]),
                 ],
-                relations: []))
-        )
+                relations: [])
+        ) { unifiedGraph in
+            let overloadSymbols = [
+                "s:myFunc-1",
+                "s:myFunc-2",
+            ]
+            let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
 
-        let overloadSymbols = [
-            "s:myFunc-1",
-            "s:myFunc-2",
-        ]
-        let expectedOverloadGroupIdentifier = "s:myFunc-1::OverloadGroup"
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     /// Ensure that an overload group does not select a deprecated overload as the overload group
     /// when a non-deprecated overload is available.
     func testPartiallyDeprecatedOverloads() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit.symbols.json", makeSymbolGraph(
+        try assertOnUnifiedGraphs(
+            ("DemoKit.symbols.json",
                 platform: "macosx",
                 symbols: [
                     .init(
@@ -474,42 +474,42 @@ class UnifiedGraphOverloadsTests: XCTestCase {
                         kind: .init(parsedIdentifier: .func, displayName: "Function"),
                         mixins: [:]),
                 ],
-                relations: []))
-        )
+                relations: [])
+        ) { unifiedGraph in
+            let overloadSymbols = [
+                "s:myFunc-2",
+                "s:myFunc-1",
+            ]
+            let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
 
-        let overloadSymbols = [
-            "s:myFunc-2",
-            "s:myFunc-1",
-        ]
-        let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     /// Like the above, but ensure that the same behavior holds for "unconditionally deprecated" symbols.
     func testPartiallyUnconditionallyDeprecatedOverloads() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit.symbols.json", makeSymbolGraph(
+        try assertOnUnifiedGraphs(
+            ("DemoKit.symbols.json",
                 platform: "macosx",
                 symbols: [
                     .init(
@@ -543,90 +543,123 @@ class UnifiedGraphOverloadsTests: XCTestCase {
                         kind: .init(parsedIdentifier: .func, displayName: "Function"),
                         mixins: [:]),
                 ],
-                relations: []))
-        )
+                relations: [])
+        ) { unifiedGraph in
+            let overloadSymbols = [
+                "s:myFunc-2",
+                "s:myFunc-1",
+            ]
+            let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
 
-        let overloadSymbols = [
-            "s:myFunc-2",
-            "s:myFunc-1",
-        ]
-        let expectedOverloadGroupIdentifier = "s:myFunc-2::OverloadGroup"
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 2)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 2)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
-
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
         }
     }
 
     /// Ensure that a cross-platform overload group from an extension symbol graph properly cleans
     /// up overload groups and relationships in the unified graph.
     func testOverloadsFromExtensionGraphs() throws {
-        let unifiedGraph = try unifySymbolGraphs(
-            ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [])),
-            ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [])),
-            ("OtherKit-macos@DemoKit.symbols.json", makeSymbolGraph(
-                platform: "macosx",
-                symbols: [1, 2].map(\.asOverloadSymbol),
-                relations: [1, 2].map(\.asOverloadRelationship)
-            )),
-            ("OtherKit-ios@DemoKit.symbols.json", makeSymbolGraph(
-                platform: "ios",
-                symbols: [2, 3].map(\.asOverloadSymbol),
-                relations: [2, 3].map(\.asOverloadRelationship)
-            ))
-        )
+        // Since this test mixes the `withOverloads` wrapper with plain symbol graphs, it doesn't
+        // use the assertion wrapper of the previous tests.
+        let unifiedGraphs = [
+            try unifySymbolGraphs(
+                ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [])),
+                ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(platform: "ios", withOverloads: [])),
+                ("OtherKit-macos@DemoKit.symbols.json", makeSymbolGraph(
+                    platform: "macosx",
+                    symbols: [1, 2].map(\.asOverloadSymbol),
+                    relations: [1, 2].map(\.asOverloadRelationship)
+                )),
+                ("OtherKit-ios@DemoKit.symbols.json", makeSymbolGraph(
+                    platform: "ios",
+                    symbols: [2, 3].map(\.asOverloadSymbol),
+                    relations: [2, 3].map(\.asOverloadRelationship)
+                ))
+            ),
+            try unifySymbolGraphs(
+                createOverloadGroups: true,
+                ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(
+                    platform: "macosx",
+                    withOverloads: [],
+                    createOverloadGroups: false
+                )),
+                ("DemoKit-ios.symbols.json", makeOverloadsSymbolGraph(
+                    platform: "ios",
+                    withOverloads: [],
+                    createOverloadGroups: false
+                )),
+                ("OtherKit-macos@DemoKit.symbols.json", makeSymbolGraph(
+                    platform: "macosx",
+                    createOverloadGroups: false,
+                    symbols: [1, 2].map(\.asOverloadSymbol),
+                    relations: [1, 2].map(\.asOverloadRelationship)
+                )),
+                ("OtherKit-ios@DemoKit.symbols.json", makeSymbolGraph(
+                    platform: "ios",
+                    createOverloadGroups: false,
+                    symbols: [2, 3].map(\.asOverloadSymbol),
+                    relations: [2, 3].map(\.asOverloadRelationship)
+                ))
+            )
+        ]
 
-        let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
-        let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+        for unifiedGraph in unifiedGraphs {
+            let overloadSymbols = [1, 2, 3].map(\.asOverloadIdentifier)
+            let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
 
-        let allRelations = unifiedGraph.unifiedRelationships
+            let allRelations = unifiedGraph.unifiedRelationships
 
-        // Make sure that overloadOf relationships were added
-        let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
-        XCTAssertEqual(overloadRelations.count, 3)
-        XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
-        XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
+            // Make sure that overloadOf relationships were added
+            let overloadRelations = allRelations.filter({ $0.kind == .overloadOf })
+            XCTAssertEqual(overloadRelations.count, 3)
+            XCTAssertEqual(Set(overloadRelations.map(\.target)).count, 1)
+            XCTAssertEqual(Set(overloadRelations.map(\.source)), Set(overloadSymbols))
 
-        // Pull out the overload group's identifier and make sure that it exists
-        let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
-        XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-        XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
+            // Pull out the overload group's identifier and make sure that it exists
+            let overloadGroupIdentifier = try XCTUnwrap(overloadRelations.first?.target)
+            XCTAssertEqual(overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+            XCTAssert(unifiedGraph.symbols.keys.contains(overloadGroupIdentifier))
 
-        // Make sure that the individual overloads reference the overload group and their index properly
-        for overloadIndex in overloadSymbols.indices {
-            let overloadIdentifier = overloadSymbols[overloadIndex]
-            let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
-            let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
-            XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
-            XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            // Make sure that the individual overloads reference the overload group and their index properly
+            for overloadIndex in overloadSymbols.indices {
+                let overloadIdentifier = overloadSymbols[overloadIndex]
+                let overloadSymbol = try XCTUnwrap(unifiedGraph.symbols[overloadIdentifier])
+                let overloadData = try XCTUnwrap(overloadSymbol.unifiedOverloadData)
+                XCTAssertEqual(overloadData.overloadGroupIdentifier, expectedOverloadGroupIdentifier)
+                XCTAssertEqual(overloadData.overloadGroupIndex, overloadIndex)
+            }
+
+            // Also make sure that the iOS overload group was dropped from the unified graph
+            let iOSOverloadGroupIdentifier = 2.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
+            XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
+            XCTAssertFalse(allRelations.contains(where: {
+                $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
+            }))
         }
-
-        // Also make sure that the iOS overload group was dropped from the unified graph
-        let iOSOverloadGroupIdentifier = 2.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
-        XCTAssertFalse(unifiedGraph.symbols.keys.contains(iOSOverloadGroupIdentifier))
-        XCTAssertFalse(allRelations.contains(where: {
-            $0.target == iOSOverloadGroupIdentifier || $0.source == iOSOverloadGroupIdentifier
-        }))
     }
 
     func testNonOverlappingOverloads() throws {
+        // This test verifies behavior that doesn't work when creating overload groups in individual
+        // symbol graphs, so it doesn't use the test abstraction of the previous tests.
         let unifiedGraph = try unifySymbolGraphs(
             createOverloadGroups: true,
             ("DemoKit-macos.symbols.json", makeOverloadsSymbolGraph(platform: "macosx", withOverloads: [1], createOverloadGroups: false)),
@@ -661,6 +694,8 @@ class UnifiedGraphOverloadsTests: XCTestCase {
     }
 
     func testNonOverlappingOverloadsWithIndividualOverloadGroups() throws {
+        // This test verifies behavior that doesn't work when creating overload groups in individual
+        // symbol graphs, so it doesn't use the test abstraction of the previous tests.
         func assertOverloadGroups(unifiedGraph: UnifiedSymbolGraph) throws {
             let overloadSymbols = [1, 2, 3, 4].map(\.asOverloadIdentifier)
             let expectedOverloadGroupIdentifier = 1.asOverloadIdentifier + SymbolGraph.Symbol.overloadGroupIdentifierSuffix
@@ -722,6 +757,10 @@ class UnifiedGraphOverloadsTests: XCTestCase {
     }
 
     func testUnifiedOverloadGroupHasSimplifiedDeclaration() throws {
+        // This test verifies that the unified symbol graph overloads code has the same behavior as
+        // the single symbol graph overloads code. The single symbol graph version is tested in
+        // `SymbolGraphOverloadsTests.testCreateOverloadWithSimplifiedDeclaration`.
+
         // func myFunc(paramOne one: Int, paramTwo two: Int) -> Int
         let symbolName = "myFunc(paramOne:paramTwo:)"
         let subHeading: [SymbolGraph.Symbol.DeclarationFragments.Fragment] = [
@@ -854,6 +893,10 @@ class UnifiedGraphOverloadsTests: XCTestCase {
     }
 
     func testProtocolDefaultImplementationDoesNotCreateOverloads() throws {
+        // This test verifies that the unified symbol graph overloads code has the same behavior as
+        // the single symbol graph overloads code. The single symbol graph version is tested in
+        // `SymbolGraphOverloadsTests.testDefaultImplementationDoesNotCreateAnOverloadGroup`.
+
         // protocol MyProtocol
         // - requirement someFunc()
         // - default implementation someFunc()
@@ -1017,7 +1060,7 @@ private func makeSymbolGraph(
 private func unifySymbolGraphs(
     moduleName: String = "DemoKit",
     createOverloadGroups: Bool = false,
-    _ graphs: (fileName: String, symbolGraph: SymbolGraph)...,
+    graphs: [(fileName: String, symbolGraph: SymbolGraph)],
     file: StaticString = #file,
     line: UInt = #line
 ) throws -> UnifiedSymbolGraph {
@@ -1028,4 +1071,133 @@ private func unifySymbolGraphs(
     return try XCTUnwrap(
         collector.finishLoading(createOverloadGroups: createOverloadGroups).unifiedGraphs[moduleName],
         file: file, line: line)
+}
+
+private func unifySymbolGraphs(
+    moduleName: String = "DemoKit",
+    createOverloadGroups: Bool = false,
+    _ graphs: (fileName: String, symbolGraph: SymbolGraph)...,
+    file: StaticString = #file,
+    line: UInt = #line
+) throws -> UnifiedSymbolGraph {
+    try unifySymbolGraphs(
+        moduleName: moduleName,
+        createOverloadGroups: createOverloadGroups,
+        graphs: graphs,
+        file: file,
+        line: line)
+}
+
+private func generateUnifiedGraphs(
+    moduleName: String = "DemoKit",
+    _ graphs: [(fileName: String, platform: String, symbols: [SymbolGraph.Symbol], relations: [SymbolGraph.Relationship])],
+    file: StaticString = #file,
+    line: UInt = #line
+) throws -> [UnifiedSymbolGraph] {
+    let graphsWithOverloads = graphs.map({ graph in
+        (fileName: graph.fileName, symbolGraph: makeSymbolGraph(
+            platform: graph.platform,
+            createOverloadGroups: true,
+            symbols: graph.symbols,
+            relations: graph.relations))
+    })
+    let graphsWithoutOverloads = graphs.map({ graph in
+        (fileName: graph.fileName, symbolGraph: makeSymbolGraph(
+            platform: graph.platform,
+            createOverloadGroups: false,
+            symbols: graph.symbols,
+            relations: graph.relations))
+    })
+
+    return [
+        try unifySymbolGraphs(
+            moduleName: moduleName,
+            createOverloadGroups: false,
+            graphs: graphsWithOverloads,
+            file: file,
+            line: line
+        ),
+        try unifySymbolGraphs(
+            moduleName: moduleName,
+            createOverloadGroups: true,
+            graphs: graphsWithoutOverloads,
+            file: file,
+            line: line
+        )
+    ]
+}
+
+private func generateOverloadsUnifiedGraphs(
+    moduleName: String = "DemoKit",
+    _ graphs: [(fileName: String, platform: String, withOverloads: [Int])],
+    file: StaticString = #file,
+    line: UInt = #line
+) throws -> [UnifiedSymbolGraph] {
+    let graphsWithOverloads = graphs.map({ graph in
+        (fileName: graph.fileName, symbolGraph: makeOverloadsSymbolGraph(
+            platform: graph.platform,
+            withOverloads: graph.withOverloads,
+            createOverloadGroups: true))
+    })
+    let graphsWithoutOverloads = graphs.map({ graph in
+        (fileName: graph.fileName, symbolGraph: makeOverloadsSymbolGraph(
+            platform: graph.platform,
+            withOverloads: graph.withOverloads,
+            createOverloadGroups: false))
+    })
+
+    return [
+        try unifySymbolGraphs(
+            moduleName: moduleName,
+            createOverloadGroups: false,
+            graphs: graphsWithOverloads,
+            file: file,
+            line: line
+        ),
+        try unifySymbolGraphs(
+            moduleName: moduleName,
+            createOverloadGroups: true,
+            graphs: graphsWithoutOverloads,
+            file: file,
+            line: line
+        )
+    ]
+}
+
+private func assertOnUnifiedGraphs(
+    moduleName: String = "DemoKit",
+    _ graphs: (fileName: String, platform: String, symbols: [SymbolGraph.Symbol], relations: [SymbolGraph.Relationship])...,
+    runAssertions: ((UnifiedSymbolGraph) throws -> Void),
+    file: StaticString = #file,
+    line: UInt = #line
+) throws {
+    let unifiedGraphs = try generateUnifiedGraphs(
+        moduleName: moduleName,
+        graphs,
+        file: file,
+        line: line
+    )
+
+    for graph in unifiedGraphs {
+        try runAssertions(graph)
+    }
+}
+
+private func assertOnOverloadsGraphs(
+    moduleName: String = "DemoKit",
+    _ graphs: (fileName: String, platform: String, withOverloads: [Int])...,
+    runAssertions: ((UnifiedSymbolGraph) throws -> Void),
+    file: StaticString = #file,
+    line: UInt = #line
+) throws {
+    let unifiedGraphs = try generateOverloadsUnifiedGraphs(
+        moduleName: moduleName,
+        graphs,
+        file: file,
+        line: line
+    )
+
+    for graph in unifiedGraphs {
+        try runAssertions(graph)
+    }
 }
