@@ -36,6 +36,11 @@ extension SymbolGraph {
     /// relationships are created between the colliding symbols and the new overload group symbol.
     /// In addition, any existing relationships the original symbol had are also cloned for the
     /// overload group.
+    ///
+    /// > Warning: If you are processing this symbol graph into a ``GraphCollector``, using this
+    /// > method can lead to incorrectly grouped overloads. Use the `createOverloadGroups`
+    /// > parameter of ``GraphCollector/finishLoading(createOverloadGroups:)`` instead, which will
+    /// > perform overload grouping over all the collected graphs.
     public mutating func createOverloadGroupSymbols() {
         struct OverloadKey: Hashable {
             let path: [String]
