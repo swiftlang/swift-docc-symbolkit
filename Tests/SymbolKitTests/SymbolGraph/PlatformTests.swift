@@ -12,25 +12,48 @@ import XCTest
 import SymbolKit
 
 class PlatformTests: XCTestCase {
-    func testMacosIsValidOperatingSystem() {
-        let macosPlatform = SymbolGraph.Platform(
-            architecture: nil,
-            vendor: nil,
-            operatingSystem: SymbolGraph.OperatingSystem(name: "macos"),
-            environment: nil
-        )
-        
-        XCTAssertEqual(macosPlatform.name, "macOS", "'macos' should be a valid OS identifier.")
+    func testValidOperatingSystems() {
+        let testPairs: [(inputName: String, expectedName: String)] = [
+            ("macos", "macOS"),
+            ("macosx", "macOS"),
+            ("ios", "iOS"),
+            ("tvos", "tvOS"),
+            ("watchos", "watchOS"),
+            ("visionos", "visionOS"),
+            ("linux", "Linux"),
+        ]
+
+        for (inputName, expectedName) in testPairs {
+            let platform = SymbolGraph.Platform(
+                architecture: nil,
+                vendor: nil,
+                operatingSystem: .init(name: inputName),
+                environment: nil
+            )
+
+            XCTAssertEqual(platform.name, expectedName, "'\(inputName)' should be a valid OS identifier.")
+        }
     }
-    
-    func testMacosxIsValidOperatingSystem() {
-        let macosxPlatform = SymbolGraph.Platform(
+
+    func testInvalidOperatingSystemName() {
+        let platform = SymbolGraph.Platform(
             architecture: nil,
             vendor: nil,
-            operatingSystem: SymbolGraph.OperatingSystem(name: "macosx"),
+            operatingSystem: SymbolGraph.OperatingSystem(name: "invalidos"),
             environment: nil
         )
-        
-        XCTAssertEqual(macosxPlatform.name, "macOS", "'macosx' should be a valid OS identifier.")
+
+        XCTAssertEqual(platform.name, "Unsupported OS: invalidos")
+    }
+
+    func testMacCatalystName() {
+        let platform = SymbolGraph.Platform(
+            architecture: nil,
+            vendor: nil,
+            operatingSystem: SymbolGraph.OperatingSystem(name: "ios"),
+            environment: "macabi"
+        )
+
+        XCTAssertEqual(platform.name, "macCatalyst", "'ios' should return macCatalyst when set with 'macabi'.")
     }
 }
