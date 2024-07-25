@@ -69,6 +69,22 @@ extension UnifiedSymbolGraph {
         /// Like an individual symbol's mixins, the `String` key for each mixin is its ``Mixin/mixinKey``.
         public var unifiedMixins: [String: Mixin]
 
+        /// Initialize an empty symbol with the given identifier.
+        init(uniqueIdentifier: String) {
+            self.uniqueIdentifier = uniqueIdentifier
+            self.mainGraphSelectors = []
+            self.modules = [:]
+            self.kind = [:]
+            self.pathComponents = [:]
+            self.type = nil
+            self.names = [:]
+            self.docComment = [:]
+            self.accessLevel = [:]
+            self.isVirtual = [:]
+            self.mixins = [:]
+            self.unifiedMixins = [:]
+        }
+
         /// Initialize a combined symbol view from a single symbol.
         public init(fromSingleSymbol sym: SymbolGraph.Symbol, module: SymbolGraph.Module, isMainGraph: Bool) {
             let lang = sym.identifier.interfaceLanguage

@@ -88,14 +88,25 @@ extension GraphCollector {
         }
     }
 
-    public func finishLoading() -> (unifiedGraphs: [String: UnifiedSymbolGraph], graphSources: [String: [GraphKind]]) {
+    /// Finalizes the collected symbol graphs, loading in extension symbol graphs and processing orphan relationships.
+    ///
+    /// - Parameter createOverloadGroups: Whether to create overload group symbols in the resulting unified symbol graphs.
+    ///   If overload groups were created in the individual symbol graphs, they will be automatically combined regardless of this setting.
+    /// - Returns: A tuple containing a map of module names to unified symbol graphs, and a map of module names to symbol graph locations.
+    public func finishLoading(
+        createOverloadGroups: Bool = false
+    ) -> (unifiedGraphs: [String: UnifiedSymbolGraph], graphSources: [String: [GraphKind]]) {
         for (url, graph) in self.extensionGraphs {
             self.mergeSymbolGraph(graph, at: url, forceLoading: true)
         }
 
         for (_, graph) in self.unifiedGraphs {
             graph.collectOrphans()
-            graph.combineOverloadGroups()
+            if createOverloadGroups {
+                graph.createOverloadGroupSymbols()
+            } else {
+                graph.combineOverloadGroups()
+            }
         }
 
         return (self.unifiedGraphs, self.graphSources)
