@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -97,6 +97,16 @@ extension SymbolGraph.Symbol.Availability {
          An application extension for the Mac Catalyst platform.
          */
         public static let macCatalystAppExtension = "macCatalystAppExtension"
+
+        /**
+         The visionOS operating system.
+         */
+        public static let visionOS = "visionOS"
+
+        /**
+         An application extension for the visionOS operating system.
+         */
+        public static let visionOSAppExtension = "visionOSAppExtension"
 
         /**
          A Linux-based operating system, but not a specific distribution.
