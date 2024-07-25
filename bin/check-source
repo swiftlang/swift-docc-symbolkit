@@ -43,10 +43,9 @@ tmp=$(mktemp /tmp/.swift-docc-symbolkit-check-source_XXXXXX)
 for language in swift-or-c bash md-or-tutorial html docker; do
   declare -a matching_files
   declare -a exceptions
-  declare -a reader
-  exceptions=( )
+  declare reader
   matching_files=( -name '*' )
-  reader=head
+  reader="head"
   case "$language" in
       swift-or-c)
         exceptions=( -name 'Package*.swift')
@@ -81,7 +80,7 @@ EOF
       md-or-tutorial)
         exceptions=( -path "./.github/*.md")
         matching_files=( -name '*.md' -o -name '*.tutorial' )
-        reader=tail
+        reader="tail"
         cat > "$tmp" <<"EOF"
 <!-- Copyright (c) YEARS Apple Inc and the Swift Project authors. All Rights Reserved. -->
 EOF
