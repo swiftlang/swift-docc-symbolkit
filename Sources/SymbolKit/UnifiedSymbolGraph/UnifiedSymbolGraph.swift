@@ -43,13 +43,36 @@ public class UnifiedSymbolGraph {
     /// to be matched with an appropriate symbol in the collected graphs.
     public var orphanRelationships: [SymbolGraph.Relationship]
 
+    /// Overload group symbols that were detected while collecting symbol graphs.
+    ///
+    /// This may not reflect the overload groups present in the collected graph;
+    /// ``GraphCollector/finishLoading(createOverloadGroups:)`` can deduplicate overload groups or
+    /// compute new ones depending on the symbol graphs that were loaded.
+    public var overloadGroupsFromOriginalGraphs: Set<String>
+
+    /// Overload group symbols that are in the final symbol graph after the graph collector finished.
+    ///
+    /// These could either be processed from pre-existing overload groups, calculated before
+    /// unification, or computed after the fact, when
+    /// ``GraphCollector/finishLoading(createOverloadGroups:)`` is given a `createOverloadGroups`
+    /// parameter of `true`.
+    public var overloadGroupSymbols: Set<String>
+
     public init?(fromSingleGraph graph: SymbolGraph, at url: URL) {
         let (_, isMainGraph) = GraphCollector.moduleNameFor(graph, at: url)
 
         self.moduleName = graph.module.name
         self.moduleData = [url: graph.module]
         self.metadata = [url: graph.metadata]
-        self.symbols = graph.symbols.mapValues { UnifiedSymbolGraph.Symbol(fromSingleSymbol: $0, module: graph.module, isMainGraph: isMainGraph) }
+        var overloadedSymbols: Set<String> = []
+        self.symbols = graph.symbols.mapValues { symbol in
+            if symbol.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) {
+                overloadedSymbols.insert(symbol.identifier.precise)
+            }
+            return UnifiedSymbolGraph.Symbol(fromSingleSymbol: symbol, module: graph.module, isMainGraph: isMainGraph)
+        }
+        self.overloadGroupsFromOriginalGraphs = overloadedSymbols
+        self.overloadGroupSymbols = []
         self.relationshipsByLanguage = [:]
         self.orphanRelationships = []
         loadRelationships(fromGraph: graph)
@@ -287,6 +310,8 @@ extension UnifiedSymbolGraph {
                 continue
             }
 
+            self.overloadGroupSymbols.insert(computedOverloadGroup)
+
             for overloadIndex in sortedOverloads.indices {
                 let overloadedSymbol = sortedOverloads[overloadIndex]
 
@@ -359,6 +384,9 @@ extension UnifiedSymbolGraph {
         self.moduleData[url] = graph.module
 
         for (key: precise, value: sym) in graph.symbols {
+            if sym.identifier.precise.hasSuffix(SymbolGraph.Symbol.overloadGroupIdentifierSuffix) {
+                self.overloadGroupsFromOriginalGraphs.insert(sym.identifier.precise)
+            }
             if let existingSymbol = self.symbols[precise] {
                 existingSymbol.mergeSymbol(symbol: sym, module: graph.module, isMainGraph: isMainGraph)
             } else {
