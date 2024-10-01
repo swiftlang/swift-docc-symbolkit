@@ -64,8 +64,9 @@ class SymbolGraphTests: XCTestCase {
             fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
         }))
 
-        // The async declaration should have been saved as an alternate declaration
-        let alternateDeclarations = try XCTUnwrap(symbol.alternateDeclarations)
+        // The async declaration should have been saved as an alternate symbol
+        let alternateSymbols = try XCTUnwrap(symbol.alternateSymbols)
+        let alternateDeclarations = try XCTUnwrap(alternateSymbols.alternateSymbols.compactMap(\.declarationFragments))
         XCTAssertEqual(alternateDeclarations.count, 1)
         let alternate = alternateDeclarations[0]
 
@@ -76,6 +77,19 @@ class SymbolGraphTests: XCTestCase {
         XCTAssertFalse(alternate.declarationFragments.contains(where: { fragment in
             fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
         }))
+
+        let alternateFunctionSignatures = try XCTUnwrap(alternateSymbols.alternateSymbols.compactMap(\.functionSignature))
+        XCTAssertEqual(alternateFunctionSignatures.count, 1)
+        let alternateSignature = alternateFunctionSignatures[0]
+
+        XCTAssertEqual(alternateSignature.parameters.count, 0)
+        XCTAssertEqual(alternateSignature.returns, [
+            .init(
+                kind: .keyword,
+                spelling: "Any",
+                preciseIdentifier: nil
+            )
+        ])
     }
 }
 
@@ -99,6 +113,47 @@ let symbolWithCompletionBlock = """
       },
       "names" : {
         "title" : "something(completionHandler:)"
+      },
+      "functionSignature": {
+        "parameters": [
+          {
+            "name": "completion",
+            "declarationFragments": [
+              {
+                "kind": "identifier",
+                "spelling": "completion"
+              },
+              {
+                "kind": "text",
+                "spelling": ": (("
+              },
+              {
+                "kind": "keyword",
+                "spelling": "Any"
+              },
+              {
+                "kind": "text",
+                "spelling": ") -> "
+              },
+              {
+                "kind": "typeIdentifier",
+                "spelling": "Void",
+                "preciseIdentifier": "s:s4Voida"
+              },
+              {
+                "kind": "text",
+                "spelling": ")!"
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "kind": "typeIdentifier",
+            "spelling": "Void",
+            "preciseIdentifier": "s:s4Voida"
+          }
+        ]
       },
       "declarationFragments" : [
         {
@@ -164,6 +219,14 @@ let symbolWithAsyncKeyword = """
       },
       "names" : {
         "title" : "something()"
+      },
+      "functionSignature": {
+        "returns": [
+          {
+            "kind": "keyword",
+            "spelling": "Any"
+          }
+        ]
       },
       "declarationFragments" : [
         {

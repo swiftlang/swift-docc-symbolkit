@@ -240,7 +240,7 @@ extension SymbolGraph.Symbol {
         static let httpEndpoint = HTTP.Endpoint.symbolCodingInfo
         static let httpParameterSource = HTTP.ParameterSource.symbolCodingInfo
         static let httpMediaType = HTTP.MediaType.symbolCodingInfo
-        static let alternateDeclarations = AlternateDeclarations.symbolCodingInfo
+        static let alternateSymbols = AlternateSymbols.symbolCodingInfo
         static let plistDetails = PlistDetails.symbolCodingInfo
 
         static let mixinCodingInfo: [String: SymbolMixinCodingInfo] = [
@@ -266,7 +266,7 @@ extension SymbolGraph.Symbol {
             CodingKeys.httpEndpoint.codingKey.stringValue: Self.httpEndpoint,
             CodingKeys.httpParameterSource.codingKey.stringValue: Self.httpParameterSource,
             CodingKeys.httpMediaType.codingKey.stringValue: Self.httpMediaType,
-            CodingKeys.alternateDeclarations.codingKey.stringValue: Self.alternateDeclarations,
+            CodingKeys.alternateSymbols.codingKey.stringValue: Self.alternateSymbols,
             CodingKeys.plistDetails.codingKey.stringValue: Self.plistDetails
         ]
         
