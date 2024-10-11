@@ -56,4 +56,14 @@ class PlatformTests: XCTestCase {
 
         XCTAssertEqual(platform.name, "macCatalyst", "'ios' should return macCatalyst when set with 'macabi'.")
     }
+    
+    func testiOSName() {
+            let platform = SymbolGraph.Platform(
+                architecture: nil,
+                vendor: nil,
+                operatingSystem: SymbolGraph.OperatingSystem(name: "ios")
+            )
+
+            XCTAssertEqual(platform.name, "iOS", "'ios' should return iOS when set with no `macabi` environment.")
+        }
 }
