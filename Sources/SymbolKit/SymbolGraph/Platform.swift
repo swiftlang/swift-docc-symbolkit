@@ -65,7 +65,7 @@ extension SymbolGraph {
             case "linux":
                 return SymbolGraph.Symbol.Availability.Domain.linux
             default:
-                return "Unsupported OS: \(os)"
+                return os
             }
         }
 

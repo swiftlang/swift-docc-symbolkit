@@ -35,15 +35,15 @@ class PlatformTests: XCTestCase {
         }
     }
 
-    func testInvalidOperatingSystemName() {
+    func testUnknownOperatingSystemName() {
         let platform = SymbolGraph.Platform(
             architecture: nil,
             vendor: nil,
-            operatingSystem: SymbolGraph.OperatingSystem(name: "invalidos"),
+            operatingSystem: SymbolGraph.OperatingSystem(name: "unknown platform"),
             environment: nil
         )
 
-        XCTAssertEqual(platform.name, "Unsupported OS: invalidos")
+        XCTAssertEqual(platform.name, "unknown platform")
     }
 
     func testMacCatalystName() {
