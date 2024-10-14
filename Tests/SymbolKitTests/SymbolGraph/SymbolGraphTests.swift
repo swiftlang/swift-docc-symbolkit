@@ -91,6 +91,38 @@ class SymbolGraphTests: XCTestCase {
             )
         ])
     }
+
+    func testDecodeLegacyAlternateDeclarations() throws {
+        let jsonData = encodedLegacySymbolGraph().data(using: .utf8)!
+        let symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: jsonData)
+
+        XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
+        let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
+        let declaration = try XCTUnwrap(symbol.mixins[SymbolGraph.Symbol.DeclarationFragments.mixinKey] as? SymbolGraph.Symbol.DeclarationFragments)
+
+        XCTAssertFalse(declaration.declarationFragments.contains(where: { fragment in
+            fragment.kind == .keyword && fragment.spelling == "async"
+        }))
+
+        XCTAssertTrue(declaration.declarationFragments.contains(where: { fragment in
+            fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
+        }))
+
+        // The legacy 'alternateDeclarations' field should have decoded into the 'alternateSymbols'
+        // mixin
+        let alternateSymbols = try XCTUnwrap(symbol.alternateSymbols)
+        let alternateDeclarations = try XCTUnwrap(alternateSymbols.alternateSymbols.compactMap(\.declarationFragments))
+        XCTAssertEqual(alternateDeclarations.count, 1)
+        let alternate = alternateDeclarations[0]
+
+        XCTAssertTrue(alternate.declarationFragments.contains(where: { fragment in
+            fragment.kind == .keyword && fragment.spelling == "async"
+        }))
+
+        XCTAssertFalse(alternate.declarationFragments.contains(where: { fragment in
+            fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
+        }))
+    }
 }
 
 // MARK: Test Data
@@ -287,4 +319,164 @@ private func encodedSymbolGraph(withCompletionHandlerVariant: Bool, withAsyncKey
   }
 }
 """
+}
+
+private func encodedLegacySymbolGraph() -> String {
+  return """
+  {
+    "metadata" : {
+      "generator" : "unit-test",
+      "formatVersion" : {
+        "major" : 1,
+        "minor" : 0,
+        "patch" : 0
+      }
+    },
+    "relationships" : [
+
+    ],
+    "symbols" : [
+      {
+        "accessLevel" : "public",
+        "kind" : {
+          "displayName" : "Instance Method",
+          "identifier" : "swift.method"
+        },
+        "pathComponents" : [
+          "ClassName",
+          "something(completionHandler:)"
+        ],
+        "identifier" : {
+          "precise" : "same-precise-identifier-for-both",
+          "interfaceLanguage" : "swift"
+        },
+        "names" : {
+          "title" : "something(completionHandler:)"
+        },
+        "functionSignature": {
+          "parameters": [
+            {
+              "name": "completion",
+              "declarationFragments": [
+                {
+                  "kind": "identifier",
+                  "spelling": "completion"
+                },
+                {
+                  "kind": "text",
+                  "spelling": ": (("
+                },
+                {
+                  "kind": "keyword",
+                  "spelling": "Any"
+                },
+                {
+                  "kind": "text",
+                  "spelling": ") -> "
+                },
+                {
+                  "kind": "typeIdentifier",
+                  "spelling": "Void",
+                  "preciseIdentifier": "s:s4Voida"
+                },
+                {
+                  "kind": "text",
+                  "spelling": ")!"
+                }
+              ]
+            }
+          ],
+          "returns": [
+            {
+              "kind": "typeIdentifier",
+              "spelling": "Void",
+              "preciseIdentifier": "s:s4Voida"
+            }
+          ]
+        },
+        "declarationFragments" : [
+          {
+            "kind" : "keyword",
+            "spelling" : "func"
+          },
+          {
+            "kind" : "text",
+            "spelling" : " "
+          },
+          {
+            "kind" : "identifier",
+            "spelling" : "something"
+          },
+          {
+            "kind" : "text",
+            "spelling" : "("
+          },
+          {
+            "kind" : "externalParam",
+            "spelling" : "completionHandler"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ": ("
+          },
+          {
+            "kind" : "keyword",
+            "spelling" : "Any"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ") -> "
+          },
+          {
+            "kind" : "typeIdentifier",
+            "preciseIdentifier" : "s:s4Voida",
+            "spelling" : "Void"
+          },
+          {
+            "kind" : "text",
+            "spelling" : ")"
+          }
+        ],
+        "alternateDeclarations": [
+          [
+            {
+              "kind" : "keyword",
+              "spelling" : "func"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " "
+            },
+            {
+              "kind" : "identifier",
+              "spelling" : "something"
+            },
+            {
+              "kind" : "text",
+              "spelling" : "()"
+            },
+            {
+              "kind" : "keyword",
+              "spelling" : "async"
+            },
+            {
+              "kind" : "text",
+              "spelling" : " -> "
+            },
+            {
+              "kind" : "keyword",
+              "spelling" : "Any"
+            }
+          ]
+        ]
+      }
+    ],
+    "module" : {
+      "name" : "ModuleName",
+      "platform" : {
+
+      }
+    }
+  }
+  """
 }

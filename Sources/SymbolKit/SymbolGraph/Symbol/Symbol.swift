@@ -151,7 +151,15 @@ extension SymbolGraph {
             docComment = try container.decodeIfPresent(LineList.self, forKey: .docComment)
             accessLevel = try container.decode(AccessControl.self, forKey: .accessLevel)
             isVirtual = try container.decodeIfPresent(Bool.self, forKey: .isVirtual) ?? false
-            
+
+            // Special-case `alternateDeclarations` and decode it into `alternateSymbols`.
+            // Do this before the next loop so that if both `alternateDeclarations` and
+            // `alternateSymbols` are present, the latter takes priority.
+            if container.contains(AlternateDeclarations.symbolCodingInfo.codingKey) {
+                let alternateDeclarations = try container.decode(AlternateDeclarations.self, forKey: AlternateDeclarations.symbolCodingInfo.codingKey)
+                mixins[AlternateSymbols.mixinKey] = AlternateSymbols(alternateDeclarations: alternateDeclarations)
+            }
+
             for key in container.allKeys {
                 guard let info = CodingKeys.mixinCodingInfo[key.stringValue] ?? decoder.registeredSymbolMixins?[key.stringValue] else {
                     continue

@@ -83,6 +83,11 @@ extension SymbolGraph.Symbol {
                 self.mixins = symbol.mixins
             }
 
+            public init(declarationFragments: DeclarationFragments) {
+                self.docComment = nil
+                self.mixins = [DeclarationFragments.mixinKey: declarationFragments]
+            }
+
             /// Whether this alternate has no information and should be discarded.
             public var isEmpty: Bool {
                 docComment == nil && mixins.isEmpty
@@ -101,6 +106,10 @@ extension SymbolGraph.Symbol {
 
         public init(alternateSymbols: [AlternateSymbol]) {
             self.alternateSymbols = alternateSymbols
+        }
+
+        init(alternateDeclarations: AlternateDeclarations) {
+            self.alternateSymbols = alternateDeclarations.declarations.map({ .init(declarationFragments: $0) })
         }
 
         /// The list of alternate symbol information.
