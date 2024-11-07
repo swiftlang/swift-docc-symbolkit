@@ -58,6 +58,11 @@ extension GraphCollector {
     ///   - inputGraph: The symbol graph to merge in.
     ///   - url: The file name where the given symbol graph is located. Used to determine whether a symbol graph
     ///     contains primary symbols or extensions.
+    ///   - forceLoading: A Boolean value, that defaults to `false`, that indicates whether the graph is merged
+    ///     even though it is a `primary` symbol graph.
+    ///
+    /// If the symbol graph is the `primary` graph, this method ignore merging the graph if it isn't already
+    /// registered in the graph collector. To force the loading into the collector, set `forceLoading` to `true`.
     public func mergeSymbolGraph(_ inputGraph: SymbolGraph, at url: URL, forceLoading: Bool = false) {
         let (extendedModuleName, isMainSymbolGraph) = Self.moduleNameFor(inputGraph, at: url)
 
@@ -126,7 +131,11 @@ extension GraphCollector {
     ///   - url: The file name where the symbol graph is located.
     /// - Returns: The name of the module described by `graph`, and whether the symbol graph is a "primary" symbol graph.
     public static func moduleNameFor(_ graph: SymbolGraph, at url: URL) -> (String, Bool) {
-        let isMainSymbolGraph = !url.lastPathComponent.contains("@")
+        // The Swift compiler generates symbol graph URLs that contain an `@` symbol to denote an
+        // extension to another modules.
+        // The snippet extractor generates symbol graph files without an `@` symbol and with the
+        // the metadata that indicates the module `isVirtual`.
+        let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
 
         let moduleName: String
         if isMainSymbolGraph {
