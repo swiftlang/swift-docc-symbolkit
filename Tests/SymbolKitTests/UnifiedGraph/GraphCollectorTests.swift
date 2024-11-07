@@ -94,4 +94,62 @@ class GraphCollectorTests: XCTestCase {
         XCTAssertEqual(graphB.symbols.count, 1)
         XCTAssert(graphB.symbols.keys.contains("s:BB"))
     }
+    
+    func testModuleNameForSymbolGraph() throws {
+        // aligned with the name "A.symbols.json"
+        let a = SymbolGraph(metadata: .init(formatVersion: .init(major: 1, minor: 0, patch: 0), generator: "unit-test"),
+                            module: .init(name: "A", platform: .init()),
+                            symbols: [
+                                .init(identifier: .init(precise: "s:AA", interfaceLanguage: "swift"),
+                                      names: .init(title: "A", navigator: nil, subHeading: nil, prose: nil),
+                                      pathComponents: ["A"],
+                                      docComment: nil,
+                                      accessLevel: .init(rawValue: "public"),
+                                      kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                                      mixins: [:])
+                            ],
+                            relationships: [])
+        
+        let (name, isMain) = GraphCollector.moduleNameFor(a, at: .init(fileURLWithPath: "A.symbols.json"))
+        XCTAssertTrue(isMain)
+        XCTAssertEqual("A", name)
+        
+        // aligned with the name "A@B.symbols.json"
+        let a_At_B = SymbolGraph(metadata: .init(formatVersion: .init(major: 1, minor: 0, patch: 0), generator: "unit-test"),
+                                 module: .init(name: "A", platform: .init()),
+                                 symbols: [
+                                     .init(identifier: .init(precise: "s:BBAatB", interfaceLanguage: "swift"),
+                                           names: .init(title: "AatB", navigator: nil, subHeading: nil, prose: nil),
+                                           pathComponents: ["B", "AatB"],
+                                           docComment: nil,
+                                           accessLevel: .init(rawValue: "public"),
+                                           kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                                           mixins: [:])
+                                 ],
+                                 relationships: [])
+        
+        let (extensionName, extensionIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "A@B.symbols.json"))
+        XCTAssertFalse(extensionIsMain)
+        XCTAssertEqual("B", extensionName)
+
+        // "A-snippets.symbols.json"
+        let a_snippet = SymbolGraph(metadata: .init(formatVersion: .init(major: 0, minor: 0, patch: 1), generator: "snippet-extract-unit-test-example"),
+                                    module: .init(name: "A", platform: .init(), isVirtual: true),
+                                    symbols: [
+                                        .init(identifier: .init(precise: "Snippet__A.example", interfaceLanguage: "swift"),
+                                              names: .init(title: "example", navigator: nil, subHeading: nil, prose: nil),
+                                              pathComponents: ["A", "exmaple"],
+                                              docComment: nil,
+                                              accessLevel: .init(rawValue: "public"),
+                                              kind: .init(parsedIdentifier: .snippet, displayName: "example"),
+                                              mixins: [:],
+                                              isVirtual: true)
+                                        
+                                    ],
+                                    relationships: [])
+        
+        let (snippetName, snippetIsMain) = GraphCollector.moduleNameFor(a_snippet, at: .init(fileURLWithPath: "A-snippets.symbols.json"))
+        XCTAssertFalse(snippetIsMain)
+        XCTAssertEqual("A-snippets", snippetName)
+    }
 }
