@@ -141,7 +141,15 @@ extension GraphCollector {
         if isMainSymbolGraph {
             // For main symbol graphs, get the module name from the symbol graph's data
             moduleName = graph.module.name
+            return (moduleName, isMainSymbolGraph)
         } else {
+            // Non-main symbol graphs are not only extensions, but also snippets. The correct module name
+            // for snippets **is** in the graph itself - so in the case where the URl is referencing symbol graph
+            // generated from snippets, return the name from within the graph.
+            if url.lastPathComponent.contains("-snippets.symbols.json") {
+                return (graph.module.name, isMainSymbolGraph)
+            }
+            
             // For extension symbol graphs, derive the extended module's name from the file name.
             //
             // The per-symbol `extendedModule` value is the same as the main module for most symbols, so it's not a good way to find the name
@@ -156,7 +164,7 @@ extension GraphCollector {
             } else {
                 moduleName = fileName.split(separator: "@", maxSplits: 1).last.map({ String($0) })!
             }
+            return (moduleName, isMainSymbolGraph)
         }
-        return (moduleName, isMainSymbolGraph)
     }
 }
