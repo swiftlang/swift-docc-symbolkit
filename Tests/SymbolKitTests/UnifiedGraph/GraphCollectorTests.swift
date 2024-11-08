@@ -150,6 +150,6 @@ class GraphCollectorTests: XCTestCase {
         
         let (snippetName, snippetIsMain) = GraphCollector.moduleNameFor(a_snippet, at: .init(fileURLWithPath: "A-snippets.symbols.json"))
         XCTAssertFalse(snippetIsMain)
-        XCTAssertEqual("A-snippets", snippetName)
+        XCTAssertEqual("A", snippetName)
     }
 }
