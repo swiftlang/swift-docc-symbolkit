@@ -46,27 +46,29 @@ extension SymbolGraph {
             guard let os = operatingSystem?.name else {
                 return nil
             }
-            switch os {
+            
+            let domain: Symbol.Availability.Domain
+            switch operatingSystem?.name {
             case "macosx", "macos":
-                return SymbolGraph.Symbol.Availability.Domain.macOS
+                domain = .macOS
             case "ios":
                 if environment == "macabi" {
-                    return SymbolGraph.Symbol.Availability.Domain.macCatalyst
-
+                    domain = .macCatalyst
                 } else {
-                    return SymbolGraph.Symbol.Availability.Domain.iOS
+                    domain = .iOS
                 }
             case "watchos":
-                return SymbolGraph.Symbol.Availability.Domain.watchOS
+                domain = .watchOS
             case "tvos":
-                return SymbolGraph.Symbol.Availability.Domain.tvOS
+                domain = .tvOS
             case "visionos":
-                return SymbolGraph.Symbol.Availability.Domain.visionOS
+                domain = .visionOS
             case "linux":
-                return SymbolGraph.Symbol.Availability.Domain.linux
+                domain = .linux
             default:
                 return "Unsupported OS: \(os)"
             }
+            return domain.rawValue
         }
 
         public init(architecture: String? = nil, vendor: String? = nil, operatingSystem: OperatingSystem? = nil, environment: String? = nil) {
