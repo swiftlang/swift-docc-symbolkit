@@ -131,9 +131,9 @@ class SymbolGraphTests: XCTestCase {
         XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
         let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
 
-        XCTAssertEqual(symbol.names.title, "init(named:in:compatibleWith:)")
+        XCTAssertEqual(symbol.names.title, "init(name:)")
         XCTAssertEqual(symbol.declarationFragments, [
-            .init(kind: .identifier, spelling: "init(named:in:compatibleWith:)", preciseIdentifier: nil)
+            .init(kind: .identifier, spelling: "init(name:)", preciseIdentifier: nil)
         ])
 
         // The obsolete declaration should have been saved as an alternate symbol
@@ -142,7 +142,7 @@ class SymbolGraphTests: XCTestCase {
         XCTAssertEqual(alternateDeclarations.count, 1)
         let alternate = alternateDeclarations[0]
         XCTAssertEqual(alternate.declarationFragments, [
-            .init(kind: .identifier, spelling: "init(named:inBundle:compatibleWithTraitCollection:)", preciseIdentifier: nil)
+            .init(kind: .identifier, spelling: "init(symbolWithName:)", preciseIdentifier: nil)
         ])
     }
 }
@@ -510,20 +510,20 @@ private let obsoleteSymbolOverload: String = """
     "displayName": "Initializer"
   },
   "identifier": {
-    "precise": "c:objc(cs)UIColor(cm)colorNamed:inBundle:compatibleWithTraitCollection:",
+    "precise": "c:MySymbol:symbolWithName:",
     "interfaceLanguage": "swift"
   },
   "pathComponents": [
-    "UIColor",
-    "init(named:inBundle:compatibleWithTraitCollection:)"
+    "MyClass",
+    "init(symbolWithName:)"
   ],
   "names": {
-    "title": "init(named:inBundle:compatibleWithTraitCollection:)",
+    "title": "init(symbolWithName:)",
   },
   "declarationFragments" : [
     {
       "kind" : "identifier",
-      "spelling" : "init(named:inBundle:compatibleWithTraitCollection:)"
+      "spelling" : "init(symbolWithName:)"
     }
   ],
   "accessLevel": "public",
@@ -533,7 +533,7 @@ private let obsoleteSymbolOverload: String = """
       "obsoleted": {
         "major": 3
       },
-      "renamed": "init(named:in:compatibleWith:)"
+      "renamed": "init(name:)"
     },
     {
       "domain": "iOS",
@@ -553,20 +553,20 @@ private let targetSymbolOverload: String = """
     "displayName": "Initializer"
   },
   "identifier": {
-    "precise": "c:objc(cs)UIColor(cm)colorNamed:inBundle:compatibleWithTraitCollection:",
+    "precise": "c:MySymbol:symbolWithName:",
     "interfaceLanguage": "swift"
   },
   "pathComponents": [
-    "UIColor",
-    "init(named:in:compatibleWith:)"
+    "MySymbol",
+    "init(name:)"
   ],
   "names": {
-    "title": "init(named:in:compatibleWith:)",
+    "title": "init(name:)",
   },
   "declarationFragments" : [
     {
       "kind" : "identifier",
-      "spelling" : "init(named:in:compatibleWith:)"
+      "spelling" : "init(name:)"
     }
   ],
   "accessLevel": "public",
