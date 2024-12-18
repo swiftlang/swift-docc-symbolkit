@@ -61,11 +61,11 @@ public struct SymbolGraph: Codable {
     }
 
     public static func _symbolToKeepInCaseOfPreciseIdentifierConflict(_ lhs: Symbol, _ rhs: Symbol) -> Symbol {
-        if lhs.declarationContainsAsyncKeyword() {
+        if lhs.declarationContainsAsyncKeyword() || lhs.isObsoleteDeprecatedOrUnavailable() {
             var result = rhs
             result.addAlternateDeclaration(from: lhs)
             return result
-        } else if rhs.declarationContainsAsyncKeyword() {
+        } else if rhs.declarationContainsAsyncKeyword() || rhs.isObsoleteDeprecatedOrUnavailable() {
             var result = lhs
             result.addAlternateDeclaration(from: rhs)
             return result
@@ -102,5 +102,14 @@ extension SymbolGraph.Symbol {
         return (mixins[DeclarationFragments.mixinKey] as? DeclarationFragments)?.declarationFragments.contains(where: { fragment in
             fragment.kind == .keyword && fragment.spelling == "async"
         }) == true
+    }
+
+    fileprivate func isObsoleteDeprecatedOrUnavailable() -> Bool {
+        return availability?.contains { availabilityItem in
+            availabilityItem.obsoletedVersion != nil
+                || availabilityItem.deprecatedVersion != nil
+                || availabilityItem.isUnconditionallyDeprecated
+                || availabilityItem.isUnconditionallyUnavailable
+        } == true
     }
 }
