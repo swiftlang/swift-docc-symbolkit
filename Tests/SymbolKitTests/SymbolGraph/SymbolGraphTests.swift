@@ -123,6 +123,28 @@ class SymbolGraphTests: XCTestCase {
             fragment.kind == .externalParameter && fragment.spelling == "completionHandler"
         }))
     }
+
+    func testDecodeObsoleteAlternateSymbol() throws {
+        let jsonData = obsoleteAlternateSymbolGraph.data(using: .utf8)!
+        let symbolGraph = try JSONDecoder().decode(SymbolGraph.self, from: jsonData)
+
+        XCTAssertEqual(symbolGraph.symbols.count, 1, "Only one of the symbols should be decoded")
+        let symbol = try XCTUnwrap(symbolGraph.symbols.values.first)
+
+        XCTAssertEqual(symbol.names.title, "init(name:)")
+        XCTAssertEqual(symbol.declarationFragments, [
+            .init(kind: .identifier, spelling: "init(name:)", preciseIdentifier: nil)
+        ])
+
+        // The obsolete declaration should have been saved as an alternate symbol
+        let alternateSymbols = try XCTUnwrap(symbol.alternateSymbols)
+        let alternateDeclarations = try XCTUnwrap(alternateSymbols.alternateSymbols.compactMap(\.declarationFragments))
+        XCTAssertEqual(alternateDeclarations.count, 1)
+        let alternate = alternateDeclarations[0]
+        XCTAssertEqual(alternate.declarationFragments, [
+            .init(kind: .identifier, spelling: "init(symbolWithName:)", preciseIdentifier: nil)
+        ])
+    }
 }
 
 // MARK: Test Data
@@ -480,3 +502,108 @@ private func encodedLegacySymbolGraph() -> String {
   }
   """
 }
+
+private let obsoleteSymbolOverload: String = """
+{
+  "kind": {
+    "identifier": "swift.init",
+    "displayName": "Initializer"
+  },
+  "identifier": {
+    "precise": "c:MySymbol:symbolWithName:",
+    "interfaceLanguage": "swift"
+  },
+  "pathComponents": [
+    "MyClass",
+    "init(symbolWithName:)"
+  ],
+  "names": {
+    "title": "init(symbolWithName:)",
+  },
+  "declarationFragments" : [
+    {
+      "kind" : "identifier",
+      "spelling" : "init(symbolWithName:)"
+    }
+  ],
+  "accessLevel": "public",
+  "availability": [
+    {
+      "domain": "Swift",
+      "obsoleted": {
+        "major": 3
+      },
+      "renamed": "init(name:)"
+    },
+    {
+      "domain": "iOS",
+      "introduced": {
+        "major": 11,
+        "minor": 0
+      }
+    }
+  ]
+}
+"""
+
+private let targetSymbolOverload: String = """
+{
+  "kind": {
+    "identifier": "swift.init",
+    "displayName": "Initializer"
+  },
+  "identifier": {
+    "precise": "c:MySymbol:symbolWithName:",
+    "interfaceLanguage": "swift"
+  },
+  "pathComponents": [
+    "MySymbol",
+    "init(name:)"
+  ],
+  "names": {
+    "title": "init(name:)",
+  },
+  "declarationFragments" : [
+    {
+      "kind" : "identifier",
+      "spelling" : "init(name:)"
+    }
+  ],
+  "accessLevel": "public",
+  "availability": [
+    {
+      "domain": "iOS",
+      "introduced": {
+        "major": 11,
+        "minor": 0
+      }
+    }
+  ]
+}
+"""
+
+private let obsoleteAlternateSymbolGraph: String = """
+{
+  "metadata" : {
+    "generator" : "unit-test",
+    "formatVersion" : {
+      "major" : 1,
+      "minor" : 0,
+      "patch" : 0
+    }
+  },
+  "relationships" : [
+
+  ],
+  "symbols" : [
+    \(obsoleteSymbolOverload),
+    \(targetSymbolOverload)
+  ],
+  "module" : {
+    "name" : "ModuleName",
+    "platform" : {
+
+    }
+  }
+}
+"""
