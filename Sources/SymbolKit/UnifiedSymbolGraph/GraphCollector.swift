@@ -58,12 +58,6 @@ extension GraphCollector {
     ///   - inputGraph: The symbol graph to merge in.
     ///   - url: The file name where the given symbol graph is located. Used to determine whether a symbol graph
     ///     contains primary symbols or extensions.
-    ///   - forceLoading: Whether or not to force processing an extension symbol graph.
-    ///
-    /// By default, "extension" symbol graphs are held aside and not processed immediately, to allow for
-    /// the "primary" graph to be loaded first regardless of the order that symbol graphs are found.
-    /// The `forceLoading` parameter is set to `true` during ``finishLoading(createOverloadGroups:)``
-    /// so that extension symbol graphs are eventually loaded at the end.
     public func mergeSymbolGraph(_ inputGraph: SymbolGraph, at url: URL, forceLoading: Bool = false) {
         let (extendedModuleName, isMainSymbolGraph) = Self.moduleNameFor(inputGraph, at: url)
 
@@ -132,25 +126,13 @@ extension GraphCollector {
     ///   - url: The file name where the symbol graph is located.
     /// - Returns: The name of the module described by `graph`, and whether the symbol graph is a "primary" symbol graph.
     public static func moduleNameFor(_ graph: SymbolGraph, at url: URL) -> (String, Bool) {
-        // The Swift compiler generates symbol graph URLs that contain an `@` symbol to denote an
-        // extension to another modules.
-        // The snippet extractor generates symbol graph files without an `@` symbol and with the
-        // the metadata that indicates the module `isVirtual`.
-        let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
+        let isMainSymbolGraph = !url.lastPathComponent.contains("@")
 
         let moduleName: String
         if isMainSymbolGraph {
             // For main symbol graphs, get the module name from the symbol graph's data
             moduleName = graph.module.name
-            return (moduleName, isMainSymbolGraph)
         } else {
-            // Non-main symbol graphs are not only extensions, but also snippets. The correct module name
-            // for snippets **is** in the graph itself - so in the case where the URl is referencing symbol graph
-            // generated from snippets, return the name from within the graph.
-            if url.lastPathComponent.contains("-snippets.symbols.json") {
-                return (graph.module.name, isMainSymbolGraph)
-            }
-            
             // For extension symbol graphs, derive the extended module's name from the file name.
             //
             // The per-symbol `extendedModule` value is the same as the main module for most symbols, so it's not a good way to find the name
@@ -165,7 +147,7 @@ extension GraphCollector {
             } else {
                 moduleName = fileName.split(separator: "@", maxSplits: 1).last.map({ String($0) })!
             }
-            return (moduleName, isMainSymbolGraph)
         }
+        return (moduleName, isMainSymbolGraph)
     }
 }
