@@ -263,21 +263,27 @@ extension SymbolGraph.Symbol.KindIdentifier {
     ///
     /// If a type is not registered, language prefixes cannot be removed correctly.
     ///
+    /// `UserInfoValue` is the type of the value in `JSONEncoder.userInfo`. This is generic to support both `Any` and
+    /// `any Sendable` (rdar://145669600) and must be either of these two types.
+    ///
     /// - Note: Registering custom identifiers on your decoder is only necessary when working in an uncontrolled environment where
     /// other parts of your executable might be disturbed by your modifications to the symbol graph structure. If that is not the case, use
     /// ``SymbolGraph/Symbol/KindIdentifier/register(_:)``.
     ///
     /// - Parameter userInfo: A property which allows editing the `userInfo` member of the
     /// `Decoder` protocol.
-    public static func register<I: Sequence>(_ identifiers: I,
-                                             to userInfo: inout [CodingUserInfoKey: Any]) where I.Element == Self {
+    public static func register<I: Sequence, UserInfoValue>(_ identifiers: I,
+                                                            to userInfo: inout [CodingUserInfoKey: UserInfoValue]) where I.Element == Self {
         var registeredIdentifiers = userInfo[.symbolKindIdentifierKey] as? [String: SymbolGraph.Symbol.KindIdentifier] ?? [:]
             
         for identifier in identifiers {
             registeredIdentifiers[identifier.identifier] = identifier
         }
         
-        userInfo[.symbolKindIdentifierKey] = registeredIdentifiers
+        // FIXME: Remove the `UserInfoValue` generic parameter when we no longer need to build swift-docc-symbolkit in 
+        // a configuration that contains https://github.com/swiftlang/swift-foundation/pull/1169 but not
+        // https://github.com/swiftlang/swift/pull/79382.
+        userInfo[.symbolKindIdentifierKey] = (registeredIdentifiers as! UserInfoValue)
     }
 }
 
