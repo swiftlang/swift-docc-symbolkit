@@ -302,6 +302,9 @@ extension SymbolGraph.Symbol {
     /// or decode that type and thus skips such entries. Note that ``Mixin``s that occur on symbols
     /// in the default symbol graph format do not have to be registered!
     ///
+    /// `UserInfoValue` is the type of the value in `JSONEncoder.userInfo`. This is generic to support both `Any` and
+    /// `any Sendable` (rdar://145669600) and must be either of these two types.
+    ///
     /// - Parameter userInfo: A property which allows editing the `userInfo` member of the
     /// `Encoder`/`Decoder` protocol.
     /// - Parameter onEncodingError: Defines the behavior when an error occurs while encoding these types of ``Mixin``s.
@@ -309,10 +312,10 @@ extension SymbolGraph.Symbol {
     /// - Parameter onDecodingError: Defines the behavior when an error occurs while decoding these types of ``Mixin``s.
     /// Next to logging warnings, the function allows for either re-throwing the error,
     /// skipping the erroneous entry, or providing a default value.
-    public static func register<M: Sequence>(mixins mixinTypes: M,
-                                             to userInfo: inout [CodingUserInfoKey: Any],
-                                             onEncodingError: ((_ error: Error, _ mixin: Mixin) throws -> Void)?,
-                                             onDecodingError: ((_ error: Error) throws -> Mixin?)?)
+    public static func register<M: Sequence, UserInfoValue>(mixins mixinTypes: M,
+                                                            to userInfo: inout [CodingUserInfoKey: UserInfoValue],
+                                                            onEncodingError: ((_ error: Error, _ mixin: Mixin) throws -> Void)?,
+                                                            onDecodingError: ((_ error: Error) throws -> Mixin?)?)
     where M.Element == Mixin.Type {
         var registeredMixins = userInfo[.symbolMixinKey] as? [String: SymbolMixinCodingInfo] ?? [:]
             
@@ -328,7 +331,10 @@ extension SymbolGraph.Symbol {
             registeredMixins[type.mixinKey] = info
         }
         
-        userInfo[.symbolMixinKey] = registeredMixins
+        // FIXME: Remove the `UserInfoValue` generic parameter when we no longer need to build swift-docc-symbolkit in 
+        // a configuration that contains https://github.com/swiftlang/swift-foundation/pull/1169 but not
+        // https://github.com/swiftlang/swift/pull/79382.
+        userInfo[.symbolMixinKey] = (registeredMixins as! UserInfoValue)
     }
 }
 
