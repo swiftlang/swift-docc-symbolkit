@@ -8,6 +8,36 @@
  See https://swift.org/CONTRIBUTORS.txt for Swift project authors
 */
 
+fileprivate enum PreReleaseVersion: Decodable {
+    case `int`(Int)
+    case `string`(String)
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+
+        if let intValue = try? container.decode(Int.self) {
+            self = .int(intValue)
+        } else if let stringValue = try? container.decode(String.self) {
+            self = .string(stringValue)
+        } else {
+            throw DecodingError.typeMismatch(
+                Self.self,
+                .init(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Expected Int or String"))
+        }
+    }
+
+    var stringValue: String {
+        switch self {
+        case .int(let intValue):
+            return String(intValue)
+        case .string(let stringValue):
+            return stringValue
+        }
+    }
+}
+
 extension SymbolGraph {
     /// A [semantic version](https://semver.org).
     public struct SemanticVersion: Codable, Equatable, CustomStringConvertible {
@@ -51,7 +81,7 @@ extension SymbolGraph {
             major = try container.decode(Int.self, forKey: .major)
             minor = try container.decodeIfPresent(Int.self, forKey: .minor) ?? 0
             patch = try container.decodeIfPresent(Int.self, forKey: .patch) ?? 0
-            prerelease = try container.decodeIfPresent(String.self, forKey: .prerelease)
+            prerelease = try container.decodeIfPresent(PreReleaseVersion.self, forKey: .prerelease)?.stringValue
             buildMetadata = try container.decodeIfPresent(String.self, forKey: .buildMetadata)
         }
 

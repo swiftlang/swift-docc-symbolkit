@@ -23,4 +23,57 @@ class SemanticVersionTests: XCTestCase {
         XCTAssertEqual(version.prerelease, "beta")
         XCTAssertEqual(version.buildMetadata, "enableX")
     }
+
+    func testDecodeSemanticVersionWithIntPreRelease() throws {
+        let inputJson: String = """
+        {
+          "major": 1,
+          "minor": 2,
+          "patch": 3,
+          "prerelease": 4
+        }
+        """
+
+        let version = try JSONDecoder().decode(SemanticVersion.self, from: inputJson.data(using: .utf8)!)
+
+        XCTAssertEqual(version.major, 1)
+        XCTAssertEqual(version.minor, 2)
+        XCTAssertEqual(version.patch, 3)
+        XCTAssertEqual(version.prerelease, "4")
+    }
+
+    func testDecodeSemanticVersionWithStringPreRelease() throws {
+        let inputJson: String = """
+        {
+          "major": 1,
+          "minor": 2,
+          "patch": 3,
+          "prerelease": "4"
+        }
+        """
+
+        let version = try JSONDecoder().decode(SemanticVersion.self, from: inputJson.data(using: .utf8)!)
+
+        XCTAssertEqual(version.major, 1)
+        XCTAssertEqual(version.minor, 2)
+        XCTAssertEqual(version.patch, 3)
+        XCTAssertEqual(version.prerelease, "4")
+    }
+
+    func testDecodeSemanticVersionWithNoPreRelease() throws {
+        let inputJson: String = """
+        {
+          "major": 1,
+          "minor": 2,
+          "patch": 3
+        }
+        """
+
+        let version = try JSONDecoder().decode(SemanticVersion.self, from: inputJson.data(using: .utf8)!)
+
+        XCTAssertEqual(version.major, 1)
+        XCTAssertEqual(version.minor, 2)
+        XCTAssertEqual(version.patch, 3)
+        XCTAssertNil(version.prerelease)
+    }
 }
