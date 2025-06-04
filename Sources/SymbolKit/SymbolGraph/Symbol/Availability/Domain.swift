@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -42,6 +42,15 @@ extension SymbolGraph.Symbol.Availability {
          of Swift.
          */
         public static let swift = "Swift"
+
+        /**
+         The Swift toolchain release.
+
+         While ``swift`` indicates availability with respect to the required language mode,
+         this availability domain indicates which version of the Swift toolchain
+         a symbol was introduced in.
+         */
+        public static let swiftToolchain = "SwiftToolchain"
 
         /**
          The Swift Package Manager Package Description Format.
