@@ -139,7 +139,20 @@ extension GraphCollector {
         let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
 
         let moduleName: String
-        if isMainSymbolGraph {
+        if isMainSymbolGraph || graph.module.bystanders != nil {
+            // graph.module.bystanders exist with cross-import overlays, and we return the module name
+            // from the data in that graph, rather than trying to extract it from the filename,
+            // but it isn't considered a "primary" graph.
+
+            // A cross-import overlays is a distinct module that references a “declaring module”
+            // (the module it is considered to be a part of) and one or more “bystander modules”
+            // (modules that must be imported alongside the declaring module for the overlay to be available)
+            // it allows a module to declare extensions to another module without having to import it
+            // directly, like how MapKit adds a SwiftUI view but doesn’t actually import SwiftUI itself.
+            // when a symbol graph is requested for a cross-import overlay module, it is treated as
+            // an extension symbol graph for the declaring module so that the symbols can be folded into
+            // there.
+
             // For main symbol graphs, get the module name from the symbol graph's data
             moduleName = graph.module.name
             return (moduleName, isMainSymbolGraph)
