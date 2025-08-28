@@ -139,8 +139,16 @@ extension GraphCollector {
         let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
 
         let moduleName: String
-        if isMainSymbolGraph {
-            // For main symbol graphs, get the module name from the symbol graph's data
+        if isMainSymbolGraph || graph.module.bystanders != nil {
+            // When bystander modules are present, the symbol graph is a cross-import overlay, and
+            // we need to preserve the original module name to properly render it. It is still
+            // kept with the extension symbols, due to the merging behavior of UnifiedSymbolGraph.
+
+            // A cross-import overlays is a distinct module that references a “declaring module”
+            // (the module it is considered to be a part of) and one or more “bystander modules”
+            // (modules that must be imported alongside the declaring module for the overlay to be available)
+
+            // For main symbol graphs (and cross-import overlays), get the module name from the symbol graph's data
             moduleName = graph.module.name
             return (moduleName, isMainSymbolGraph)
         } else {
