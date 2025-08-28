@@ -152,4 +152,39 @@ class GraphCollectorTests: XCTestCase {
         XCTAssertFalse(snippetIsMain)
         XCTAssertEqual("A", snippetName)
     }
+
+    func testModuleNameForImportOverlaySymbolGraph() throws {
+        // aligned with the name "A.symbols.json"
+        guard let jsonDataA = CrossImportOverlaySymbolGraphs.base().data(using: .utf8) else {
+            XCTFail("Invalid JSON in cross import overlay example data")
+            return
+        }
+        let a = try JSONDecoder().decode(SymbolGraph.self, from: jsonDataA)
+
+        let (name, isMain) = GraphCollector.moduleNameFor(a, at: .init(fileURLWithPath: "A.symbols.json"))
+        XCTAssertTrue(isMain)
+        XCTAssertEqual("A", name)
+
+        // aligned with the name "_A_B@A.symbols.json"
+        guard let jsonDataAatA = CrossImportOverlaySymbolGraphs.overlaidA().data(using: .utf8) else {
+            XCTFail("Invalid JSON in cross import overlay example data")
+            return
+        }
+        let a_At_A = try JSONDecoder().decode(SymbolGraph.self, from: jsonDataAatA)
+
+        let (extendedA, extendedAIsMain) = GraphCollector.moduleNameFor(a_At_A, at: .init(fileURLWithPath: "_A_B@A.symbols.json"))
+        XCTAssertFalse(extendedAIsMain)
+        XCTAssertEqual("A", extendedA)
+
+        // aligned with the name "_A_B@B.symbols.json"
+        guard let jsonDataAatB = CrossImportOverlaySymbolGraphs.overlaidB().data(using: .utf8) else {
+            XCTFail("Invalid JSON in cross import overlay example data")
+            return
+        }
+        let a_At_B = try JSONDecoder().decode(SymbolGraph.self, from: jsonDataAatB)
+
+        let (extendedB, extendedBIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "_A_B@B.symbols.json"))
+        XCTAssertFalse(extendedBIsMain)
+        XCTAssertEqual("A", extendedB)
+    }
 }
