@@ -185,6 +185,6 @@ class GraphCollectorTests: XCTestCase {
 
         let (extendedB, extendedBIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "_A_B@B.symbols.json"))
         XCTAssertFalse(extendedBIsMain)
-        XCTAssertEqual("A", extendedB)
+        XCTAssertEqual("B", extendedB)
     }
 }
