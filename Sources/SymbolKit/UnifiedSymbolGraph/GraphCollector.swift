@@ -139,7 +139,7 @@ extension GraphCollector {
         let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
 
         let moduleName: String
-        if isMainSymbolGraph || graph.module.bystanders != nil {
+        if isMainSymbolGraph && graph.module.bystanders == nil {
             // When bystander modules are present, the symbol graph is a cross-import overlay, and
             // we need to preserve the original module name to properly render it. It is still
             // kept with the extension symbols, due to the merging behavior of UnifiedSymbolGraph.
@@ -165,6 +165,9 @@ extension GraphCollector {
             // of the module that was extended (rdar://63200368).
             let fileName = url.lastPathComponent.components(separatedBy: ".symbols.json")[0]
 
+            // Overlay imports of the form `_A_B@B.symbols.json` have the graph name being "A", but are symbols
+            // that apply to the "B" module, which isn't included in the graph - so we have to drop back to parsing
+            // the module name from the name of the symbolgraph.
             let fileNameComponents = fileName.components(separatedBy: "@")
             if fileNameComponents.count > 2 {
                 // For a while, cross-import overlay symbol graphs had more than two components:
