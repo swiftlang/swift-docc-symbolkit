@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2023 Apple Inc. and the Swift project authors
+ Copyright (c) 2023-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -63,6 +63,24 @@ class GenericConstraintTests: XCTestCase {
             kind: .sameType,
             leftTypeName: "Self",
             rightTypeName: "Problem"
+        )
+        XCTAssertEqual(jsonConstraint, constraint)
+    }
+
+    func testInitializeSameShape() throws {
+        let jsonString = """
+        {
+            "kind": "sameShape",
+            "lhs": "T1",
+            "rhs": "T2",
+        }
+        """
+        let jsonData = Data(jsonString.utf8)
+        let jsonConstraint = try JSONDecoder().decode(SymbolGraph.Symbol.Swift.GenericConstraint.self, from: jsonData)
+        let constraint = SymbolGraph.Symbol.Swift.GenericConstraint(
+            kind: .sameShape,
+            leftTypeName: "T1",
+            rightTypeName: "T2"
         )
         XCTAssertEqual(jsonConstraint, constraint)
     }
