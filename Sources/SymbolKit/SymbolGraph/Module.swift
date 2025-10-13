@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2025 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -40,7 +40,9 @@ extension SymbolGraph {
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.name = try container.decode(String.self, forKey: .name)
-            self.bystanders = try container.decodeIfPresent([String].self, forKey: .bystanders)
+            if let bystanders = try container.decodeIfPresent([String].self, forKey: .bystanders) {
+                self.bystanders = bystanders.isEmpty ? nil : bystanders
+            }
             self.platform = try container.decode(Platform.self, forKey: .platform)
             self.version = try container.decodeIfPresent(SemanticVersion.self, forKey: .version)
             self.isVirtual = try container.decodeIfPresent(Bool.self, forKey: .isVirtual) ?? false
