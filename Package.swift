@@ -16,14 +16,18 @@ let package = Package(
     products: [
         .library(
             name: "SymbolKit",
-            targets: ["SymbolKit"]),
+            targets: ["SymbolKit"]
+        ),
     ],
     targets: [
         .target(
             name: "SymbolKit",
-            dependencies: []),
+            dependencies: [],
+            exclude: ["CMakeLists.txt"]
+        ),
         .testTarget(
             name: "SymbolKitTests",
-            dependencies: ["SymbolKit"]),
+            dependencies: ["SymbolKit"]
+        ),
     ]
 )
