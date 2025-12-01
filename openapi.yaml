@@ -501,15 +501,15 @@ components:
             API changes can be tracked across versions of that framework.
           type: string
           nullable: true
-        introducedVersion:
+        introduced:
           description: The version of a domain where the symbol was introduced.
           $ref: "#/components/schemas/SemanticVersion"
           nullable: true
-        deprecatedVersion:
+        deprecated:
           description: The version of a domain where the symbol was deprecated.
           $ref: "#/components/schemas/SemanticVersion"
           nullable: true
-        obsoletedVersion:
+        obsoleted:
           description: The version of a domain where the symbol was obsoleted.
           $ref: "#/components/schemas/SemanticVersion"
           nullable: true
