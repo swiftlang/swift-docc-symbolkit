@@ -44,6 +44,13 @@ class ModuleTests: XCTestCase {
             let decodedModule = try module.roundTripDecode()
             XCTAssertEqual(["A"], decodedModule.bystanders)
         }
+        
+        do {
+            // bystanders = []
+            let module = SymbolGraph.Module(name: "Test", platform: ModuleTests.platform, bystanders: [])
+            let decodedModule = try module.roundTripDecode()
+            XCTAssertNil(decodedModule.bystanders)
+        }
     }
     
     func testOptionalIsVirtual() throws {
