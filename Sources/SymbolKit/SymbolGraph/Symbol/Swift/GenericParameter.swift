@@ -47,5 +47,11 @@ extension SymbolGraph.Symbol.Swift {
          `T` has depth 0 and `U` has depth 1.
          */
         public var depth: Int
+        
+        public init(name: String, index: Int, depth: Int) {
+            self.name = name
+            self.index = index
+            self.depth = depth
+        }
     }
 }

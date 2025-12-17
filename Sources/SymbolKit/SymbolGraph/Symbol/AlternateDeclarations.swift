@@ -87,6 +87,11 @@ extension SymbolGraph.Symbol {
                 self.docComment = nil
                 self.mixins = [DeclarationFragments.mixinKey: declarationFragments]
             }
+            
+            public init(docComment: SymbolGraph.LineList? = nil, mixins: [String : any Mixin] = [:]) {
+                self.docComment = docComment
+                self.mixins = mixins
+            }
 
             /// Whether this alternate has no information and should be discarded.
             public var isEmpty: Bool {
