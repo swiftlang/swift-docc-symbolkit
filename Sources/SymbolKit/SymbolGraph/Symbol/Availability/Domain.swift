@@ -41,7 +41,7 @@ extension SymbolGraph.Symbol.Availability {
          in Swift, or availability applies to particular versions
          of Swift.
          */
-        public static let swift = "Swift"
+        public static let swift = Domain(rawValue: "Swift")
 
         /**
          The Swift toolchain release.
@@ -55,71 +55,71 @@ extension SymbolGraph.Symbol.Availability {
         /**
          The Swift Package Manager Package Description Format.
          */
-        public static let swiftPM = "SwiftPM"
+        public static let swiftPM = Domain(rawValue: "SwiftPM")
 
         /**
          Apple's macOS operating system.
          */
-        public static let macOS = "macOS"
+        public static let macOS = Domain(rawValue: "macOS")
 
         /**
          An application extension for the macOS operating system.
          */
-        public static let macOSAppExtension = "macOSAppExtension"
+        public static let macOSAppExtension = Domain(rawValue: "macOSAppExtension")
 
         /**
          The iOS operating system.
          */
-        public static let iOS = "iOS"
+        public static let iOS = Domain(rawValue: "iOS")
 
         /**
          An application extension for the iOS operating system.
          */
-        public static let iOSAppExtension = "iOSAppExtension"
+        public static let iOSAppExtension = Domain(rawValue: "iOSAppExtension")
 
         /**
          The watchOS operating system.
          */
-        public static let watchOS = "watchOS"
+        public static let watchOS = Domain(rawValue: "watchOS")
 
         /**
          An application extension for the watchOS operating system.
          */
-        public static let watchOSAppExtension = "watchOSAppExtension"
+        public static let watchOSAppExtension = Domain(rawValue: "watchOSAppExtension")
 
         /**
          The tvOS operating system.
          */
-        public static let tvOS = "tvOS"
+        public static let tvOS = Domain(rawValue: "tvOS")
 
         /**
          An application extension for the tvOS operating system.
          */
-        public static let tvOSAppExtension = "tvOSAppExtension"
+        public static let tvOSAppExtension = Domain(rawValue: "tvOSAppExtension")
 
         /**
          The Mac Catalyst platform.
          */
-        public static let macCatalyst = "macCatalyst"
+        public static let macCatalyst = Domain(rawValue: "macCatalyst")
 
         /**
          An application extension for the Mac Catalyst platform.
          */
-        public static let macCatalystAppExtension = "macCatalystAppExtension"
+        public static let macCatalystAppExtension = Domain(rawValue: "macCatalystAppExtension")
 
         /**
          The visionOS operating system.
          */
-        public static let visionOS = "visionOS"
+        public static let visionOS = Domain(rawValue: "visionOS")
 
         /**
          An application extension for the visionOS operating system.
          */
-        public static let visionOSAppExtension = "visionOSAppExtension"
+        public static let visionOSAppExtension = Domain(rawValue: "visionOSAppExtension")
 
         /**
          A Linux-based operating system, but not a specific distribution.
          */
-        public static let linux = "Linux"
+        public static let linux = Domain(rawValue: "Linux")
     }
 }
