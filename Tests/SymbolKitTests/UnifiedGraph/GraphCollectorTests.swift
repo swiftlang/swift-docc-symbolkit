@@ -127,8 +127,26 @@ class GraphCollectorTests: XCTestCase {
                                            mixins: [:])
                                  ],
                                  relationships: [])
+
+        var (extensionName, extensionIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "A@B.symbols.json"))
+        XCTAssertFalse(extensionIsMain)
+        XCTAssertEqual("B", extensionName)
+
+        // "A@B" style graph, with extension of B in module A, using shortened name scheme.
+        let a_At_B_Shortened = SymbolGraph(metadata: .init(formatVersion: .init(major: 1, minor: 0, patch: 0), generator: "unit-test"),
+                                 module: .init(name: "A", platform: .init(), extended: "B"),
+                                 symbols: [
+                                     .init(identifier: .init(precise: "s:BBAatB", interfaceLanguage: "swift"),
+                                           names: .init(title: "AatB", navigator: nil, subHeading: nil, prose: nil),
+                                           pathComponents: ["B", "AatB"],
+                                           docComment: nil,
+                                           accessLevel: .init(rawValue: "public"),
+                                           kind: .init(parsedIdentifier: .class, displayName: "Class"),
+                                           mixins: [:])
+                                 ],
+                                 relationships: [])
         
-        let (extensionName, extensionIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "A@B.symbols.json"))
+        (extensionName, extensionIsMain) = GraphCollector.moduleNameFor(a_At_B_Shortened, at: .init(fileURLWithPath: "ABCDEF123456.symbols.json"))
         XCTAssertFalse(extensionIsMain)
         XCTAssertEqual("B", extensionName)
 
@@ -186,5 +204,12 @@ class GraphCollectorTests: XCTestCase {
         let (extendedB, extendedBIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "_A_B@B.symbols.json"))
         XCTAssertFalse(extendedBIsMain)
         XCTAssertEqual("B", extendedB)
+
+        // "A@B" style graph, with extension of B in module A, using shortened name scheme.
+        var a_At_B_ShortenedFileName = a_At_B
+        a_At_B_ShortenedFileName.module.extended = "B"
+        let (extendedBShortForm, extendedBIsMainShortForm) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "_A_B@B.symbols.json"))
+        XCTAssertFalse(extendedBIsMainShortForm)
+        XCTAssertEqual("B", extendedBShortForm)
     }
 }
