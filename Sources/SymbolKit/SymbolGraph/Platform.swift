@@ -49,13 +49,10 @@ extension SymbolGraph {
             switch os {
             case "macosx", "macos":
                 return SymbolGraph.Symbol.Availability.Domain.macOS
+            case "ios" where environment == "macabi":
+                return SymbolGraph.Symbol.Availability.Domain.macCatalyst
             case "ios":
-                if environment == "macabi" {
-                    return SymbolGraph.Symbol.Availability.Domain.macCatalyst
-
-                } else {
-                    return SymbolGraph.Symbol.Availability.Domain.iOS
-                }
+                return SymbolGraph.Symbol.Availability.Domain.iOS
             case "watchos":
                 return SymbolGraph.Symbol.Availability.Domain.watchOS
             case "tvos":
@@ -65,7 +62,7 @@ extension SymbolGraph {
             case "linux":
                 return SymbolGraph.Symbol.Availability.Domain.linux
             default:
-                return "Unsupported OS: \(os)"
+                return os
             }
         }
 
