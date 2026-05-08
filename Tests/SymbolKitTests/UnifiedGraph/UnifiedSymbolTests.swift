@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -526,6 +526,67 @@ class UnifiedSymbolTests: XCTestCase {
         comboSymbol.mergeSymbol(symbol: decoded2, module: module, isMainGraph: false)
 
         return comboSymbol
+    }
+    
+    func testSameSymbolWithDifferentArchitectures() throws {
+        let decoder = JSONDecoder()
+       
+        let aarch64Module = SymbolGraph.Module(name: "TestModule", platform: SymbolGraph.Platform(architecture: "aarch64", vendor: nil, operatingSystem: nil, environment: nil), version: nil, bystanders: nil)
+        let x86_64Module = SymbolGraph.Module(name: "TestModule", platform: SymbolGraph.Platform(architecture: "x86_64", vendor: nil, operatingSystem: nil, environment: nil), version: nil, bystanders: nil)
+
+        let aarch64SymbolLiteral = """
+        {
+           "kind": {
+               "identifier": "swift.class",
+               "displayName": "Class"
+           },
+           "identifier": {
+               "precise": "c:objc(cs)PlayingCard",
+               "interfaceLanguage": "swift"
+           },
+           "pathComponents": [
+               "PlayingCard"
+           ],
+           "names": {
+               "title": "PlayingCard aarch64"
+           },
+           "accessLevel": "open"
+        }
+        """
+        let x86_64SymbolLiteral = """
+        {
+           "kind": {
+               "identifier": "swift.class",
+               "displayName": "Class"
+           },
+           "identifier": {
+               "precise": "c:objc(cs)PlayingCard",
+               "interfaceLanguage": "swift"
+           },
+           "pathComponents": [
+               "PlayingCard"
+           ],
+           "names": {
+               "title": "PlayingCard x86_64"
+           },
+           "accessLevel": "open"
+        }
+        """
+
+        let aarch64Symbol = try decoder.decode(SymbolGraph.Symbol.self, from: Data(aarch64SymbolLiteral.utf8))
+        let x86_64Symbol = try decoder.decode(SymbolGraph.Symbol.self, from: Data(x86_64SymbolLiteral.utf8))
+
+        var unifiedSymbol = UnifiedSymbolGraph.Symbol(fromSingleSymbol: x86_64Symbol, module: x86_64Module, isMainGraph: true)
+        unifiedSymbol.mergeSymbol(symbol: aarch64Symbol, module: aarch64Module, isMainGraph: true)
+        XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "c:objc(cs)PlayingCard")
+        XCTAssertEqual(unifiedSymbol.names[swiftSelector]?.title, "PlayingCard aarch64")
+
+        // Validate that when a symbol exists in both Apple Silicon and another
+        // architecture with different information, the Apple Silicon version prevails.
+        unifiedSymbol = UnifiedSymbolGraph.Symbol(fromSingleSymbol: aarch64Symbol, module: aarch64Module, isMainGraph: true)
+        unifiedSymbol.mergeSymbol(symbol: x86_64Symbol, module: x86_64Module, isMainGraph: true)
+        XCTAssertEqual(unifiedSymbol.uniqueIdentifier, "c:objc(cs)PlayingCard")
+        XCTAssertEqual(unifiedSymbol.names[swiftSelector]?.title, "PlayingCard aarch64")
     }
 
 }

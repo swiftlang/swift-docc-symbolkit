@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -125,6 +125,13 @@ extension UnifiedSymbolGraph {
 
             if isMainGraph && !self.mainGraphSelectors.contains(selector) {
                 self.mainGraphSelectors.append(selector)
+            }
+            // Preserve Apple Silicon symbol information over other architectures.
+            if let existingPlatform = self.modules[selector]?.platform {
+                let incomingPlatform = module.platform
+                if !incomingPlatform.isAppleSilicon && existingPlatform.isAppleSilicon {
+                    return
+                }
             }
 
             // Add a new variant to the fields that track it

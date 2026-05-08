@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -15,6 +15,9 @@ extension SymbolGraph {
          The name of the architecture that this module targets, such as `x86_64` or `arm64`. If the module doesn't have a specific architecture, this may be undefined.
          */
         public var architecture: String?
+        var isAppleSilicon: Bool {
+            architecture == "aarch64" || architecture == "arm64"
+        }
 
         /**
          The platform vendor from which this module came, such as `apple` or `linux`.
