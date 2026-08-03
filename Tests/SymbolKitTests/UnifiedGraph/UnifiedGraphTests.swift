@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -133,6 +133,41 @@ class UnifiedGraphTests: XCTestCase {
         let extensionSym = try XCTUnwrap(demoGraph.symbols["s:SomeStruct"])
         let extensionSymModule = try XCTUnwrap(extensionSym.modules[.init(forSymbolGraph: extensionSyms)!])
         XCTAssertEqual(extensionSymModule.name, "OtherKit")
+    }
+
+    func testMergeRelationshipsDeduplicatesWithTargetFallback() throws {
+        let graph = try XCTUnwrap(UnifiedSymbolGraph(
+            fromSingleGraph: makeSymbolGraph(symbols: [], relations: []),
+            at: .init(fileURLWithPath: "Example.symbols.json")))
+
+        let symbol = SymbolGraph.Relationship(
+            source: "s:SomeType", target: "s:SomeProtocol", kind: .conformsTo, targetFallback: "OtherModule.SomeProtocol")
+        let duplicate = SymbolGraph.Relationship(
+            source: "s:SomeType", target: "s:SomeProtocol", kind: .conformsTo, targetFallback: "SomeProtocol")
+
+        let forward = graph.mergeRelationships([symbol], [duplicate])
+        let backward = graph.mergeRelationships([duplicate], [symbol])
+
+        XCTAssertEqual(forward.count, 1)
+        XCTAssertEqual(backward.count, 1)
+        XCTAssertEqual(forward, backward, "Deduplication must not depend on merge order")
+        XCTAssertEqual(forward.first?.targetFallback, "OtherModule.SomeProtocol", "The deduplicated symbol should have the lexicographically smallest target fallback")
+    }
+
+    func testMergeRelationshipsPreservesFirstSeenOrder() throws {
+        let graph = try XCTUnwrap(UnifiedSymbolGraph(
+            fromSingleGraph: makeSymbolGraph(symbols: [], relations: []),
+            at: .init(fileURLWithPath: "Example.symbols.json")))
+
+        let left = ["s:A", "s:B", "s:A"].map {
+            SymbolGraph.Relationship(source: "s:SomeType", target: $0, kind: .conformsTo, targetFallback: nil)
+        }
+        let right = ["s:C", "s:B", "s:C"].map {
+            SymbolGraph.Relationship(source: "s:SomeType", target: $0, kind: .conformsTo, targetFallback: nil)
+        }
+
+        let merged = graph.mergeRelationships(left, right)
+        XCTAssertEqual(merged.map(\.target), ["s:A", "s:B", "s:C"])
     }
 }
 

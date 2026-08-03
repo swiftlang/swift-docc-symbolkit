@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2021-2024 Apple Inc. and the Swift project authors
+ Copyright (c) 2021-2026 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -117,7 +117,8 @@ extension UnifiedSymbolGraph {
 
     /// Merge the given lists of ``SymbolGraph/Relationship``s.
     ///
-    /// This function will deduplicate relationships based on their source, target, and kind. If it sees a duplicate, it will keep the first one it sees.
+    /// This function keys relationships by their source, target, and kind.
+    /// Deduplication is done using ``preferredRelationship(first:second:)``.
     func mergeRelationships(_ relationsList: [SymbolGraph.Relationship]...)
     -> [SymbolGraph.Relationship] {
         struct RelationKey: Hashable {
@@ -130,19 +131,39 @@ extension UnifiedSymbolGraph {
                 self.target = relationship.target
                 self.kind = relationship.kind
             }
-
-            static func makePair(fromRelation relationship: SymbolGraph.Relationship) -> (RelationKey, SymbolGraph.Relationship) {
-                return (RelationKey(fromRelation: relationship), relationship)
-            }
         }
 
         let allRelations = relationsList.joined()
 
-        // deduplicate the combined relationships array by source/target/kind
+        // Deduplicate relationships using ``preferredRelationship(first:second:)``.
         // FIXME: Actually merge relationships if they have different mixins (rdar://84267943)
-        let map = [:].merging(allRelations.map({ RelationKey.makePair(fromRelation: $0) }), uniquingKeysWith: { r1, r2 in r1 })
+        var deduplicated: [RelationKey: SymbolGraph.Relationship] = [:]
+        var orderedKeys: [RelationKey] = []
+        for relationship in allRelations {
+            let key = RelationKey(fromRelation: relationship)
+            if let existing = deduplicated[key] {
+                deduplicated[key] = preferredRelationship(existing, relationship)
+            } else {
+                deduplicated[key] = relationship
+                orderedKeys.append(key)
+            }
+        }
+        return orderedKeys.map { deduplicated[$0]! }
+    }
 
-        return Array(map.values)
+    /// A comparator for relationships that share a source, target, and kind.
+    /// The presence of ``SymbolGraph/Relationship/targetFallback`` is preferred.
+    /// When both symbols have a target fallback, they are compared lexicographically.
+    private func preferredRelationship(
+        _ first: SymbolGraph.Relationship,
+        _ second: SymbolGraph.Relationship
+    ) -> SymbolGraph.Relationship {
+        switch (first.targetFallback, second.targetFallback) {
+            case (_?, nil), (nil, nil): first
+            case (nil, _?):        second
+            case let (lhs?, rhs?):
+                lhs <= rhs ? first : second
+        }
     }
 
     /// Scans over ``orphanRelationships`` and sorts any whose source/target symbols were loaded
