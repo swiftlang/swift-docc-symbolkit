@@ -1,7 +1,7 @@
 /*
  This source file is part of the Swift.org open source project
 
- Copyright (c) 2022-2026 Apple Inc. and the Swift project authors
+ Copyright (c) 2022 Apple Inc. and the Swift project authors
  Licensed under Apache License v2.0 with Runtime Library Exception
 
  See https://swift.org/LICENSE.txt for license information
@@ -183,9 +183,8 @@ class GraphCollectorTests: XCTestCase {
         }
         let a_At_B = try JSONDecoder().decode(SymbolGraph.self, from: jsonDataAatB)
 
-        // For cross-import overlays the name comes from the graph's `module.name`, not from the module named after the "@" in the file name.
-        let (overlayAtBName, overlayAtBIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "_A_B@B.symbols.json"))
-        XCTAssertFalse(overlayAtBIsMain)
-        XCTAssertEqual("A", overlayAtBName)
+        let (extendedB, extendedBIsMain) = GraphCollector.moduleNameFor(a_At_B, at: .init(fileURLWithPath: "_A_B@B.symbols.json"))
+        XCTAssertFalse(extendedBIsMain)
+        XCTAssertEqual("B", extendedB)
     }
 }
