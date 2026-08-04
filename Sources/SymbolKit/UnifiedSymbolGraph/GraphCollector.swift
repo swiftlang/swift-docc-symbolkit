@@ -139,11 +139,7 @@ extension GraphCollector {
         let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
 
         let moduleName: String
-
-        // FIXME: Stop forcing cross-import overlays into this branch when Swift-DocC corrects its rendering behavior
-        // (https://github.com/swiftlang/swift-docc/issues/1611)
-        let isCrossImportOverlay = graph.module.bystanders != nil
-        if isMainSymbolGraph || isCrossImportOverlay {
+        if isMainSymbolGraph && graph.module.bystanders == nil {
             // When bystander modules are present, the symbol graph is a cross-import overlay, and
             // we need to preserve the original module name to properly render it. It is still
             // kept with the extension symbols, due to the merging behavior of UnifiedSymbolGraph.
