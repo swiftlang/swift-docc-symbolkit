@@ -15,6 +15,8 @@ In addition, graph representations of data also present opportunities for visual
 
 Please see SymbolKit's [documentation site](https://apple.github.io/swift-docc-symbolkit/documentation/symbolkit/) for more detailed information about the library.
 
+
+
 ## Getting Started Using SymbolKit
 
 In your `Package.swift` Swift Package Manager manifest, add the following dependency to your `dependencies` argument:
