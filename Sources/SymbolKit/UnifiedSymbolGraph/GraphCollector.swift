@@ -136,8 +136,15 @@ extension GraphCollector {
         // extension to another modules.
         // The snippet extractor generates symbol graph files without an `@` symbol and with the
         // the metadata that indicates the module `isVirtual`.
-        let isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
-
+        let isMainSymbolGraph: Bool
+        if let extended = graph.module.extended {
+            // The "extended" field was added in a revision to the symbolgraph format. When that
+            // field is not set, the symbolgraph data was emitted by a previous compiler version.
+            isMainSymbolGraph = extended == graph.module.name
+        } else {
+            isMainSymbolGraph = !url.lastPathComponent.contains("@") && !graph.module.isVirtual
+        }
+        
         let moduleName: String
         if isMainSymbolGraph && graph.module.bystanders == nil {
             // When bystander modules are present, the symbol graph is a cross-import overlay, and
@@ -157,6 +164,10 @@ extension GraphCollector {
             // generated from snippets, return the name from within the graph.
             if url.lastPathComponent.contains("-snippets.symbols.json") {
                 return (graph.module.name, isMainSymbolGraph)
+            }
+
+            if let extended = graph.module.extended {
+                return (extended, isMainSymbolGraph)
             }
             
             // For extension symbol graphs, derive the extended module's name from the file name.
