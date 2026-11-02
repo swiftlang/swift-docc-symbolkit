@@ -154,6 +154,37 @@ class UnifiedGraphTests: XCTestCase {
         XCTAssertEqual(forward.first?.targetFallback, "OtherModule.SomeProtocol", "The deduplicated symbol should have the lexicographically smallest target fallback")
     }
 
+    func testMergeRelationshipsPrefersRelationshipWithoutTargetFallback() throws {
+        let graph = try XCTUnwrap(UnifiedSymbolGraph(
+            fromSingleGraph: makeSymbolGraph(symbols: [], relations: []),
+            at: .init(fileURLWithPath: "Example.symbols.json")))
+
+        // The module that declares the target emits the relationship without a target fallback.
+        var declared = SymbolGraph.Relationship(
+            source: "s:SomeType", target: "s:SomeProtocol", kind: .conformsTo, targetFallback: nil)
+        declared[mixin: SymbolGraph.Relationship.Swift.GenericConstraints.self] = .init(constraints: [
+            .init(kind: .conformance, leftTypeName: "T", rightTypeName: "SomeProtocol")
+        ])
+        // Another module emits an implied relationship with its own condition and a target fallback.
+        var implied = SymbolGraph.Relationship(
+            source: "s:SomeType", target: "s:SomeProtocol", kind: .conformsTo, targetFallback: "DemoKit.SomeProtocol")
+        implied[mixin: SymbolGraph.Relationship.Swift.GenericConstraints.self] = .init(constraints: [
+            .init(kind: .conformance, leftTypeName: "T", rightTypeName: "OtherProtocol")
+        ])
+
+        let forward = graph.mergeRelationships([declared], [implied])
+        let backward = graph.mergeRelationships([implied], [declared])
+
+        XCTAssertEqual(forward.count, 1)
+        XCTAssertEqual(backward.count, 1)
+        XCTAssertEqual(forward, backward, "Deduplication must not depend on merge order")
+        XCTAssertNil(forward.first?.targetFallback)
+        XCTAssertEqual(
+            forward.first?[mixin: SymbolGraph.Relationship.Swift.GenericConstraints.self]?.constraints.map(\.rightTypeName),
+            ["SomeProtocol"],
+            "The relationship from the module that declares the target should keep its own constraints")
+    }
+
     func testMergeRelationshipsPreservesFirstSeenOrder() throws {
         let graph = try XCTUnwrap(UnifiedSymbolGraph(
             fromSingleGraph: makeSymbolGraph(symbols: [], relations: []),
