@@ -152,15 +152,16 @@ extension UnifiedSymbolGraph {
     }
 
     /// A comparator for relationships that share a source, target, and kind.
-    /// The presence of ``SymbolGraph/Relationship/targetFallback`` is preferred.
+    /// The absence of ``SymbolGraph/Relationship/targetFallback`` is preferred,
+    /// because the compiler only omits it when the target is declared in the module that emitted the relationship.
     /// When both symbols have a target fallback, they are compared lexicographically.
     private func preferredRelationship(
         _ first: SymbolGraph.Relationship,
         _ second: SymbolGraph.Relationship
     ) -> SymbolGraph.Relationship {
         switch (first.targetFallback, second.targetFallback) {
-            case (_?, nil), (nil, nil): first
-            case (nil, _?):        second
+            case (nil, _?), (nil, nil): first
+            case (_?, nil):        second
             case let (lhs?, rhs?):
                 lhs <= rhs ? first : second
         }
