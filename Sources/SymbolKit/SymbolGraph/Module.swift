@@ -19,6 +19,12 @@ extension SymbolGraph {
         /// Optional bystander module names.
         public var bystanders: [String]?
 
+        /// Optional extended module name.
+        ///
+        /// Extended module name is set when the symbol graph contains symbols that are all
+        /// extensions from a specific module.
+        public var extended: String?
+
         /// The platform intended for deployment.
         public var platform: Platform
 
@@ -29,11 +35,12 @@ extension SymbolGraph {
         /// but one created implicitly to hold relationships.
         public var isVirtual: Bool = false
 
-        public init(name: String, platform: Platform, version: SemanticVersion? = nil, bystanders: [String]? = nil, isVirtual: Bool = false) {
+        public init(name: String, platform: Platform, version: SemanticVersion? = nil, bystanders: [String]? = nil, extended: String? = nil, isVirtual: Bool = false) {
             self.name = name
             self.platform = platform
             self.version = version
             self.bystanders = bystanders
+            self.extended = extended
             self.isVirtual = isVirtual
         }
 
@@ -41,6 +48,7 @@ extension SymbolGraph {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             self.name = try container.decode(String.self, forKey: .name)
             self.bystanders = try container.decodeIfPresent([String].self, forKey: .bystanders)
+            self.extended = try container.decodeIfPresent(String.self, forKey: .extended)
             self.platform = try container.decode(Platform.self, forKey: .platform)
             self.version = try container.decodeIfPresent(SemanticVersion.self, forKey: .version)
             self.isVirtual = try container.decodeIfPresent(Bool.self, forKey: .isVirtual) ?? false
