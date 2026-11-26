@@ -263,7 +263,7 @@ components:
               items:
                 $ref: "#/components/schemas/DeclarationFragment"
             prose:
-              description: The name of a symbol when shown inline with other prose.
+              description: The name of a symbol when referred to inline in documentation prose, such as the text of an inline link to the symbol. If absent, `title` is used instead.
               type: string
               nullable: true
         docComment:

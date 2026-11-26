@@ -31,7 +31,7 @@ extension SymbolGraph.Symbol {
         public var subHeading: [DeclarationFragments.Fragment]?
 
         /**
-         A name to use in documentation prose or inline link titles.
+         An abbreviated form of the symbol's title that's preferred for use in documentation prose and inline link text.
 
          > Note: If undefined, use the `title`.
          */
